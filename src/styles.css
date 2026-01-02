@@ -1,0 +1,638 @@
+:root {
+  --blue: #2f6ff6;
+  --text: #111827;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --bg: #ffffff;
+  --card: #ffffff;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --radius: 12px;
+  --max: 1180px;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans KR',
+    sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  font: inherit;
+}
+
+.blue {
+  color: var(--blue);
+}
+.muted {
+  color: var(--muted);
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.page {
+  padding: 28px 0 40px;
+  flex: 1;
+}
+
+.containerX {
+  width: min(var(--max), calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  padding: 8px 12px;
+  background: #000;
+  color: #fff;
+  border-radius: 8px;
+}
+.skip:focus {
+  left: 12px;
+  top: 12px;
+  z-index: 9999;
+}
+
+.header {
+  border-bottom: 1px solid var(--line);
+}
+.headTop {
+  padding: 10px 0;
+}
+.headBottom {
+  border-top: 1px solid var(--line);
+}
+
+.logoArea {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+}
+.logoMark {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: #ffffff;
+  overflow: hidden;
+}
+.logoMark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.logoTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.logoBold {
+  font-weight: 700;
+  font-family: 'Noto Sans KR', Arial, Helvetica, sans-serif;
+  font-size: 22px;
+  letter-spacing: -0.3px;
+}
+.logoSemiBold {
+  font-family: 'Noto Sans KR', Arial, Helvetica, sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.3px;
+}
+.logoTerm {
+  color: var(--blue);
+  font-family: 'Noto Sans KR', Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+}
+.logoSub {
+  font-size: 12px;
+  font-family: 'Noto Sans KR', Arial, Helvetica, sans-serif;
+  font-weight: 500;
+  color: var(--muted);
+  margin-top: 0px;
+}
+
+.headTop .containerX {
+  display: grid;
+  grid-template-columns: 340px minmax(280px, 520px);
+  gap: 14px;
+  align-items: center;
+}
+
+.searchBox {
+  display: flex;
+  align-items: flex-start;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  gap: 6px;
+  background: #fff;
+  height: 50px;
+  width: 640px;
+}
+
+.searchSelect {
+  border: none;
+  background: transparent;
+  padding: 14px 10px;
+  color: var(--muted);
+  font-size: 16px;
+  outline: none;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 16px 14px;
+  color: #0f347f;
+  min-width: 0;
+}
+.searchInput::placeholder {
+  color: #cbd5e1;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.iconBtn {
+  border: none;
+  background: transparent;
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  color: #376dc8;
+  cursor: pointer;
+}
+.iconBtn svg {
+  width: 33px;
+  height: 33px;
+  stroke-width: 1;
+  fill: currentColor;
+}
+.iconBtn:hover {
+  background: #f3f4f6;
+}
+
+.gnb {
+  display: flex;
+  gap: 0;
+  padding: 14px 0;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.gnbItem {
+  position: relative;
+  padding: 0 12px;
+  font-weight: 550;
+  color: #222222;
+}
+
+.gnbItem:hover {
+  color: var(--blue);
+}
+
+.gnbItem:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 18px;
+  background: #e5e7eb;
+  transform: translateY(-50%);
+}
+
+.headBottom .containerX {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.linkList {
+  display: flex;
+  gap: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.linkItem {
+  position: relative;
+  padding: 0 14px;
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 700;
+}
+
+.linkItem:hover,
+.linkItem.on {
+  color: var(--blue);
+}
+
+.linkItem:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 14px;
+  background: #e5e7eb;
+  transform: translateY(-50%);
+}
+
+.subNavBar {
+  background: #eef6ff;
+  border-top: 1px solid #dbeafe;
+}
+
+.subNavInner {
+  padding: 18px 0;
+}
+
+.subNavList {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  color: #334155;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.subNavItem {
+  color: #334155;
+}
+
+.subNavItem:hover {
+  color: var(--blue);
+}
+
+.subNavSep {
+  width: 1px;
+  height: 22px;
+  background: #cbd5e1;
+  opacity: 0.7;
+}
+
+.footer {
+  border-top: 1px solid var(--line);
+  padding: 18px 0;
+}
+.footerInner {
+  display: grid;
+  gap: 10px;
+}
+.footerLinks {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 13px;
+}
+.footerCopy {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ===== Home 2-Column Layout (PC 기본 적용) ===== */
+.homeGrid {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 28px;
+  align-items: start;
+  margin-top: 28px;
+}
+
+.homeCol {
+  display: grid;
+  gap: 22px;
+}
+
+.panel {
+  background: #fff;
+  border: 2px solid #dbe7ff;
+  border-radius: 12px;
+}
+
+.panelHead {
+  padding: 22px 22px 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.panelBody {
+  padding: 18px 22px 22px;
+}
+
+.panelTitle {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+/* ===== 기간안내 ===== */
+.periodHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.periodTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+.periodYear {
+  font-weight: 900;
+}
+
+.periodText {
+  color: #111827;
+  font-weight: 900;
+}
+
+.periodNote {
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.periodBody {
+  padding: 0;
+}
+
+.periodTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 16px;
+}
+
+.periodTable th,
+.periodTable td {
+  padding: 22px 18px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+
+.periodTable th {
+  font-weight: 800;
+  color: #111827;
+  background: #fff;
+}
+
+.periodTable td {
+  color: #111827;
+}
+
+.periodTable th:not(:last-child),
+.periodTable td:not(:last-child) {
+  border-right: 1px solid #eef2f7;
+}
+
+.periodTarget {
+  line-height: 1.35;
+  word-break: keep-all;
+}
+
+/* ===== 수강안내 ===== */
+.infoBody {
+  display: grid;
+  gap: 16px;
+  padding-top: 18px;
+}
+
+.infoLine {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* ===== 로그인 ===== */
+.loginPanel {
+  border-color: #dbe7ff;
+}
+
+.loginTop {
+  padding: 26px 26px 24px;
+  text-align: center;
+}
+
+.loginTitle {
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 16px;
+}
+
+.loginBtn {
+  width: 100%;
+  height: 64px;
+  border: none;
+  border-radius: 8px;
+  background: #3b6ec9;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.loginBtn:hover {
+  filter: brightness(0.98);
+}
+
+.loginBtnLink {
+  width: 100%;
+  height: 64px;
+  border: none;
+  border-radius: 8px;
+  background: #3b6ec9;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loginBtnLink:hover {
+  filter: brightness(0.98);
+}
+
+.loginDesc {
+  margin-top: 18px;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.loginFind {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  align-items: center;
+}
+
+.findBtn {
+  border: none;
+  background: transparent;
+  color: #2f6ff6;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+.findSep {
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+/* ===== 오른쪽 버튼 2개 ===== */
+.rightButtons {
+  display: grid;
+  gap: 14px;
+}
+
+.rightOutlineBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 86px;
+  border: 2px solid #2f6ff6;
+  border-radius: 12px;
+  background: #fff;
+  color: #2f6ff6;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.rightOutlineBtn:hover {
+  background: #f7fbff;
+}
+
+/* ===== 공지사항 ===== */
+.noticePanel .panelHead {
+  border-bottom: none;
+}
+
+.noticeHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 22px 22px 10px;
+}
+
+.noticeMore {
+  color: #6b7280;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.noticeMore:hover {
+  color: var(--blue);
+}
+
+.noticeBody {
+  padding: 0 22px 22px;
+  display: grid;
+  gap: 14px;
+}
+
+.noticeRow {
+  position: relative;
+  padding-left: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.noticeRow::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #94a3b8;
+}
+
+.noticeRow:hover {
+  color: var(--blue);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 980px) {
+  .headTop .containerX {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .headBottom .containerX {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .linkList {
+    justify-content: flex-start;
+  }
+
+  .homeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .searchBox {
+    width: 100%;
+    max-width: 640px;
+  }
+}
+
+@media (max-width: 520px) {
+  .logoArea {
+    min-width: 0;
+  }
+  .logoTitle {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .searchSelect {
+    display: none;
+  }
+
+  .panelTitle {
+    font-size: 22px;
+  }
+  .periodTitle {
+    font-size: 20px;
+  }
+  .loginTitle {
+    font-size: 24px;
+  }
+  .rightOutlineBtn {
+    font-size: 18px;
+  }
+}
