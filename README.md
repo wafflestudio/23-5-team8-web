@@ -1,17 +1,30 @@
-# React + TypeScript + Vite
+# 수강신청 연습 사이트 web repository
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 페이지 구성
 
-Currently, two official plugins are available:
+### 진입 및 인증
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+메인 페이지: 수강신청 메인 페이지와 유사. 실제 수강신청 사이트에는 필요한 섹션이지만 본 프로젝트에서는 무관한 부분은 삭제나 수정이 가해짐.
 
-## React Compiler
+로그인: ID/PW 입력, 회원가입, 소셜 로그인
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+### 수강신청 시뮬레이션
 
-Note: This will impact Vite dev & build performances.
+강좌 검색
+
+장바구니
+
+수강신청
+
+수강신청 내역
+
+### 개인화 및 결과
+
+마이페이지
+
+### 부가 기능
+
+리더보드
 
 ## Expanding the ESLint configuration
 
