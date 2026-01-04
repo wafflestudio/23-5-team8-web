@@ -10,7 +10,7 @@ export default function HomePage() {
         <div className='homeGrid'>
           {/* 1. 기간안내 패널 */}
           <section className='panel periodPanel'>
-            <div className='panelHead periodHead'>
+            <div className='panelHead'>
               <div className='periodTitle'>
                 <span className='periodYear blue'>2025학년도 겨울학기</span>
                 <span className='periodText'>수강신청 기간안내</span>
@@ -35,7 +35,7 @@ export default function HomePage() {
                     <td data-label='대상' className='periodTarget'>
                       2/3 환불(~1/3), 1/2 환불(~1/8)
                       <br />
-                      메뉴: mySNU-학사정보-수업-계절학기수강취소/환불
+                      메뉴:mySNU- 학사정보-수업-계절학기수강취소/환불
                     </td>
                   </tr>
                 </tbody>
@@ -46,17 +46,10 @@ export default function HomePage() {
           {/* 2. 수강안내 패널 */}
           <section className='panel infoPanel'>
             <div className='panelHead'>
-              <div className='panelTitle blue'>수강안내</div>
+              <div className='panelTitle'>사이트안내</div>
             </div>
-            <div className='panelBody infoBody'>
-              <div className='infoLine'>
-                ★ 강의매매 방지를 위한 수강신청제도 시스템을 시범
-                운영합니다.(2025년 동계 계절수업)
-              </div>
-              <div className='infoLine'>
-                자세한 사항은 mySNU 포털 공지사항 혹은 수강신청사이트 공지사항을
-                참고해 주시기 바랍니다.
-              </div>
+            <div className='panelBody'>
+              <div className='infoLineBold'>내용을 채워 넣읍시다.</div>
             </div>
           </section>
 
@@ -103,12 +96,12 @@ export default function HomePage() {
           {/* 5. 공지사항 패널 */}
           <section className='panel noticePanel'>
             <div className='noticeHead'>
-              <div className='panelTitle blue'>공지사항</div>
+              <div className='panelTitle'>공지사항</div>
               <Link className='noticeMore' to='/notice'>
                 더보기
               </Link>
             </div>
-            <div className='noticeBody'>
+            <div className='panelBody'>
               {DUMMY_NOTICES.slice(0, 4).map((n) => (
                 <Link key={n.id} to='/notice' className='noticeRow'>
                   {n.title}

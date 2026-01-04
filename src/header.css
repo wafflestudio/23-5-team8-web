@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --blue: #2f6ff6;
+  --blue: #376dc8;
   --text: #111827;
   --muted: #6b7280;
   --line: #cccccc;
@@ -169,6 +169,11 @@ button {
   color: #3b82f6;
   cursor: pointer;
   padding: 0;
+}
+.iconBtn svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 1.5px;
 }
 
 /* Mobile Search Button */
