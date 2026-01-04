@@ -3,7 +3,9 @@ import {createRoot} from 'react-dom/client';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import App from './App.tsx';
 import Login from './Login.tsx';
-import './styles.css';
+import './header.css';
+import './homePage.css';
+import './login.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -1,0 +1,277 @@
+.page {
+  padding: 34px 0 40px;
+  flex: 1;
+}
+
+/* ===== Home Layout System (Flattened) ===== */
+/* Mobile First (One Column) */
+.homeGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* 모바일 순서 지정 (Flex Order) */
+/* 요구사항: 로그인 -> 기간 -> 버튼 -> 수강안내 -> 공지 */
+.loginPanel {
+  order: 1;
+}
+.periodPanel {
+  order: 2;
+}
+.rightButtons {
+  order: 3;
+}
+.infoPanel {
+  order: 4;
+}
+.noticePanel {
+  order: 5;
+}
+
+/* PC (1080px 이상): Grid 2 Columns */
+@media (min-width: 1080px) {
+  .homeGrid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 32px;
+    align-items: start;
+  }
+
+  /* PC 배치 지정 (Grid Lines) */
+  /* Left Column Items */
+  .periodPanel {
+    grid-column: 1;
+    grid-row: 1;
+    order: unset;
+  }
+  .infoPanel {
+    grid-column: 1;
+    grid-row: 2;
+    order: unset;
+  }
+
+  /* Right Column Items */
+  .loginPanel {
+    grid-column: 2;
+    grid-row: 1;
+    order: unset;
+  }
+  .rightButtons {
+    grid-column: 2;
+    grid-row: 2;
+    order: unset;
+  }
+  .noticePanel {
+    grid-column: 2;
+    grid-row: 3;
+    order: unset;
+  }
+}
+
+/* Panel Styles */
+.panel {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  width: 100%;
+}
+.panelHead {
+  padding: 22px 22px 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.panelBody {
+  padding: 18px 22px 22px;
+}
+.panelTitle {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+/* Period Panel */
+.periodHead {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 38px 36px 20px;
+  border: none;
+  flex-wrap: wrap;
+}
+.periodTitle {
+  font-size: 24px;
+  font-weight: 800;
+}
+.periodYear {
+  color: var(--blue);
+  margin-right: 6px;
+}
+.periodTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+  border-top: 2px solid #939393;
+}
+
+/* Mobile Table (Card View) */
+@media (max-width: 768px) {
+  .periodTable thead {
+    display: none;
+  }
+  .periodTable,
+  .periodTable tbody,
+  .periodTable tr,
+  .periodTable td {
+    display: block;
+    width: 100%;
+  }
+  .periodTable tr {
+    margin-bottom: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+    background: #f9fafb;
+  }
+  .periodTable td {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    text-align: right;
+  }
+  .periodTable td:last-child {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    border: none;
+  }
+  .periodTable td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: #4b5563;
+    margin-right: 12px;
+  }
+}
+/* PC Table */
+@media (min-width: 769px) {
+  .periodTable th,
+  .periodTable td {
+    padding: 22px 18px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+  }
+  .periodTable th {
+    background: #fff;
+    border-right: 1px solid #eef2f7;
+  }
+  .periodTable td {
+    border-right: 1px solid #eef2f7;
+  }
+  .periodTable th:last-child,
+  .periodTable td:last-child {
+    border-right: none;
+  }
+}
+
+/* Info Panel */
+.infoBody {
+  display: grid;
+  gap: 16px;
+}
+.infoLine {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* Login Panel */
+.loginPanel {
+  border-color: #dbe7ff;
+}
+.loginTop {
+  padding: 26px;
+  text-align: center;
+}
+.loginTitle {
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 16px;
+}
+.loginBtnLink {
+  width: 100%;
+  height: 64px;
+  background: #3b6ec9;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+.loginDesc {
+  margin-top: 18px;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
+}
+.loginFind {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.findBtn {
+  color: #2f6ff6;
+  font-weight: 800;
+  font-size: 14px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Right Buttons */
+.rightButtons {
+  display: grid;
+  gap: 14px;
+}
+.rightOutlineBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 86px;
+  border: 2px solid #2f6ff6;
+  border-radius: 12px;
+  background: #fff;
+  color: #2f6ff6;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+/* Notice Panel */
+.noticeHead {
+  display: flex;
+  justify-content: space-between;
+  padding: 22px;
+}
+.noticeBody {
+  padding: 0 22px 22px;
+  display: grid;
+  gap: 14px;
+}
+.noticeRow {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+/* Login Page Only */
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 30px;
+}
