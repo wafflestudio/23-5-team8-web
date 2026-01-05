@@ -1,0 +1,146 @@
+.cart-page-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.cart-notice-box {
+  background: #5089d6;
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.cart-notice {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #ffffff;
+  font-weight: 400;
+}
+
+.cart-notice + .cart-notice {
+  margin-top: 6px;
+}
+
+.cart-left-section {
+  max-width: 50%;
+}
+
+.cart-tabs-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.cart-tab-button {
+  padding: 8px 20px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  border-radius: 20px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cart-tab-button:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.cart-tab-button.active {
+  background: #f3f4f6;
+  color: #374151;
+  border-color: #d1d5db;
+}
+
+.cart-btn-arrow {
+  width: 12px;
+  height: 12px;
+  object-fit: contain;
+  opacity: 0.7;
+}
+
+.cart-credit-info {
+  margin-left: auto;
+  font-size: 14px;
+  font-weight: 400;
+  color: #374151;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cart-credit-number {
+  color: #5089d6;
+  font-weight: 600;
+}
+
+.cart-content-box {
+  border: none;
+  border-bottom: 2px solid #6b7280;
+  min-height: 300px;
+  padding-bottom: 100px;
+}
+
+.cart-breadcrumb {
+  padding: 16px 24px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.cart-breadcrumb-item {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.cart-breadcrumb-item:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.cart-breadcrumb-arrow {
+  color: #9ca3af;
+  font-size: 14px;
+  user-select: none;
+}
+
+.cart-empty-state {
+  text-align: center;
+  padding: 80px 20px 60px;
+}
+
+.cart-empty-title {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.cart-empty-desc {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.6;
+}

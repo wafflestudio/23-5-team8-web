@@ -6,14 +6,54 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] =
     useState(true);
+  const [showPassword, setShowPassword] =
+    useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("로그인 시도:", {
-      username,
-      password,
-      rememberMe,
-    });
+
+    // ============================================
+    // 더미 데이터
+    // ============================================
+    const DUMMY_USERNAME = "test1234";
+    const DUMMY_PASSWORD = "test1234!";
+
+    if (
+      username === DUMMY_USERNAME &&
+      password === DUMMY_PASSWORD
+    ) {
+      // 로그인 성공
+      const authToken =
+        "dummy-auth-token-" + Date.now();
+      const userInfo = {
+        username: username,
+        loginTime: new Date().toISOString(),
+      };
+
+      // localStorage에 인증 정보 저장
+      localStorage.setItem(
+        "authToken",
+        authToken
+      );
+      localStorage.setItem(
+        "userInfo",
+        JSON.stringify(userInfo)
+      );
+
+      alert("로그인 성공!");
+      console.log("로그인 성공:", userInfo);
+
+      // 나중에 메인 페이지로 리다이렉트 추가 가능
+      // navigate('/main');
+    } else {
+      // 로그인 실패
+      alert(
+        "아이디 또는 비밀번호가 일치하지 않습니다."
+      );
+      console.log("로그인 실패");
+    }
+    // ============================================
+    // ============================================
   };
 
   const handleSocialLogin = (
@@ -67,16 +107,42 @@ export default function Login() {
             </div>
 
             <div className="form-group">
-              <input
-                type="password"
-                className="form-input"
-                placeholder="비밀번호 입력"
-                value={password}
-                onChange={(e) =>
-                  setPassword(e.target.value)
-                }
-                required
-              />
+              <div className="password-input-wrapper">
+                <input
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
+                  className="form-input password-input"
+                  placeholder="비밀번호 입력"
+                  value={password}
+                  onChange={(e) =>
+                    setPassword(e.target.value)
+                  }
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() =>
+                    setShowPassword(!showPassword)
+                  }
+                >
+                  <img
+                    src={
+                      showPassword
+                        ? "/src/assets/hide.png"
+                        : "/src/assets/view.png"
+                    }
+                    alt={
+                      showPassword
+                        ? "비밀번호 숨기기"
+                        : "비밀번호 보기"
+                    }
+                  />
+                </button>
+              </div>
             </div>
 
             <div className="form-checkbox">

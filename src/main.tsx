@@ -6,6 +6,7 @@ import Login from './Login.tsx';
 import './header.css';
 import './homePage.css';
 import './login.css';
+import './cart.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

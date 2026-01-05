@@ -1,9 +1,10 @@
 import React from 'react';
 import {Link, Route, Routes, useLocation} from 'react-router-dom';
 import './header.css';
-import HomePage from './HomePage.tsx';
-import Login from './Login.tsx';
-import Register from './Register.tsx';
+import HomePage from './HomePage';
+import Login from './Login';
+import Register from './Register';
+import Cart from './Cart';
 
 export default function App() {
   const location = useLocation();
@@ -22,6 +23,7 @@ export default function App() {
           <Route path='/notice' element={<NoticePage />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
+          <Route path='/cart' element={<Cart />} />
         </Routes>
       </div>
       {!isAuthPage && <Footer />}
@@ -217,9 +219,10 @@ function Header() {
                     예비수강신청내역
                   </a>
                   <span className='subNavSep' aria-hidden='true' />
-                  <a className='subNavItem' href='#' onClick={prevent}>
+
+                  <Link className='subNavItem' to='/cart'>
                     장바구니
-                  </a>
+                  </Link>
                   <a className='subNavItem' href='#' onClick={prevent}>
                     수강신청
                   </a>
