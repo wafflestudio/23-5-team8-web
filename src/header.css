@@ -92,13 +92,13 @@ button {
 .logoTitle {
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: wrap;
 }
 .logoBold {
   font-weight: 700;
   font-size: 22px;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.6px;
 }
 .logoSemiBold {
   font-weight: 500;

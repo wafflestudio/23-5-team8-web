@@ -42,24 +42,25 @@ function Header() {
         <div className='containerX headTopGrid'>
           <div className='logoArea'>
             <div className='logoMark'>
-              <img
-                src='/src/assets/logo.png'
-                alt='SNU CRS'
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).style.display = 'none';
-                }}
-              />
+              <Link to='/'>
+                <img
+                  src='/src/assets/logo.png'
+                  alt='SNU CRS'
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.display =
+                      'none';
+                  }}
+                />
+              </Link>
             </div>
 
-            <Link to='/' className='logoText'>
-              <div className='logoTitle'>
-                <span className='logoBold'>
-                  SNU <span className='logoSemiBold'>CRS</span>
-                </span>
-                <span className='logoTerm'>2025-겨울학기</span>
-              </div>
-              <div className='logoSub'>서울대학교 수강신청 시스템</div>
-            </Link>
+            <div className='logoTitle'>
+              <span className='logoBold'>
+                SNU <span className='logoSemiBold'>CRS</span>
+              </span>
+              <span className='logoTerm'>2025-겨울학기</span>
+            </div>
+            <div className='logoSub'>서울대학교 수강신청 시스템</div>
           </div>
 
           <div className='searchArea'>
