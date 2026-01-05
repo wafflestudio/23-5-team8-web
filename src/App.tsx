@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
+import Cart from "./Cart";
 
 type NoticeItem = { id: number; title: string };
 
@@ -330,13 +331,12 @@ function Header() {
                     aria-hidden="true"
                   />
 
-                  <a
+                  <Link
                     className="subNavItem"
-                    href="#"
-                    onClick={prevent}
+                    to="/cart"
                   >
                     장바구니
-                  </a>
+                  </Link>
                   <a
                     className="subNavItem"
                     href="#"
@@ -656,6 +656,10 @@ export default function App() {
           <Route
             path="/register"
             element={<Register />}
+          />
+          <Route
+            path="/cart"
+            element={<Cart />}
           />
         </Routes>
       </div>
