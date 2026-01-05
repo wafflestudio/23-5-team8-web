@@ -1,0 +1,334 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --blue: #376dc8;
+  --text: #111827;
+  --muted: #6b7280;
+  --line: #cccccc;
+  --bg: #ffffff;
+  --card: #ffffff;
+  --max: 1180px;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  font: inherit;
+}
+.blue {
+  color: var(--blue);
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.containerX {
+  width: min(var(--max), calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  padding: 8px 12px;
+  background: #000;
+  color: #fff;
+}
+.skip:focus {
+  left: 12px;
+  top: 12px;
+  z-index: 9999;
+}
+
+.header {
+  border-bottom: 1px solid var(--line);
+}
+.headTop {
+  padding: 12px 0;
+}
+.headBottom {
+  position: relative;
+  border-top: 1px solid var(--line);
+  z-index: 1000;
+}
+
+/* Logo */
+.logoArea {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+}
+.logoMark {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+.logoMark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.logoTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.logoBold {
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.6px;
+}
+.logoSemiBold {
+  font-weight: 500;
+  font-size: 22px;
+}
+.logoTerm {
+  color: var(--blue);
+  font-size: 18px;
+}
+.logoSub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Header Top Grid & Search */
+.headTopGrid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.searchArea {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.searchBox {
+  display: none; /* Mobile Default: Hide SearchBox */
+  align-items: stretch;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  height: 50px;
+  width: 100%;
+  max-width: 640px;
+  overflow: hidden;
+}
+
+.searchSelect {
+  border: none;
+  background: transparent;
+  padding: 0 4px 0 22px;
+  color: var(--muted);
+  font-size: 16px;
+  outline: none;
+}
+.searchInput {
+  flex: 1;
+  border: none;
+  padding: 0 14px;
+  font-size: 16px;
+  outline: none;
+  min-width: 0;
+}
+.searchSep {
+  width: 1px;
+  background: #e5e7eb;
+  margin: 0;
+}
+.iconBtn {
+  border: none;
+  background: transparent;
+  width: 50px;
+  display: grid;
+  place-items: center;
+  color: #3b82f6;
+  cursor: pointer;
+  padding: 0;
+}
+.iconBtn svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 1.5px;
+}
+
+/* Mobile Search Button */
+.mobileSearchBtn {
+  display: block; /* Mobile Default: Show Icon */
+  border: none;
+  background: transparent;
+  color: var(--blue);
+  cursor: pointer;
+  padding: 8px;
+}
+
+/* 1080px 이상 (PC) */
+@media (min-width: 1080px) {
+  .headTopGrid {
+    display: grid;
+    grid-template-columns: 342px 1fr;
+    justify-content: flex-start;
+  }
+  .searchArea {
+    display: block;
+    width: 100%;
+  }
+  .searchBox {
+    display: flex;
+  } /* Show SearchBox */
+  .mobileSearchBtn {
+    display: none;
+  } /* Hide Icon */
+}
+
+/* Head Bottom (GNB, LinkList) */
+.headBottom {
+  display: none; /* Mobile Default: Hide Bottom Nav */
+}
+@media (min-width: 1080px) {
+  .headBottom {
+    display: block;
+  } /* PC: Show Bottom Nav */
+}
+
+.headBottomFlex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gnb {
+  display: flex;
+  padding: 14px 0;
+}
+.gnbItem {
+  position: relative;
+  padding: 0 12px;
+  font-size: 17px;
+  color: #222;
+  font-weight: 400;
+}
+.gnbItem:hover {
+  color: var(--blue);
+}
+.gnbItem:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 18px;
+  background: #e5e7eb;
+  transform: translateY(-50%);
+}
+
+.linkList {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  /* 핵심: 줄바꿈 방지 */
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+.linkItem {
+  position: relative;
+  padding: 0 9px;
+  font-size: 12px;
+  color: #747474;
+  font-weight: 500;
+}
+.linkItem:hover,
+.linkItem.on {
+  color: var(--blue);
+}
+.linkItem:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 14px;
+  background: #e5e7eb;
+  transform: translateY(-50%);
+}
+
+/* SubNav & Footer (Keep as is mostly) */
+.subNavBar {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #eef6ff;
+  border-top: 1px solid #dbeafe;
+  z-index: 999;
+}
+.subNavInner {
+  padding: 14px 30px;
+}
+
+.subNavList {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  color: #334155;
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.subNavItem {
+  color: #334155;
+}
+
+.subNavItem:hover {
+  color: var(--blue);
+}
+
+.subNavSep {
+  width: 1px;
+  height: 22px;
+  background: #cbd5e1;
+  opacity: 0.7;
+}
+.footer {
+  border-top: 1px solid var(--line);
+  padding: 18px 0;
+  margin-top: auto;
+}
+.footerInner {
+  display: grid;
+  gap: 10px;
+}
+.footerLinks {
+  display: flex;
+  gap: 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.footerCopy {
+  font-size: 12px;
+  color: var(--muted);
+}

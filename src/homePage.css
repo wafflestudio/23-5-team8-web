@@ -1,0 +1,379 @@
+.page {
+  padding: 60px 0 40px;
+  flex: 1;
+}
+
+/* ===== Home Layout System (Flattened) ===== */
+/* Mobile First (One Column) */
+.homeGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* 모바일 순서 지정 (Flex Order) */
+/* 요구사항: 로그인 -> 기간 -> 버튼 -> 수강안내 -> 공지 */
+.loginPanel {
+  order: 1;
+}
+.periodPanel {
+  order: 2;
+}
+.rightButtons {
+  order: 3;
+}
+.infoPanel {
+  order: 4;
+}
+.noticePanel {
+  order: 5;
+}
+
+/* PC (1080px 이상): Grid 2 Columns */
+@media (min-width: 1080px) {
+  .homeGrid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 32px;
+    align-items: start;
+  }
+
+  /* PC 배치 지정 (Grid Lines) */
+  /* Left Column Items */
+  .periodPanel {
+    grid-column: 1;
+    grid-row: 1;
+    order: unset;
+  }
+  .infoPanel {
+    grid-column: 1;
+    grid-row: 2;
+    order: unset;
+  }
+
+  /* Right Column Items */
+  .loginPanel {
+    grid-column: 2;
+    grid-row: 1;
+    order: unset;
+  }
+  .rightButtons {
+    grid-column: 2;
+    grid-row: 2;
+    order: unset;
+  }
+  .noticePanel {
+    grid-column: 2;
+    grid-row: 3;
+    order: unset;
+  }
+}
+
+/* Panel Styles */
+.panel {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  width: 100%;
+}
+.panelHead {
+  padding: 30px 36px 18px;
+  gap: 9px;
+  display: flex;
+  align-items: flex-end;
+  border: none;
+  flex-wrap: wrap;
+}
+.periodTitle {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.6px;
+}
+.periodYear {
+  color: var(--blue);
+  font-size: 19px;
+  font-weight: 600;
+  margin-right: 6px;
+  letter-spacing: -0.6px;
+}
+.periodBody {
+  padding: 0 40px 30px;
+}
+.periodTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+  border-top: 2px solid #939393;
+}
+.periodNote {
+  color: #6a6a6a;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.6px;
+}
+
+/* Mobile Table (Grid Layout: Left Header / Right Details) */
+@media (max-width: 768px) {
+  /* 1. 테이블 헤더 숨김 */
+  .periodTable thead {
+    display: none;
+  }
+
+  /* 2. 테이블 구조 초기화 */
+  .periodTable,
+  .periodTable tbody {
+    display: block;
+    width: 100%;
+  }
+
+  /* 3. [핵심] 한 줄(tr)을 그리드로 만들어서 좌우 2칸으로 나눔 */
+  .periodTable tr {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  /* 4. 왼쪽 칸: "수강취소(개강후)" */
+  /* 첫 번째 td는 오른쪽 3줄(일자, 시간, 대상) 높이만큼 합침 */
+  .periodTable td:first-child {
+    grid-column: 1; /* 1열 */
+    grid-row: 1 / 4; /* 1행부터 4행 직전까지(총 3줄) 합치기 */
+
+    display: flex;
+    align-items: center; /* 수직 중앙 정렬 */
+    justify-content: center; /* 가로 중앙 정렬 */
+
+    text-align: center;
+    font-weight: 400;
+    color: #333;
+    border-right: 1px solid #e5e7eb;
+    padding: 0;
+  }
+
+  /* 왼쪽 칸에는 "수강신청 구분" 라벨(data-label) 표시 안 함 */
+  .periodTable td:first-child::before {
+    content: none;
+  }
+
+  /* 5. 오른쪽 칸들: 일자, 시간, 대상 */
+  .periodTable td:not(:first-child) {
+    grid-column: 2; /* 2열에 배치 */
+    display: flex;
+    align-items: flex-start; /* 글자가 길어지면 위쪽 기준 정렬 */
+    padding: 8px 12px;
+    font-size: 14px;
+    border-bottom: 1px solid #f3f4f6; /* 항목 사이 옅은 줄 */
+  }
+
+  /* 마지막 줄(대상)은 밑줄 제거 */
+  .periodTable td:last-child {
+    border-bottom: none;
+  }
+
+  /* 6. 라벨 스타일 (일자, 시간, 대상) */
+  .periodTable td::before {
+    content: attr(data-label);
+    display: block;
+    width: 40px; /* 라벨 너비 고정 (줄 맞춤용) */
+    flex-shrink: 0; /* 너비 줄어듦 방지 */
+    font-weight: 700;
+    color: #4b5563;
+    margin-right: 10px;
+    text-align: left;
+  }
+}
+/* PC Table */
+@media (min-width: 769px) {
+  .periodTable th:nth-child(1) {
+    width: 25%;
+  } /* 구분 */
+  .periodTable th:nth-child(2) {
+    width: 41%;
+  } /* 일자 */
+  .periodTable th:nth-child(3) {
+    width: 18%;
+  } /* 시간 */
+  .periodTable th:nth-child(4) {
+    width: 16%;
+  } /* 대상 */
+  .periodTable th {
+    padding: 14px 18px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+    border-right: 1px solid #eef2f7;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: center;
+  }
+  .periodTable td {
+    padding: 12px 5px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+    border-right: 1px solid #eef2f7;
+    font-size: 15px;
+    font-weight: 400;
+    text-align: center;
+  }
+  .periodTable th:last-child,
+  .periodTable td:last-child {
+    border-right: none;
+  }
+}
+
+/* Info & Notice Panel */
+.panelTitle {
+  color: var(--blue);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.6px;
+}
+.panelBody {
+  padding: 18px 22px 22px;
+  margin: 0px 34px 22px;
+  border-top: 1.5px solid #e7e7e7;
+  padding: 18px 0;
+}
+.infoLineBold {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  padding: 0;
+}
+.infoLine {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 0;
+}
+
+.panelTitle {
+  font-size: 19px;
+  font-weight: 600;
+}
+
+/* Login Panel */
+.loginPanel {
+  border-color: var(--line);
+}
+.loginTop {
+  padding: 32px 47px 20px;
+  text-align: center;
+}
+.loginTitle {
+  font-size: 19px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  font: 'Noto Sans KR', sans-serif;
+}
+.loginBtnLink {
+  width: 100%;
+  height: 48px;
+  background: #376dc8;
+  color: #fff;
+  font: 'Noto Sans KR', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+.loginDesc {
+  margin-top: 16px;
+  color: #a1a1a1;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.7px;
+}
+.loginFind {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 0px;
+}
+.findBtn {
+  color: #376dc8;
+  font-weight: 600;
+  font-size: 13px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 7px;
+}
+.findSep {
+  color: #376dc8;
+}
+
+/* Right Buttons */
+.rightButtons {
+  display: grid;
+  gap: 12px;
+}
+.rightOutlineBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 72px;
+  border: 2px solid #376dc8;
+  border-radius: 12px;
+  background: #fff;
+  color: #376dc8;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.6px;
+}
+
+/* Notice Panel */
+.noticeHead {
+  padding: 30px 36px 18px;
+  gap: 9px;
+  align-items: flex-end;
+  border: none;
+  flex-wrap: wrap;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.noticeBody {
+  padding: 0 22px 22px;
+  display: grid;
+  gap: 14px;
+}
+.noticeMore {
+  text-decoration: none;
+  color: #969696;
+  font-size: 14px;
+}
+.noticeMore::after {
+  content: ' >';
+  font-size: 12px;
+  margin-left: 2px;
+  font-weight: 300;
+}
+.noticeRow {
+  font-weight: 400;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  margin-top: 8px;
+}
+.noticeRow::before {
+  content: '·';
+  color: #9ca3af;
+  font-weight: 100;
+  margin-right: 8px;
+  font-size: 20px;
+  vertical-align: middle;
+  line-height: 0;
+}
+
+/* Login Page Only */
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 30px;
+}
