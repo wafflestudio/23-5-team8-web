@@ -75,6 +75,7 @@
   border: 1px solid var(--line);
   border-radius: 12px;
   width: 100%;
+  margin-bottom: 18px;
 }
 .panelHead {
   padding: 30px 36px 18px;
@@ -254,6 +255,7 @@
 /* Login Panel */
 .loginPanel {
   border-color: var(--line);
+  margin-bottom: 120px;
 }
 .loginTop {
   padding: 32px 47px 20px;
@@ -310,6 +312,27 @@
   display: grid;
   gap: 12px;
 }
+.rightFilledBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 72px;
+
+  /* 디자인 반전: 파란 배경, 흰 글씨 */
+  background: #5189d6;
+  color: #fff;
+
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.6px;
+  transition: opacity 0.2s;
+  text-decoration: none;
+}
+
+.rightFilledBtn:hover {
+  opacity: 0.9;
+}
 .rightOutlineBtn {
   display: flex;
   justify-content: center;
@@ -325,6 +348,9 @@
 }
 
 /* Notice Panel */
+.noticePanel {
+  margin-top: 18px;
+}
 .noticeHead {
   padding: 30px 36px 18px;
   gap: 9px;
@@ -336,9 +362,9 @@
   align-items: center;
 }
 .noticeBody {
-  padding: 0 22px 22px;
+  padding: 16px 0 14px;
   display: grid;
-  gap: 14px;
+  gap: 2px;
 }
 .noticeMore {
   text-decoration: none;

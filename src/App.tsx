@@ -1,5 +1,6 @@
-import React from 'react';
-import {Link, Route, Routes, useLocation} from 'react-router-dom';
+import React, {useState} from 'react';
+import {Link, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
+import {useAuth} from './contexts/AuthContext.tsx';
 import './header.css';
 import HomePage from './HomePage';
 import Login from './Login';
@@ -33,10 +34,20 @@ export default function App() {
 
 function Header() {
   const loc = useLocation();
-  const [hoverMenu, setHoverMenu] = React.useState<
-    null | 'search' | 'apply' | 'mba'
-  >(null);
+  const navigate = useNavigate();
+  const {user, logout} = useAuth();
+  const [hoverMenu, setHoverMenu] = useState<null | 'search' | 'apply' | 'mba'>(
+    null
+  );
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const prevent = (e: React.MouseEvent) => e.preventDefault();
+
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    logout();
+    setShowUserMenu(false);
+    navigate('/', {replace: true});
+  };
 
   return (
     <header className='header'>
@@ -56,13 +67,15 @@ function Header() {
               </Link>
             </div>
 
-            <div className='logoTitle'>
-              <span className='logoBold'>
-                SNU <span className='logoSemiBold'>CRS</span>
-              </span>
-              <span className='logoTerm'>2025-겨울학기</span>
+            <div className='logoTextArea'>
+              <div className='logoTitle'>
+                <span className='logoBold'>
+                  SNU <span className='logoSemiBold'>CRS</span>
+                </span>
+                <span className='logoTerm'>2026-1학기</span>
+              </div>
+              <div className='logoSub'>서울대학교 수강신청 시스템</div>
             </div>
-            <div className='logoSub'>서울대학교 수강신청 시스템</div>
           </div>
 
           <div className='searchArea'>
@@ -111,6 +124,31 @@ function Header() {
                 </svg>
               </button>
             </div>
+            {user && (
+              <div className='userInfoArea'>
+                <button
+                  className='userInfoBtn'
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                >
+                  <div className='userInfoText'>
+                    <span className='userName'>{user.name}</span>
+                    <span className='userStudentId'>학번 {user.studentId}</span>
+                  </div>
+                  <span className={`userIcon ${showUserMenu ? 'open' : ''}`}>
+                    ▼
+                  </span>
+                </button>
+
+                <div className={`userDropdown ${showUserMenu ? 'active' : ''}`}>
+                  <Link to='/mypage' className='userDropItem'>
+                    마이페이지
+                  </Link>
+                  <a href='#' className='userDropItem' onClick={handleLogout}>
+                    로그아웃
+                  </a>
+                </div>
+              </div>
+            )}
 
             {/* 모바일용 돋보기 버튼 (기본 숨김) */}
             <button className='mobileSearchBtn' aria-label='검색 열기'>

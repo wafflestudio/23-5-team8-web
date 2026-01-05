@@ -7,14 +7,17 @@ import './header.css';
 import './homePage.css';
 import './login.css';
 import './cart.css';
+import {AuthProvider} from './contexts/AuthContext.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path='/login' element={<Login />} />
-        <Route path='/*' element={<App />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/login' element={<Login />} />
+          <Route path='/*' element={<App />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   </StrictMode>
 );
