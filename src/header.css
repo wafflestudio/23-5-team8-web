@@ -236,6 +236,18 @@ button {
   color: #222;
   font-weight: 400;
 }
+.gnbItem.active {
+  color: #376dc8;
+}
+.gnbItem.active::after {
+  content: '';
+  position: absolute;
+  left: 12px; /* padding 값 고려 */
+  right: 12px;
+  bottom: -4px;
+  height: 1px;
+  background: #376dc8;
+}
 .gnbItem:hover {
   color: var(--blue);
 }
