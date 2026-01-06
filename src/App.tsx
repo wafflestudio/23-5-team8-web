@@ -1,9 +1,18 @@
-import React from 'react';
-import {Link, Route, Routes, useLocation} from 'react-router-dom';
+import React, {useState} from 'react';
+import {
+  Link,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
+import {useAuth} from './contexts/AuthContext.tsx';
 import './header.css';
 import HomePage from './HomePage';
 import Login from './Login';
 import Register from './Register';
+import SearchPage from './Search';
 import Cart from './Cart';
 
 export default function App() {
@@ -23,6 +32,7 @@ export default function App() {
           <Route path='/notice' element={<NoticePage />} />
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
+          <Route path='/search' element={<SearchPage />} />
           <Route path='/cart' element={<Cart />} />
         </Routes>
       </div>
@@ -33,10 +43,31 @@ export default function App() {
 
 function Header() {
   const loc = useLocation();
-  const [hoverMenu, setHoverMenu] = React.useState<
-    null | 'search' | 'apply' | 'mba'
-  >(null);
+  const navigate = useNavigate();
+  const {user, logout} = useAuth();
+  const [hoverMenu, setHoverMenu] = useState<null | 'search' | 'apply' | 'mba'>(
+    null
+  );
+  const [searchingCourse, setSearchingCourse] = useState('');
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const prevent = (e: React.MouseEvent) => e.preventDefault();
+
+  const handleSearch = () => {
+    navigate(`/search?query=${encodeURIComponent(searchingCourse)}`);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    logout();
+    setShowUserMenu(false);
+    navigate('/', {replace: true});
+  };
 
   return (
     <header className='header'>
@@ -56,13 +87,15 @@ function Header() {
               </Link>
             </div>
 
-            <div className='logoTitle'>
-              <span className='logoBold'>
-                SNU <span className='logoSemiBold'>CRS</span>
-              </span>
-              <span className='logoTerm'>2025-겨울학기</span>
+            <div className='logoTextArea'>
+              <div className='logoTitle'>
+                <span className='logoBold'>
+                  SNU <span className='logoSemiBold'>CRS</span>
+                </span>
+                <span className='logoTerm'>2026-1학기</span>
+              </div>
+              <div className='logoSub'>서울대학교 수강신청 시스템</div>
             </div>
-            <div className='logoSub'>서울대학교 수강신청 시스템</div>
           </div>
 
           <div className='searchArea'>
@@ -74,8 +107,15 @@ function Header() {
               <input
                 className='searchInput'
                 placeholder='전체 강좌 검색은 돋보기 버튼을 클릭하세요'
+                value={searchingCourse}
+                onChange={(e) => setSearchingCourse(e.target.value)}
+                onKeyDown={handleKeyDown}
               />
-              <button className='iconBtn' aria-label='검색'>
+              <button
+                className='iconBtn'
+                aria-label='검색'
+                onClick={handleSearch}
+              >
                 <svg
                   viewBox='0 0 24 24'
                   width='22'
@@ -111,6 +151,31 @@ function Header() {
                 </svg>
               </button>
             </div>
+            {user && (
+              <div className='userInfoArea'>
+                <button
+                  className='userInfoBtn'
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                >
+                  <div className='userInfoText'>
+                    <span className='userName'>{user.name}</span>
+                    <span className='userStudentId'>학번 {user.studentId}</span>
+                  </div>
+                  <span className={`userIcon ${showUserMenu ? 'open' : ''}`}>
+                    ▼
+                  </span>
+                </button>
+
+                <div className={`userDropdown ${showUserMenu ? 'active' : ''}`}>
+                  <Link to='/mypage' className='userDropItem'>
+                    마이페이지
+                  </Link>
+                  <a href='#' className='userDropItem' onClick={handleLogout}>
+                    로그아웃
+                  </a>
+                </div>
+              </div>
+            )}
 
             {/* 모바일용 돋보기 버튼 (기본 숨김) */}
             <button className='mobileSearchBtn' aria-label='검색 열기'>
@@ -136,9 +201,14 @@ function Header() {
         <div className='containerX headBottomFlex'>
           <nav className='gnb' aria-label='메인 메뉴'>
             <a
-              className='gnbItem'
+              className={`gnbItem ${
+                loc.pathname === '/search' ? 'active' : ''
+              }`}
               href='#'
-              onClick={prevent}
+              onClick={(e) => {
+                prevent(e);
+                navigate('/search');
+              }}
               onMouseEnter={() => setHoverMenu('search')}
             >
               강좌검색

@@ -1,0 +1,235 @@
+.searchPage {
+  padding-bottom: 100px;
+  min-height: 800px;
+}
+
+.searchHeader {
+  text-align: center;
+  padding: 28px 0 42px;
+}
+
+.searchTitle {
+  font-size: 22px;
+  font-weight: 400;
+  color: #333;
+  margin: 0 0 6px 0;
+}
+
+.searchTitle .quote {
+  color: #376dc8;
+  font-weight: 500;
+}
+
+.searchCount {
+  font-size: 14px;
+  color: #333;
+  margin: 0;
+}
+
+.countNum {
+  color: #e53e3e;
+  font-weight: 400;
+}
+
+/* 전체 레이아웃 (좌우 2단 분리) */
+.searchContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  position: relative;
+}
+
+/* 왼쪽 칼럼 */
+.searchLeftColumn {
+  flex: 1;
+  min-width: 0; /* flex 자식 요소 overflow 방지 */
+}
+
+/* 오른쪽 칼럼 */
+.searchRightColumn {
+  width: 140px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 20px; /* 스크롤 시 상단 여백 유지하며 고정 */
+  z-index: 50;
+}
+
+/* 왼쪽 칼럼 내부: 툴바 */
+.searchToolbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 10px;
+  position: relative;
+}
+
+.legendList {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .legendList {
+    justify-content: flex-end;
+    margin-right: 0;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #718dab;
+}
+
+.legendIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #999;
+  border-radius: 50%;
+  font-size: 10px;
+  color: #718dab;
+}
+
+.legendIcon.globe {
+  border: none;
+  width: auto;
+  height: auto;
+}
+
+.excelBtn {
+  background: #f3f4f6;
+  border: 1px solid #ddd;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: #444;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+/* 왼쪽 칼럼 내부: 검은 실선 */
+.blackLine {
+  border: none;
+  border-top: 2px solid #333;
+  margin: 0;
+}
+
+/* 왼쪽 칼럼 내부: 결과 리스트 영역 */
+.resultListArea {
+  min-height: 600px;
+}
+
+/* 오른쪽 칼럼 내부: 플로팅 메뉴 디자인 */
+.searchFloatingMenu {
+  background-color: #0f3c8e;
+  border-radius: 10px;
+  padding: 20px 17px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.floatBtn {
+  width: 100%;
+  padding: 8px 0;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.outlineBtn {
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+}
+
+.fillBlueBtn {
+  background: #376dc8;
+  border: none;
+  color: #fff;
+}
+
+.fillRedBtn {
+  background: #f04e45;
+  border: none;
+  color: #fff;
+}
+
+.outlineWhiteBtn {
+  background: #fff;
+  border: none;
+  color: #0f3c8e;
+}
+
+.floatLine {
+  height: 2.5px;
+  background: #04265f;
+  margin-top: 5px;
+  margin-bottom: 1px;
+}
+
+.captchaRow {
+  display: flex;
+  gap: 0;
+  margin: 5px 0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.captchaBox {
+  background: #c0c0c0;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1f4e38;
+  letter-spacing: 4px;
+  user-select: none;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+.captchaDigit {
+  display: inline-block;
+  font-family: 'Courier New', Courier, monospace; /* 픽셀 느낌이 나는 고정폭 글꼴 */
+  font-weight: 900;
+  margin: 0 4px; /* 기본 간격 */
+
+  /* 약간의 블러 처리로 저화질 이미지 느낌 구현 */
+  filter: blur(0.6px);
+
+  /* 텍스트 그림자로 번진 느낌 추가 */
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.3),
+    -1px -1px 0px rgba(0, 0, 0, 0.1);
+}
+
+.captchaInput {
+  flex: 1;
+  width: 50%;
+  border: none;
+  outline: none;
+  padding: 0 8px;
+  font-size: 13px;
+  text-align: center;
+  height: 36px;
+  background: #fff;
+  color: #333;
+}
+.captchaInput::placeholder {
+  color: #ccc;
+}
