@@ -1,0 +1,80 @@
+name: CI/CD Team8 React App
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  branches:
+    - main
+
+jobs:
+  # 1. CI 작업 (검사 및 빌드 테스트)
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      # [중요] 코드 스타일 및 에러 검사
+      # package.json에 "lint" 명령어가 있어야 합니다.
+      - name: Lint Code
+        run: npm run lint
+
+      # (선택사항) 유닛 테스트가 있다면 주석을 풀고 사용하세요
+      # - name: Run Tests
+      #   run: npm run test
+
+      # 빌드가 정상적으로 되는지 미리 확인 (Type Check 포함)
+      - name: Build Test
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+  # 2. CD 작업 (배포) - CI가 성공해야만 실행됨
+  deploy:
+    needs: ci # <--- [핵심] ci 작업이 성공해야만 deploy가 실행됩니다.
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' # PR일 땐 배포하지 않고, Push일 때만 배포
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload to S3
+        run: |
+          aws s3 sync ./dist s3://${{ secrets.AWS_S3_BUCKET }} --delete
+
+      - name: Invalidate CloudFront Cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_ID }} --paths "/*"
