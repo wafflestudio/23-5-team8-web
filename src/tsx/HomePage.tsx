@@ -1,7 +1,6 @@
-import React from 'react';
 import {Link} from 'react-router-dom';
-import {useAuth} from './contexts/AuthContext.tsx';
-import './homePage.css';
+import {useAuth} from '../contexts/AuthContext.tsx';
+import '../css/homePage.css';
 
 export default function HomePage() {
   const {user} = useAuth();

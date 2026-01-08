@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useLayoutEffect} from 'react';
-import './search.css';
+import {useState, useEffect} from 'react';
+import '../css/search.css';
 import {useLocation} from 'react-router-dom';
 
 interface CaptchaDigit {
