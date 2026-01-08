@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "vite build",
+    "test": "npm run lint && npm run typecheck",
     "preview": "vite preview",
     "prepare": "husky"
   },
