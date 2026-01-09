@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import '../css/search.css';
 import {useLocation} from 'react-router-dom';
+import {showNotSupportedToast} from '../utils/NotSupporting';
 
 interface CaptchaDigit {
   value: string;
@@ -92,7 +93,12 @@ export default function SearchPage() {
 
           <div className='searchRightColumn'>
             <div className='searchFloatingMenu'>
-              <button className='floatBtn outlineBtn'>관심강좌 저장</button>
+              <button
+                className='floatBtn outlineBtn'
+                onClick={showNotSupportedToast}
+              >
+                관심강좌 저장
+              </button>
               <button className='floatBtn fillBlueBtn'>장바구니 담기</button>
 
               <div className='floatLine'></div>
@@ -117,7 +123,12 @@ export default function SearchPage() {
               </div>
 
               <button className='floatBtn fillRedBtn'>수강신청</button>
-              <button className='floatBtn outlineWhiteBtn'>예비수강신청</button>
+              <button
+                className='floatBtn outlineWhiteBtn'
+                onClick={showNotSupportedToast}
+              >
+                예비수강신청
+              </button>
             </div>
           </div>
         </div>
