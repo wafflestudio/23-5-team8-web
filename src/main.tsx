@@ -7,7 +7,7 @@ import './css/header.css';
 import './css/cart.css';
 import './css/login.css';
 import './css/cart.css';
-import {AuthProvider} from './contexts/AuthContext.tsx';
+import {AuthProvider} from './contexts/AuthProvider.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import '../css/search.css';
 import {useLocation} from 'react-router-dom';
 
@@ -11,37 +11,29 @@ interface CaptchaDigit {
   fontSize: number;
 }
 
+function makeCaptchaDigits(): CaptchaDigit[] {
+  const num1 = Math.floor(Math.random() * 10);
+  const num2 = Math.floor(Math.random() * 10);
+  const chars = [num1, num2];
+
+  const colors = ['#1f4e38', '#5a3e1b', '#2b2b80', '#631818', '#2f4f4f'];
+
+  return chars.map((char) => ({
+    value: char.toString(),
+    rotation: Math.random() * 40 - 20,
+    yOffset: Math.random() * 8 - 4,
+    xOffset: Math.random() * 10 - 5,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    fontSize: Math.floor(Math.random() * 7) + 20,
+  }));
+}
+
 export default function SearchPage() {
-  const [captchaDigits, setCaptchaDigits] = useState<CaptchaDigit[]>([]);
+  const [captchaDigits] = useState<CaptchaDigit[]>(() => makeCaptchaDigits());
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const keyword = searchParams.get('query') || '';
-
-  useEffect(() => {
-    const num1 = Math.floor(Math.random() * 10);
-    const num2 = Math.floor(Math.random() * 10);
-    const chars = [num1, num2];
-
-    // Reference 이미지에 보이는 어두운 계열 색상들 (초록, 갈색, 네이비, 짙은 빨강)
-    const colors = ['#1f4e38', '#5a3e1b', '#2b2b80', '#631818', '#2f4f4f'];
-
-    const newDigits = chars.map((char) => ({
-      value: char.toString(),
-      // -20도 ~ 20도 회전
-      rotation: Math.random() * 40 - 20,
-      // 상하 위치 랜덤 (-4px ~ 4px)
-      yOffset: Math.random() * 8 - 4,
-      // 좌우 간격 약간의 불규칙함
-      xOffset: Math.random() * 10 - 5,
-      // 랜덤 색상
-      color: colors[Math.floor(Math.random() * colors.length)],
-      // 폰트 크기 랜덤 (20px ~ 26px)
-      fontSize: Math.floor(Math.random() * 7) + 20,
-    }));
-
-    setCaptchaDigits(newDigits);
-  }, []);
 
   return (
     <div className='searchPage'>
@@ -93,16 +85,11 @@ export default function SearchPage() {
         </div>
 
         <div className='searchContent'>
-          {/* 왼쪽 칼럼: 툴바, 실선, 리스트 */}
           <div className='searchLeftColumn'>
             <hr className='blackLine' />
-
-            <div className='resultListArea'>
-              {/* 여기에 검색 결과 리스트가 들어옵니다 */}
-            </div>
+            <div className='resultListArea'></div>
           </div>
 
-          {/* 오른쪽 칼럼: 플로팅 메뉴 */}
           <div className='searchRightColumn'>
             <div className='searchFloatingMenu'>
               <button className='floatBtn outlineBtn'>관심강좌 저장</button>
