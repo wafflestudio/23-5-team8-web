@@ -1,0 +1,399 @@
+/* 전체 페이지 레이아웃 */
+.registrationPage {
+  padding-bottom: 60px;
+  font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  background-color: #fff;
+  min-height: 900px;
+}
+
+.regHeader {
+  padding: 50px 0 20px;
+}
+
+.regTitle {
+  font-size: 28px;
+  font-weight: 400;
+  color: #333;
+  margin: 0;
+  letter-spacing: -1px;
+}
+
+/* 탭 메뉴 스타일 */
+.regTabs {
+  display: flex;
+  border-bottom: 1px solid #d1d1d1; /* 탭 아래 얇은 회색 선 */
+}
+
+.regTabItem {
+  padding: 16px 10px;
+  width: 164px;
+  font-size: 16px;
+  cursor: pointer;
+  border: 1px solid #d1d1d1;
+  border-bottom: none;
+  background-color: #fff;
+  color: #555;
+  margin-right: -1px;
+  font-family: inherit;
+  text-align: center;
+}
+
+.regTabItem.active {
+  background-color: #0f3e8e; /* SNU 파란색 */
+  color: #fff;
+}
+
+/* 2단 레이아웃 */
+.regContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+  position: relative;
+}
+.regInfoLine {
+  margin-top: 40px;
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: #666;
+}
+.infoNum {
+  color: #174083;
+}
+
+.regLeftColumn {
+  flex: 1;
+  min-width: 0;
+  min-height: 400px;
+}
+
+.regDarkSeparator {
+  border: none;
+  border-top: 1.5px solid #5a5a5a; /* 진한 회색 실선 */
+  margin: 0;
+}
+
+/* 빈 상태 메시지 */
+.stateMessage {
+  display: flex;
+  justify-content: center;
+  padding-top: 20px; /* 약간 위쪽에 위치 */
+  color: #555;
+  font-size: 15px;
+}
+
+/* 오른쪽 플로팅 컬럼 */
+.regRightColumn {
+  width: 140px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 28px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 우측 플로팅 박스 (수강신청) - 실제 디자인 반영 */
+.regFloatingBox {
+  background-color: #174083; /* 짙은 파랑 */
+  border-radius: 10px;
+  padding: 20px 17px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 보안문자 + 입력창을 감싸는 행 */
+.regCaptchaRow {
+  display: flex;
+  border-radius: 6px;
+  height: 36px;
+  overflow: hidden; /* 자식 요소 둥글게 깎기 */
+  margin-bottom: 8px;
+}
+
+/* 좌측 보안문자 영역 */
+.regCaptchaDisplay {
+  background: #c0c0c0; /* 회색 배경 */
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  position: relative;
+}
+
+.regCaptchaDigit {
+  display: inline-block;
+  font-family: 'Courier New', monospace;
+  font-weight: 900;
+  margin: 0 1px;
+  z-index: 2;
+}
+
+/* 우측 입력창 영역 */
+.regInputWrapper {
+  width: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.regCaptchaInput {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  text-align: center;
+  font-size: 13px;
+  padding: 0;
+  background: transparent;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.regCaptchaInput::placeholder {
+  color: #cecece;
+  letter-spacing: 2px;
+  font-size: 12px;
+}
+
+/* 수강신청 버튼 */
+.regSubmitBtn {
+  width: 100%;
+  background: #f34c38; /* 밝은 빨강 */
+  border: none;
+  color: #fff;
+  padding: 7px 0;
+  border-radius: 24px; /* 버튼도 둥글게 */
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.regSubmitBtn:hover {
+  background: #d6483c;
+}
+
+/* 연습 모드 버튼 영역 */
+.practiceArea {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.practiceToggleBtn {
+  width: 100%;
+  padding: 8px 0;
+  background-color: #fff;
+  border: 1px solid #333;
+  color: #333;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.practiceToggleBtn:hover {
+  background-color: #f7f7f7;
+}
+
+.practiceToggleBtn.active {
+  background-color: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+.practiceDesc {
+  font-size: 11px;
+  color: #888;
+  margin-top: 6px;
+  line-height: 1.3;
+  letter-spacing: -0.5px;
+}
+
+/* =========================================
+   UTCk PiP 윈도우 스타일 (Local Font Version)
+   ========================================= */
+
+body.pip-mode {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #ece9d8;
+}
+
+.utck-window {
+  width: 100vw;
+  height: 100vh;
+  padding: 8px;
+  box-sizing: border-box;
+  background-color: #ece9d8;
+  font-family: 'Gulim', 'Dotum', sans-serif;
+  user-select: none;
+}
+
+.utck-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.utck-btn {
+  background-color: #ece9d8;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  box-shadow: 1px 1px 0 #000;
+  color: #000;
+  font-size: 12px;
+  font-family: 'Gulim', sans-serif;
+  cursor: pointer;
+  text-align: center;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+.utck-btn:active {
+  border-top: 1px solid #404040;
+  border-left: 1px solid #404040;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  box-shadow: none;
+  transform: translate(1px, 1px);
+}
+
+.utck-top-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3px;
+  margin-bottom: 8px;
+  height: 26px;
+}
+
+.utck-lcd-frame {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  margin-bottom: 8px;
+}
+
+.utck-lcd-screen {
+  flex: 1;
+  background-color: #000;
+  border-top: 1px solid #404040;
+  border-left: 1px solid #404040;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  box-shadow: inset 1px 1px 0 #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.utck-date-text {
+  color: #00ff00;
+  font-size: 14px;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: baseline; /* 숫자와 한글 높이 맞춤 */
+  justify-content: center;
+}
+
+.seg-text {
+  font-family: 'MyDSEG7', monospace;
+  font-weight: normal;
+  line-height: 1;
+  display: inline-block;
+}
+
+.seg-text.small {
+  font-size: 13px;
+  margin-right: 2px;
+  margin-left: 2px;
+}
+
+.kor-text {
+  font-family: 'Dotum', 'Gulim', sans-serif;
+  font-size: 13px;
+  margin-right: 2px;
+  font-weight: bold; /* 도트 느낌을 위해 굵게 */
+}
+
+.utck-time-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 6px;
+}
+
+/* [중요] Registration.tsx에서 정의한 'MyDSEG7' 폰트 사용 */
+.utck-time-fg {
+  /* seg-text 속성을 포함하되 크기 재정의 */
+  font-family: 'MyDSEG7', monospace;
+  font-weight: normal;
+  line-height: 1;
+  color: #00ff00;
+  text-shadow: 0 0 2px #003300; /* 살짝 번지는 효과 */
+
+  /* 크기 대폭 확대 및 기울기 */
+  font-size: 36px;
+  display: inline-block;
+  letter-spacing: 2px; /* 숫자 간 간격 확보 */
+}
+
+.utck-side-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 55px;
+}
+.utck-btn.side {
+  flex: 1;
+}
+
+.utck-message-bar {
+  background-color: #808080;
+  border-top: 1px solid #404040;
+  border-left: 1px solid #404040;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  color: #ffff00;
+  text-align: center;
+  font-size: 12px;
+  padding: 4px 0;
+  margin-bottom: 8px;
+  font-family: 'Dotum', sans-serif;
+  letter-spacing: -0.5px;
+}
+
+.utck-logo-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+}
+
+.utck-logo-kriss {
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  color: #555;
+  margin-right: 6px;
+  letter-spacing: -1px;
+}
+
+.utck-logo-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  font-family: 'Dotum', sans-serif;
+}

@@ -7,7 +7,9 @@ import Login from './Login.tsx';
 import Register from './Register.tsx';
 import SearchPage from './Search.tsx';
 import Cart from './Cart.tsx';
-import {showNotSupportedToast} from '../utils/NotSupporting.tsx';
+import Registration from './Registration.tsx';
+import NeedLogin from '../utils/NeedLogin.tsx';
+import showNotSupportedToast from '../utils/NotSupporting.tsx';
 
 export default function App() {
   const location = useLocation();
@@ -28,6 +30,7 @@ export default function App() {
           <Route path='/register' element={<Register />} />
           <Route path='/search' element={<SearchPage />} />
           <Route path='/cart' element={<Cart />} />
+          <Route path='/registration' element={<Registration />} />
         </Routes>
       </div>
       {!isAuthPage && <Footer />}
@@ -42,8 +45,9 @@ function Header() {
   const [hoverMenu, setHoverMenu] = useState<null | 'search' | 'apply' | 'mba'>(
     null
   );
-  const [searchingCourse, setSearchingCourse] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [searchingCourse, setSearchingCourse] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const prevent = (e: React.MouseEvent) => e.preventDefault();
 
   const handleSearch = () => {
@@ -59,10 +63,21 @@ function Header() {
   const handleLogout = (e: React.MouseEvent) => {
     e.preventDefault();
     logout();
-    setShowUserMenu(false);
+    setIsLoggedIn(false);
     navigate('/', {replace: true});
   };
 
+  const handleProtectedClick = (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault();
+      setIsLoggedIn(true);
+    }
+  };
+
+  const handleConfirmLogin = () => {
+    setIsLoggedIn(false);
+    navigate('/login');
+  };
   return (
     <header className='header'>
       <div className='headTop'>
@@ -159,12 +174,12 @@ function Header() {
                     <span className='userName'>{user.name}</span>
                     <span className='userStudentId'>학번 {user.studentId}</span>
                   </div>
-                  <span className={`userIcon ${showUserMenu ? 'open' : ''}`}>
+                  <span className={`userIcon ${isLoggedIn ? 'open' : ''}`}>
                     ▼
                   </span>
                 </button>
 
-                <div className={`userDropdown ${showUserMenu ? 'active' : ''}`}>
+                <div className={`userDropdown ${isLoggedIn ? 'active' : ''}`}>
                   <Link to='/mypage' className='userDropItem'>
                     마이페이지
                   </Link>
@@ -307,12 +322,20 @@ function Header() {
                   </a>
                   <span className='subNavSep' aria-hidden='true' />
 
-                  <Link className='subNavItem' to='/cart'>
+                  <Link
+                    className='subNavItem'
+                    to='/cart'
+                    onClick={handleProtectedClick}
+                  >
                     장바구니
                   </Link>
-                  <a className='subNavItem' href='#' onClick={prevent}>
+                  <Link
+                    className='subNavItem'
+                    to='/registration'
+                    onClick={handleProtectedClick}
+                  >
                     수강신청
-                  </a>
+                  </Link>
                   <a className='subNavItem' href='#' onClick={prevent}>
                     수강신청내역
                   </a>
@@ -348,6 +371,11 @@ function Header() {
           </div>
         )}
       </div>
+      <NeedLogin
+        isOpen={isLoggedIn}
+        onClose={() => setIsLoggedIn(false)}
+        onConfirm={handleConfirmLogin}
+      />
     </header>
   );
 }
