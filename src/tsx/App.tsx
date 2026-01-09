@@ -7,6 +7,7 @@ import Login from './Login.tsx';
 import Register from './Register.tsx';
 import SearchPage from './Search.tsx';
 import Cart from './Cart.tsx';
+import {showNotSupportedToast} from '../utils/NotSupporting.tsx';
 
 export default function App() {
   const location = useLocation();
@@ -124,7 +125,11 @@ function Header() {
                 </svg>
               </button>
               <span className='searchSep' aria-hidden='true'></span>
-              <button className='iconBtn' aria-label='필터'>
+              <button
+                className='iconBtn'
+                aria-label='필터'
+                onClick={showNotSupportedToast}
+              >
                 <svg
                   viewBox='0 0 24 24'
                   width='22'
@@ -198,10 +203,7 @@ function Header() {
                 loc.pathname === '/search' ? 'active' : ''
               }`}
               href='#'
-              onClick={(e) => {
-                prevent(e);
-                navigate('/search');
-              }}
+              onClick={prevent}
               onMouseEnter={() => setHoverMenu('search')}
             >
               강좌검색
@@ -227,7 +229,7 @@ function Header() {
             <a
               className='gnbItem'
               href='#'
-              onClick={prevent}
+              onClick={showNotSupportedToast}
               onMouseEnter={() => setHoverMenu(null)}
             >
               수강교과목추천(스누지니)
@@ -235,7 +237,7 @@ function Header() {
           </nav>
 
           <div className='linkList' aria-label='우측 링크'>
-            <a className='linkItem' href='#' onClick={prevent}>
+            <a className='linkItem' href='#' onClick={showNotSupportedToast}>
               학업이수현황
             </a>
             <Link
@@ -244,13 +246,13 @@ function Header() {
             >
               공지사항
             </Link>
-            <a className='linkItem' href='#' onClick={prevent}>
+            <a className='linkItem' href='#' onClick={showNotSupportedToast}>
               FAQ
             </a>
-            <a className='linkItem' href='#' onClick={prevent}>
+            <a className='linkItem' href='#' onClick={showNotSupportedToast}>
               수업교시기준
             </a>
-            <a className='linkItem' href='#' onClick={prevent}>
+            <a className='linkItem' href='#' onClick={showNotSupportedToast}>
               ENGLISH
             </a>
           </div>
@@ -264,23 +266,43 @@ function Header() {
             <div className='containerX subNavInner'>
               {hoverMenu === 'search' && (
                 <div className='subNavList'>
-                  <a className='subNavItem' href='#' onClick={prevent}>
+                  <a
+                    className='subNavItem'
+                    href='#'
+                    onClick={showNotSupportedToast}
+                  >
                     관심강좌
                   </a>
-                  <a className='subNavItem' href='#' onClick={prevent}>
+                  <a
+                    className='subNavItem'
+                    href='#'
+                    onClick={showNotSupportedToast}
+                  >
                     수강지도상담
                   </a>
                 </div>
               )}
               {hoverMenu === 'apply' && (
                 <div className='subNavList'>
-                  <a className='subNavItem' href='#' onClick={prevent}>
+                  <a
+                    className='subNavItem'
+                    href='#'
+                    onClick={showNotSupportedToast}
+                  >
                     예비장바구니
                   </a>
-                  <a className='subNavItem' href='#' onClick={prevent}>
+                  <a
+                    className='subNavItem'
+                    href='#'
+                    onClick={showNotSupportedToast}
+                  >
                     예비수강신청
                   </a>
-                  <a className='subNavItem' href='#' onClick={prevent}>
+                  <a
+                    className='subNavItem'
+                    href='#'
+                    onClick={showNotSupportedToast}
+                  >
                     예비수강신청내역
                   </a>
                   <span className='subNavSep' aria-hidden='true' />
@@ -295,17 +317,29 @@ function Header() {
                     수강신청내역
                   </a>
                   <span className='subNavSep' aria-hidden='true' />
-                  <a className='subNavItem' href='#' onClick={prevent}>
+                  <a
+                    className='subNavItem'
+                    href='#'
+                    onClick={showNotSupportedToast}
+                  >
                     정원 외 신청
                   </a>
                 </div>
               )}
               {hoverMenu === 'mba' && (
                 <div className='subNavList'>
-                  <a className='subNavItem' href='#' onClick={prevent}>
+                  <a
+                    className='subNavItem'
+                    href='#'
+                    onClick={showNotSupportedToast}
+                  >
                     MBA 수강신청
                   </a>
-                  <a className='subNavItem' href='#' onClick={prevent}>
+                  <a
+                    className='subNavItem'
+                    href='#'
+                    onClick={showNotSupportedToast}
+                  >
                     EMBA 수강신청
                   </a>
                 </div>

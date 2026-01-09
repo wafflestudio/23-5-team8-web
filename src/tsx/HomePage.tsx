@@ -1,6 +1,7 @@
 import {Link} from 'react-router-dom';
 import {useAuth} from '../contexts/AuthContext.tsx';
 import '../css/homePage.css';
+import {showNotSupportedToast} from '../utils/NotSupporting.tsx';
 
 export default function HomePage() {
   const {user} = useAuth();
@@ -89,14 +90,14 @@ export default function HomePage() {
               <a
                 className={user ? 'rightFilledBtn' : 'rightOutlineBtn'}
                 href='#'
-                onClick={(e) => e.preventDefault()}
+                onClick={showNotSupportedToast}
               >
                 장바구니 초보를 위한 수강신청 안내 →
               </a>
               <a
                 className={user ? 'rightFilledBtn' : 'rightOutlineBtn'}
                 href='#'
-                onClick={(e) => e.preventDefault()}
+                onClick={showNotSupportedToast}
               >
                 수강신청방법 매뉴얼
                 <svg
