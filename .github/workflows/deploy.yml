@@ -5,8 +5,8 @@ on:
     branches:
       - main
   pull_request:
-  branches:
-    - main
+    branches:
+      - main
 
 jobs:
   # 1. CI 작업 (검사 및 빌드 테스트)
