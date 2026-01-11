@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import '../css/search.css';
 import {useLocation} from 'react-router-dom';
-import showNotSupportedToast from '../utils/NotSupporting';
+import showNotSupportedToast from '../utils/notSupporting';
 
 interface CaptchaDigit {
   value: string;

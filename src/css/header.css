@@ -387,10 +387,17 @@ button {
   justify-content: center;
   text-align: left;
   line-height: 1.2;
+  width: 80px;
 }
 
-.userStudentId {
+.welcome {
   font-size: 13px;
+  font-weight: 400;
+  opacity: 0.9;
+  color: #666666;
+}
+.nim {
+  font-size: 14px;
   font-weight: 400;
   opacity: 0.9;
   color: #666666;

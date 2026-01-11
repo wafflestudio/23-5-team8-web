@@ -1,18 +1,20 @@
 import React, {useState} from 'react';
 import {Link, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
-import {useAuth} from '../contexts/AuthContext.tsx';
+import {useAuth} from '../contexts/AuthContext.ts';
 import '../css/header.css';
+import '../css/footer.css';
 import HomePage from './HomePage.tsx';
 import Login from './Login.tsx';
 import Register from './Register.tsx';
 import SearchPage from './Search.tsx';
 import Cart from './Cart.tsx';
-import Registration from './Registration.tsx';
-import NeedLogin from '../utils/NeedLogin.tsx';
-import showNotSupportedToast from '../utils/NotSupporting.tsx';
+import Registration from './RegistrationPage.tsx';
+import NeedLogin from '../utils/needLogin.tsx';
+import showNotSupportedToast from '../utils/notSupporting.tsx';
 
 export default function App() {
   const location = useLocation();
+  const {user, timeLeft, extendLogin} = useAuth();
   const isAuthPage =
     location.pathname === '/login' || location.pathname === '/register';
 
@@ -34,6 +36,9 @@ export default function App() {
         </Routes>
       </div>
       {!isAuthPage && <Footer />}
+      {user && timeLeft <= 60 && timeLeft > 0 && (
+        <SessionWarningModal timeLeft={timeLeft} onExtend={extendLogin} />
+      )}
     </div>
   );
 }
@@ -60,9 +65,9 @@ function Header() {
     }
   };
 
-  const handleLogout = (e: React.MouseEvent) => {
+  const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
-    logout();
+    await logout();
     setIsLoggedIn(false);
     navigate('/', {replace: true});
   };
@@ -171,15 +176,18 @@ function Header() {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                 >
                   <div className='userInfoText'>
-                    <span className='userName'>{user.name}</span>
-                    <span className='userStudentId'>학번 {user.studentId}</span>
+                    <span className='userName'>
+                      {user.nickname}
+                      <span className='nim'>님</span>
+                    </span>
+                    <span className='welcome'>환영합니다!</span>
                   </div>
-                  <span className={`userIcon ${isLoggedIn ? 'open' : ''}`}>
+                  <span className={`userIcon ${showUserMenu ? 'open' : ''}`}>
                     ▼
                   </span>
                 </button>
 
-                <div className={`userDropdown ${isLoggedIn ? 'active' : ''}`}>
+                <div className={`userDropdown ${showUserMenu ? 'active' : ''}`}>
                   <Link to='/mypage' className='userDropItem'>
                     마이페이지
                   </Link>
@@ -434,21 +442,152 @@ function NoticePage() {
 }
 
 function Footer() {
+  const {user, timeLeft, extendLogin} = useAuth();
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
   return (
-    <footer className='footer'>
+    <div className='footer'>
       <div className='containerX footerInner'>
-        <div className='footerLinks'>
-          <a href='#' onClick={(e) => e.preventDefault()}>
-            개인정보처리방침
-          </a>
-          <a href='#' onClick={(e) => e.preventDefault()}>
-            이메일무단수집거부
-          </a>
+        {/* 왼쪽: 개인정보처리방침, 이메일무단수집거부, Copyright */}
+        <div className='footerLeft'>
+          <div className='footerLinks'>
+            <a
+              href='#'
+              className='footerLinkItem bold'
+              onClick={showNotSupportedToast}
+            >
+              개인정보처리방침
+            </a>
+            <span className='divider'>|</span>
+            <a
+              href='#'
+              className='footerLinkItem bold'
+              onClick={showNotSupportedToast}
+            >
+              이메일무단수집거부
+            </a>
+          </div>
+          <div className='footerCopy'>
+            Copyright (C) 2020 SEOUL NATIONAL UNIVERSITY. All Rights Reserved.
+          </div>
         </div>
-        <div className='footerCopy'>
-          Copyright (C) 2020 SEOUL NATIONAL UNIVERSITY. All Rights Reserved.
+
+        {/* 오른쪽: 타이머 및 연장 버튼 (로그인 시에만 노출) */}
+        {user ? (
+          <div className='footerRight'>
+            <div className='footerRightLeftColumn'>
+              <div className='timerInfoUp'>
+                <span className='timerLabel'>자동 로그아웃 남은시간</span>
+                <div className='timerDisplay'>
+                  <svg
+                    className='timerIcon'
+                    viewBox='0 0 24 24'
+                    width='18'
+                    height='18'
+                    fill='none'
+                    stroke='currentColor'
+                    strokeWidth='2'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                  >
+                    <circle cx='12' cy='12' r='10'></circle>
+                    <polyline points='12 6 12 12 16 14'></polyline>
+                  </svg>
+                  <span className='timerTime'>{formatTime(timeLeft)}</span>
+                </div>
+              </div>
+              <span className='timerInfoDown'>
+                10분간 사용하지 않을 경우 자동로그아웃 됩니다.
+              </span>
+            </div>
+            <button className='extendBtn' onClick={extendLogin}>
+              지금 로그인 연장
+            </button>
+          </div>
+        ) : (
+          <div className='footerRight'></div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SessionWarningModal({
+  timeLeft,
+  onExtend,
+}: {
+  timeLeft: number;
+  onExtend: () => void;
+}) {
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.5)', // 반투명 검은 배경
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 9999, // 다른 요소보다 위에 뜨도록
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: 'white',
+          padding: '30px',
+          borderRadius: '8px',
+          textAlign: 'center',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          width: '400px',
+          maxWidth: '90%',
+        }}
+      >
+        <h3
+          style={{
+            marginTop: 0,
+            marginBottom: '15px',
+            color: '#d32f2f',
+            fontSize: '18px',
+            fontWeight: 'bold',
+          }}
+        >
+          자동 로그아웃 안내
+        </h3>
+        <p style={{margin: '20px 0', fontSize: '15px', lineHeight: '1.5'}}>
+          로그인 유효시간이{' '}
+          <strong style={{color: '#d32f2f', fontSize: '1.2em'}}>
+            {timeLeft}초
+          </strong>{' '}
+          남았습니다.
+          <br />
+          계속 이용하시려면 연장 버튼을 눌러주세요.
+        </p>
+        <div style={{display: 'flex', justifyContent: 'center', gap: '10px'}}>
+          <button
+            onClick={onExtend}
+            style={{
+              padding: '10px 24px',
+              backgroundColor: '#1e88e5', // 파란색 버튼
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              fontSize: '14px',
+            }}
+          >
+            로그인 연장하기
+          </button>
         </div>
       </div>
-    </footer>
+    </div>
   );
 }

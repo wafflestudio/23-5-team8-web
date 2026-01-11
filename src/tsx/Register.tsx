@@ -1,28 +1,31 @@
 import React, {useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
+import {signupApi} from '../api/auth';
+import {isAxiosError} from 'axios';
 
 export default function Register() {
+  const navigate = useNavigate();
+
   const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [errors, setErrors] = useState({
-    username: '',
+    email: '',
     password: '',
     confirmPassword: '',
+    name: '',
   });
 
-  const validateUsername = (value: string): string => {
+  const [globalError, setGlobalError] = useState<string | null>(null);
+
+  const validateEmail = (value: string): string => {
     if (value.length === 0) return '';
-    if (value.length < 4 || value.length > 20) {
-      return '아이디는 4글자 이상 20글자 이하여야 합니다.';
-    }
-    if (!/^[a-zA-Z0-9]+$/.test(value)) {
-      return '아이디는 영어와 숫자로만 구성되어야 합니다.';
-    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) return '올바른 이메일 형식이 아닙니다.';
     return '';
   };
 
@@ -51,23 +54,18 @@ export default function Register() {
     return '';
   };
 
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // --- 핸들러 ---
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setUsername(value);
-    setErrors({
-      ...errors,
-      username: validateUsername(value),
-    });
+    setEmail(value);
+    setErrors((prev) => ({...prev, email: validateEmail(value)}));
+    setGlobalError(null); // 입력 시작하면 글로벌 에러 초기화
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setPassword(value);
-    setErrors({
-      ...errors,
-      password: validatePassword(value),
-    });
-    // 비밀번호 확인도 다시 검증
+    setErrors((prev) => ({...prev, password: validatePassword(value)}));
     if (confirmPassword) {
       setErrors((prev) => ({
         ...prev,
@@ -81,39 +79,77 @@ export default function Register() {
   ) => {
     const value = e.target.value;
     setConfirmPassword(value);
-    setErrors({
-      ...errors,
+    setErrors((prev) => ({
+      ...prev,
       confirmPassword: validateConfirmPassword(value),
-    });
+    }));
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setGlobalError(null);
 
-    const usernameError = validateUsername(username);
+    // 1. 프론트엔드 유효성 검사
+    const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
     const confirmPasswordError = validateConfirmPassword(confirmPassword);
 
-    if (usernameError || passwordError || confirmPasswordError) {
+    if (emailError || passwordError || confirmPasswordError || !name.trim()) {
       setErrors({
-        username: usernameError,
+        email: emailError,
         password: passwordError,
         confirmPassword: confirmPasswordError,
+        name: !name.trim() ? '이름을 입력해주세요.' : '',
       });
       return;
     }
 
-    if (!name.trim()) {
-      alert('이름을 입력해주세요.');
-      return;
-    }
+    try {
+      // 2. API 호출 (name -> nickname 매핑)
+      await signupApi({
+        email,
+        password,
+        nickname: name,
+      });
 
-    console.log('회원가입 시도:', {
-      name,
-      username,
-      password,
-    });
-    // 여기에 실제 회원가입 로직 추가
+      alert('회원가입 성공! 로그인 페이지로 이동합니다.');
+      navigate('/login');
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        const status = error.response.status;
+        const data = error.response.data;
+
+        // 3. 에러 처리
+        switch (status) {
+          case 409: // 이메일 중복
+            setErrors((prev) => ({
+              ...prev,
+              email: '이미 사용 중인 이메일입니다.',
+            }));
+            break;
+
+          case 400: // 유효성 검사 실패 (백엔드에서 오는 구체적 에러)
+            if (data.validationErrors) {
+              setErrors((prev) => ({
+                ...prev,
+                email: data.validationErrors.email || prev.email,
+                password: data.validationErrors.password || prev.password,
+                name: data.validationErrors.nickname || prev.name,
+              }));
+            } else {
+              setGlobalError(data.message || '입력 정보를 확인해주세요.');
+            }
+            break;
+
+          default:
+            setGlobalError('회원가입 중 알 수 없는 오류가 발생했습니다.');
+            console.error('Register Failed:', data);
+        }
+      } else {
+        setGlobalError('네트워크 오류가 발생했습니다.');
+        console.error('Unexpected Error:', error);
+      }
+    }
   };
 
   return (
@@ -137,6 +173,14 @@ export default function Register() {
         <div className='login-container'>
           <h1 className='login-title'>회원가입</h1>
 
+          {globalError && (
+            <div
+              style={{color: 'red', marginBottom: '16px', textAlign: 'center'}}
+            >
+              {globalError}
+            </div>
+          )}
+
           <form className='login-form' onSubmit={handleRegister}>
             <div className='form-group'>
               <input
@@ -147,19 +191,22 @@ export default function Register() {
                 onChange={(e) => setName(e.target.value)}
                 required
               />
+              {errors.name && (
+                <span className='error-message'>{errors.name}</span>
+              )}
             </div>
 
             <div className='form-group'>
               <input
                 type='text'
                 className='form-input'
-                placeholder='아이디'
-                value={username}
-                onChange={handleUsernameChange}
+                placeholder='이메일'
+                value={email}
+                onChange={handleEmailChange}
                 required
               />
-              {errors.username && (
-                <span className='error-message'>{errors.username}</span>
+              {errors.email && (
+                <span className='error-message'>{errors.email}</span>
               )}
             </div>
 
