@@ -1,5 +1,5 @@
 import {Link} from 'react-router-dom';
-import {useAuth} from '../contexts/AuthContext.tsx';
+import {useAuth} from '../contexts/AuthContext.ts';
 import '../css/homePage.css';
 import showNotSupportedToast from '../utils/notSupporting.tsx';
 

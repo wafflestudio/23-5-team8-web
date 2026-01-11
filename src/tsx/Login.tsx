@@ -3,14 +3,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from '../contexts/AuthContext';
 import {api} from '../api/axios';
 import {isAxiosError} from 'axios';
-
-type loginResponse = {
-  user: {
-    id: number;
-    nickname: string;
-  };
-  accessToken?: string;
-};
+import {loginApi} from '../api/auth';
 
 export default function Login() {
   const {login} = useAuth();
@@ -31,16 +24,14 @@ export default function Login() {
     setErrorCode(null);
 
     try {
-      const response = await api.post<loginResponse>('/api/auth/login', {
-        email,
-        password,
-      });
+      const response = await loginApi({email, password});
 
       const {user, accessToken} = response.data;
 
-      login({id: user.id.toString(), nickname: user.nickname});
-      localStorage.setItem('authToken', accessToken || '');
-      localStorage.setItem('userInfo', JSON.stringify(user));
+      login(
+        {id: user.id.toString(), nickname: user.nickname},
+        accessToken || ''
+      );
 
       navigate('/');
     } catch (error) {
