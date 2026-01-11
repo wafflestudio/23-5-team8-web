@@ -24,7 +24,6 @@ export interface ErrorResponse {
   validationErrors?: Record<string, string> | null;
 }
 
-// 요청 타입들
 export interface LoginRequest {
   email?: string;
   password?: string;
@@ -40,4 +39,18 @@ export interface SignupRequest {
 export interface SocialLoginRequest {
   code: string;
   redirectUri?: string;
+}
+
+export interface SignupRequest {
+  email: string;
+  password: string;
+  nickname: string;
+}
+
+export interface SignupResponse {
+  user: {
+    id: number;
+    nickname: string;
+  };
+  accessToken: string;
 }

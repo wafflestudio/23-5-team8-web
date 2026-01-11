@@ -253,4 +253,53 @@ export const handlers = [
       accessToken: 'mock-google-access-token',
     });
   }),
+
+  // [추가] 회원가입 핸들러
+  http.post('/api/auth/signup', async ({request}) => {
+    const body = (await request.json()) as any;
+    const {email, password, nickname} = body;
+
+    // 1. 이메일 중복 시나리오 (테스트용: duplicate@test.com)
+    if (email === 'duplicate@test.com') {
+      return HttpResponse.json(
+        {
+          timestamp: new Date().toISOString(),
+          status: 409,
+          error: 'Conflict',
+          message: '이미 사용 중인 이메일입니다',
+          errorCode: 'DUPLICATE_EMAIL',
+        },
+        {status: 409}
+      );
+    }
+
+    // 2. 유효성 검사 실패 시나리오 (예: 비밀번호가 너무 짧은 경우 - 백엔드 검증 흉내)
+    if (password.length < 8) {
+      return HttpResponse.json(
+        {
+          timestamp: new Date().toISOString(),
+          status: 400,
+          error: 'Bad Request',
+          message: '입력 값이 유효하지 않습니다',
+          errorCode: 'VALIDATION_FAILED',
+          validationErrors: {
+            password: '비밀번호는 8글자 이상이어야 합니다.',
+          },
+        },
+        {status: 400}
+      );
+    }
+
+    // 3. 성공 시나리오 (201 Created)
+    return HttpResponse.json(
+      {
+        user: {
+          id: Date.now(),
+          nickname: nickname,
+        },
+        accessToken: 'mock-access-token-' + Date.now(),
+      },
+      {status: 201}
+    );
+  }),
 ];
