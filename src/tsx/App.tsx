@@ -7,9 +7,9 @@ import Login from './Login.tsx';
 import Register from './Register.tsx';
 import SearchPage from './Search.tsx';
 import Cart from './Cart.tsx';
-import Registration from './Registration.tsx';
-import NeedLogin from '../utils/NeedLogin.tsx';
-import showNotSupportedToast from '../utils/NotSupporting.tsx';
+import Registration from './RegistrationPage.tsx';
+import NeedLogin from '../utils/needLogin.tsx';
+import showNotSupportedToast from '../utils/notSupporting.tsx';
 
 export default function App() {
   const location = useLocation();
@@ -171,15 +171,18 @@ function Header() {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                 >
                   <div className='userInfoText'>
-                    <span className='userName'>{user.name}</span>
-                    <span className='userStudentId'>학번 {user.studentId}</span>
+                    <span className='userName'>
+                      {user.nickname}
+                      <span className='nim'>님</span>
+                    </span>
+                    <span className='welcome'>환영합니다!</span>
                   </div>
-                  <span className={`userIcon ${isLoggedIn ? 'open' : ''}`}>
+                  <span className={`userIcon ${showUserMenu ? 'open' : ''}`}>
                     ▼
                   </span>
                 </button>
 
-                <div className={`userDropdown ${isLoggedIn ? 'active' : ''}`}>
+                <div className={`userDropdown ${showUserMenu ? 'active' : ''}`}>
                   <Link to='/mypage' className='userDropItem'>
                     마이페이지
                   </Link>

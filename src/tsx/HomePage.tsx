@@ -1,7 +1,7 @@
 import {Link} from 'react-router-dom';
 import {useAuth} from '../contexts/AuthContext.tsx';
 import '../css/homePage.css';
-import showNotSupportedToast from '../utils/NotSupporting.tsx';
+import showNotSupportedToast from '../utils/notSupporting.tsx';
 
 export default function HomePage() {
   const {user} = useAuth();

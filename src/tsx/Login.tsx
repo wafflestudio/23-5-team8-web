@@ -1,59 +1,95 @@
 import React, {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
-import {useAuth} from '../contexts/AuthContext.tsx';
+import {useAuth} from '../contexts/AuthContext';
+import {api} from '../api/axios';
+import {isAxiosError} from 'axios';
+
+type loginResponse = {
+  user: {
+    id: number;
+    nickname: string;
+  };
+  accessToken?: string;
+};
 
 export default function Login() {
   const {login} = useAuth();
 
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [errorCode, setErrorCode] = useState<number | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // ============================================
-    // 더미 데이터
-    // ============================================
-    const DUMMY_USERNAME = 'test1234';
-    const DUMMY_PASSWORD = 'test1234!';
+    setErrorMessage(null);
+    setErrorCode(null);
 
-    if (username === DUMMY_USERNAME && password === DUMMY_PASSWORD) {
-      // 로그인 성공
-      const authToken = 'dummy-auth-token-' + Date.now();
-      const userInfo = {
-        username: username,
-        name: '김와플',
-        studentId: '2026-12345',
-        loginTime: new Date().toISOString(),
-      };
+    try {
+      const response = await api.post<loginResponse>('/api/auth/login', {
+        email,
+        password,
+      });
 
-      login(userInfo);
+      const {user, accessToken} = response.data;
 
-      // localStorage에 인증 정보 저장
-      localStorage.setItem('authToken', authToken);
-      localStorage.setItem('userInfo', JSON.stringify(userInfo));
+      login({id: user.id.toString(), nickname: user.nickname});
+      localStorage.setItem('authToken', accessToken || '');
+      localStorage.setItem('userInfo', JSON.stringify(user));
 
-      alert('로그인 성공!');
-      console.log('로그인 성공:', userInfo);
       navigate('/');
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        const status = error.response.status;
+        const data = error.response.data;
 
-      // 나중에 메인 페이지로 리다이렉트 추가 가능
-      // navigate('/main');
-    } else {
-      // 로그인 실패
-      alert('아이디 또는 비밀번호가 일치하지 않습니다.');
-      console.log('로그인 실패');
+        switch (status) {
+          case 400:
+            // 400 Bad Request: 유효성 검사 실패
+            setErrorMessage('올바른 이메일 형식이 아닙니다');
+            setErrorCode(400);
+            break;
+
+          case 401:
+            // 401 Unauthorized: 인증 실패
+            setErrorMessage('이메일 또는 비밀번호가 올바르지 않습니다');
+            setErrorCode(401);
+            break;
+
+          default:
+            // 그 외 서버 에러
+            setErrorMessage('로그인 중 알 수 없는 오류가 발생했습니다.');
+            console.error('Login Failed:', data);
+        }
+      } else {
+        console.error('Unexpected Error:', error);
+        setErrorMessage('네트워크 오류가 발생했습니다.');
+      }
     }
-    // ============================================
-    // ============================================
   };
 
-  const handleSocialLogin = (provider: string) => {
-    console.log(`${provider} 로그인`);
+  const handleSocialLogin = async (provider: 'kakao' | 'google') => {
+    const mockCode = 'mock-auth-code-123';
+    try {
+      const response = await api.post(`/api/auth/${provider}/login`, {
+        code: mockCode,
+      });
+
+      const {user, accessToken} = response.data;
+
+      login(user);
+      localStorage.setItem('authToken', accessToken);
+      alert(`${provider} 로그인 성공!`);
+      navigate('/');
+    } catch (error) {
+      console.error(`${provider} login error`, error);
+      alert('소셜 로그인 실패');
+    }
   };
 
   return (
@@ -76,17 +112,31 @@ export default function Login() {
       <main className='login-main'>
         <div className='login-container'>
           <h1 className='login-title'>아이디 로그인</h1>
+          {errorCode === 401 && (
+            <div
+              style={{color: 'red', marginBottom: '10px', textAlign: 'center'}}
+            >
+              {errorMessage}
+            </div>
+          )}
 
           <form className='login-form' onSubmit={handleLogin}>
             <div className='form-group'>
               <input
                 type='text'
                 className='form-input'
-                placeholder='아이디'
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder='이메일'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
+              {errorCode === 400 && (
+                <span
+                  style={{color: 'red', fontSize: '16px', marginLeft: '8px'}}
+                >
+                  {errorMessage}
+                </span>
+              )}
             </div>
 
             <div className='form-group'>
@@ -131,7 +181,7 @@ export default function Login() {
           <div className='social-login'>
             <button
               className='social-login-button kakao'
-              onClick={() => handleSocialLogin('카카오')}
+              onClick={() => handleSocialLogin('kakao')}
             >
               <img
                 src='/assets/kakao_logo.png'
@@ -142,7 +192,7 @@ export default function Login() {
             </button>
             <button
               className='social-login-button google'
-              onClick={() => handleSocialLogin('구글')}
+              onClick={() => handleSocialLogin('google')}
             >
               <img
                 src='/assets/google_logo.png'

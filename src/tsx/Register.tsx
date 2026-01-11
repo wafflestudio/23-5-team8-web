@@ -1,28 +1,28 @@
 import React, {useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
+import {api} from '../api/axios';
+import {isAxiosError} from 'axios';
 
 export default function Register() {
+  const navigate = useNavigate();
+
   const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [errors, setErrors] = useState({
-    username: '',
+    email: '',
     password: '',
     confirmPassword: '',
   });
 
-  const validateUsername = (value: string): string => {
+  const validateEmail = (value: string): string => {
     if (value.length === 0) return '';
-    if (value.length < 4 || value.length > 20) {
-      return '아이디는 4글자 이상 20글자 이하여야 합니다.';
-    }
-    if (!/^[a-zA-Z0-9]+$/.test(value)) {
-      return '아이디는 영어와 숫자로만 구성되어야 합니다.';
-    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) return '올바른 이메일 형식이 아닙니다.';
     return '';
   };
 
@@ -51,12 +51,12 @@ export default function Register() {
     return '';
   };
 
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setUsername(value);
+    setEmail(value);
     setErrors({
       ...errors,
-      username: validateUsername(value),
+      email: validateEmail(value),
     });
   };
 
@@ -87,16 +87,16 @@ export default function Register() {
     });
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const usernameError = validateUsername(username);
+    const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
     const confirmPasswordError = validateConfirmPassword(confirmPassword);
 
-    if (usernameError || passwordError || confirmPasswordError) {
+    if (emailError || passwordError || confirmPasswordError) {
       setErrors({
-        username: usernameError,
+        email: emailError,
         password: passwordError,
         confirmPassword: confirmPasswordError,
       });
@@ -108,12 +108,26 @@ export default function Register() {
       return;
     }
 
-    console.log('회원가입 시도:', {
-      name,
-      username,
-      password,
-    });
-    // 여기에 실제 회원가입 로직 추가
+    try {
+      // Axios POST 요청
+      await api.post('/api/auth/signup', {
+        email,
+        password,
+        name,
+      });
+
+      alert('회원가입 성공! 로그인 페이지로 이동합니다.');
+      navigate('/login');
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const errorMessage =
+          error.response?.data?.message || '회원가입 중 오류가 발생했습니다.';
+        alert(errorMessage);
+        console.error('Register Failed:', error.response?.data);
+      } else {
+        console.error('Unexpected Error:', error);
+      }
+    }
   };
 
   return (
@@ -153,13 +167,13 @@ export default function Register() {
               <input
                 type='text'
                 className='form-input'
-                placeholder='아이디'
-                value={username}
-                onChange={handleUsernameChange}
+                placeholder='이메일'
+                value={email}
+                onChange={handleEmailChange}
                 required
               />
-              {errors.username && (
-                <span className='error-message'>{errors.username}</span>
+              {errors.email && (
+                <span className='error-message'>{errors.email}</span>
               )}
             </div>
 
