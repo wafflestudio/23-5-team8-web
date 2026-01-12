@@ -1,7 +1,6 @@
 import React, {useState, useCallback} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from '../contexts/AuthContext';
-import {api} from '../api/axios';
 import {isAxiosError} from 'axios';
 import {loginApi, socialLoginApi, type socialProvider} from '../api/auth';
 
