@@ -1,11 +1,16 @@
-import React, {useState, useCallback} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import React, {useState, useCallback, useEffect} from 'react';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 import {useAuth} from '../contexts/AuthContext';
 import {isAxiosError} from 'axios';
 import {loginApi, socialLoginApi, type socialProvider} from '../api/auth';
 
+const KAKAO_REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
 export default function Login() {
   const {login} = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -16,8 +21,6 @@ export default function Login() {
   const [socialErrorMessage, setSocialErrorMessage] = useState<string | null>(
     null
   );
-
-  const navigate = useNavigate();
 
   const redirectUri = `${window.location.origin}/login`;
 
@@ -79,30 +82,32 @@ export default function Login() {
     }
   };
 
+  const handleSocialStart = (provider: socialProvider) => {
+    sessionStorage.setItem('pendingSocialProvider', provider);
+
+    if (provider === 'kakao') {
+      const url = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${redirectUri}&response_type=code`;
+      window.location.href = url;
+    } else if (provider === 'google') {
+      const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=email profile`;
+      window.location.href = url;
+    }
+  };
+
   const handleSocialLogin = useCallback(
-    async (provider: socialProvider, providedCode?: string) => {
-      const code =
-        providedCode || (import.meta.env.DEV ? 'mock-auth-code-123' : '');
-
-      if (!code) {
-        setSocialErrorMessage('소셜 로그인 인증 코드가 없습니다.');
-        return;
-      }
-
+    async (provider: socialProvider, code: string) => {
       setSocialErrorMessage(null);
 
       try {
         const response = await socialLoginApi(provider, {code, redirectUri});
-
         const {user, accessToken} = response.data;
 
         login({id: user.id.toString(), nickname: user.nickname}, accessToken);
-        localStorage.setItem('authToken', accessToken || '');
+        // navigate('/')는 login 함수 내부나 이후 흐름에서 처리
         navigate('/');
       } catch (error) {
         if (isAxiosError(error) && error.response) {
           const status = error.response.status;
-
           switch (status) {
             case 400:
               setSocialErrorMessage('입력 값이 유효하지 않습니다.');
@@ -120,10 +125,32 @@ export default function Login() {
           console.error('Unexpected Error:', error);
           setSocialErrorMessage('네트워크 오류가 발생했습니다.');
         }
+      } finally {
+        // 처리가 끝나면 임시 저장 데이터 삭제 및 URL 정리
+        sessionStorage.removeItem('pendingSocialProvider');
       }
     },
     [login, navigate, redirectUri]
   );
+
+  // 인증 코드로 돌아왔을 때 소셜 로그인 처리
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const code = searchParams.get('code');
+
+    // 이전에 어떤 버튼을 눌렀는지 확인
+    const provider = sessionStorage.getItem(
+      'pendingSocialProvider'
+    ) as socialProvider | null;
+
+    if (code && provider) {
+      // 코드가 있고, 진행 중인 provider가 있다면 로그인 시도
+      handleSocialLogin(provider, code);
+
+      // 재요청 방지를 위해 URL의 쿼리 파라미터 제거 (선택 사항)
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [location, handleSocialLogin]);
 
   return (
     <div className='login-page'>
@@ -225,7 +252,7 @@ export default function Login() {
             )}
             <button
               className='kakao-login-button'
-              onClick={() => handleSocialLogin('kakao')}
+              onClick={() => handleSocialStart('kakao')}
             >
               <div className='kakao-icon-wrapper'>
                 <img src='/assets/kakao_logo.png' alt='Kakao Symbol' />
@@ -234,7 +261,7 @@ export default function Login() {
             </button>
             <button
               className='gsi-material-button'
-              onClick={() => handleSocialLogin('google')}
+              onClick={() => handleSocialStart('google')}
             >
               <div className='gsi-material-button-state'></div>
               <div className='gsi-material-button-content-wrapper'>
