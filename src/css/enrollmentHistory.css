@@ -1,0 +1,87 @@
+.enrollment-page-title {
+  font-size: 28px;
+  font-weight: 400;
+  margin: 0 0 20px 0;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.enrollment-left-section {
+  max-width: 50%;
+}
+
+.enrollment-notice-text {
+  margin: 0 0 2px 0;
+  font-size: 20px;
+  line-height: 1.7;
+  color: #111827;
+  font-weight: 300;
+}
+
+.enrollment-tabs-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.enrollment-tab-button {
+  padding: 6px 10px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 350;
+  color: #919191;
+  border-radius: 16px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 30px;
+  line-height: 1;
+}
+
+.enrollment-tab-button.active {
+  background: #f2f2f2;
+  color: #919191;
+  border-color: #d1d5db;
+}
+
+.enrollment-credit-info {
+  margin-left: auto;
+  font-size: 14px;
+  font-weight: 350;
+  color: #919191;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.enrollment-credit-number {
+  color: #5089d6;
+  font-weight: 350;
+}
+
+.enrollment-content-box {
+  border: none;
+  border-top: 2px solid #6b7280;
+  min-height: 100px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.enrollment-empty-state {
+  text-align: center;
+  padding: 30px 20px 30px;
+}
+
+.enrollment-empty-text {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 350;
+  color: #919191;
+  line-height: 1.5;
+}
