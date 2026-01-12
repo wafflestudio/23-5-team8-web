@@ -2,6 +2,7 @@ import {api} from './axios';
 import type {
   LoginRequest,
   LoginResponse,
+  SocialLoginRequest,
   SignupRequest,
   SignupResponse,
 } from '../mocks/apiTypes';
@@ -20,4 +21,14 @@ export const logoutApi = async () => {
 // 회원가입 API
 export const signupApi = (data: SignupRequest) => {
   return api.post<SignupResponse>('/api/auth/signup', data);
+};
+
+export type socialProvider = 'kakao' | 'google';
+
+// 소셜 로그인 API
+export const socialLoginApi = (
+  provider: socialProvider,
+  data: SocialLoginRequest
+) => {
+  return api.post<LoginResponse>(`/api/auth/${provider}/login`, data);
 };

@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from '../contexts/AuthContext';
 import {api} from '../api/axios';
 import {isAxiosError} from 'axios';
-import {loginApi} from '../api/auth';
+import {loginApi, socialLoginApi, type socialProvider} from '../api/auth';
 
 export default function Login() {
   const {login} = useAuth();
@@ -14,14 +14,20 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorCode, setErrorCode] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [socialErrorMessage, setSocialErrorMessage] = useState<string | null>(
+    null
+  );
 
   const navigate = useNavigate();
+
+  const redirectUri = `${window.location.origin}/login`;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setErrorMessage(null);
     setErrorCode(null);
+    setSocialErrorMessage(null);
 
     try {
       const response = await loginApi({email, password});
@@ -64,24 +70,51 @@ export default function Login() {
     }
   };
 
-  const handleSocialLogin = async (provider: 'kakao' | 'google') => {
-    const mockCode = 'mock-auth-code-123';
-    try {
-      const response = await api.post(`/api/auth/${provider}/login`, {
-        code: mockCode,
-      });
+  const handleSocialLogin = useCallback(
+    async (provider: socialProvider, providedCode?: string) => {
+      const code =
+        providedCode || (import.meta.env.DEV ? 'mock-auth-code-123' : '');
 
-      const {user, accessToken} = response.data;
+      if (!code) {
+        setSocialErrorMessage('소셜 로그인 인증 코드가 없습니다.');
+        return;
+      }
 
-      login(user, accessToken);
-      localStorage.setItem('authToken', accessToken);
-      alert(`${provider} 로그인 성공!`);
-      navigate('/');
-    } catch (error) {
-      console.error(`${provider} login error`, error);
-      alert('소셜 로그인 실패');
-    }
-  };
+      setSocialErrorMessage(null);
+
+      try {
+        const response = await socialLoginApi(provider, {code, redirectUri});
+
+        const {user, accessToken} = response.data;
+
+        login({id: user.id.toString(), nickname: user.nickname}, accessToken);
+        localStorage.setItem('authToken', accessToken || '');
+        navigate('/');
+      } catch (error) {
+        if (isAxiosError(error) && error.response) {
+          const status = error.response.status;
+
+          switch (status) {
+            case 400:
+              setSocialErrorMessage('입력 값이 유효하지 않습니다.');
+              break;
+            case 401:
+              setSocialErrorMessage('소셜 인증에 실패했습니다.');
+              break;
+            default:
+              setSocialErrorMessage(
+                '소셜 로그인 중 알 수 없는 오류가 발생했습니다.'
+              );
+              console.error('Social Login Failed:', error.response.data);
+          }
+        } else {
+          console.error('Unexpected Error:', error);
+          setSocialErrorMessage('네트워크 오류가 발생했습니다.');
+        }
+      }
+    },
+    [login, navigate, redirectUri]
+  );
 
   return (
     <div className='login-page'>
@@ -170,6 +203,17 @@ export default function Login() {
           </form>
 
           <div className='social-login'>
+            {socialErrorMessage && (
+              <div
+                style={{
+                  color: 'red',
+                  marginBottom: '10px',
+                  textAlign: 'center',
+                }}
+              >
+                {socialErrorMessage}
+              </div>
+            )}
             <button
               className='kakao-login-button'
               onClick={() => handleSocialLogin('kakao')}
@@ -179,7 +223,10 @@ export default function Login() {
               </div>
               <span className='kakao-label'>Login with Kakao</span>
             </button>
-            <button className='gsi-material-button'>
+            <button
+              className='gsi-material-button'
+              onClick={() => handleSocialLogin('google')}
+            >
               <div className='gsi-material-button-state'></div>
               <div className='gsi-material-button-content-wrapper'>
                 <div className='gsi-material-button-icon'>
