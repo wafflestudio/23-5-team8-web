@@ -25,7 +25,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     setTimeLeft(MAX_LOGIN_TIME);
   };
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await logoutApi(); // 1. 서버에 로그아웃 요청
     } catch (error) {
@@ -36,7 +36,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
       sessionStorage.removeItem('userInfo');
       sessionStorage.removeItem('authToken');
     }
-  };
+  }, []);
 
   const extendLogin = useCallback(() => {
     if (user) {
