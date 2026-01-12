@@ -1,6 +1,6 @@
 .cart-page-title {
   font-size: 28px;
-  font-weight: 300;
+  font-weight: 400;
   margin: 0 0 20px 0;
   color: #111827;
   letter-spacing: -0.02em;
@@ -11,18 +11,42 @@
   border-radius: 8px;
   padding: 20px 24px;
   margin-bottom: 24px;
+  display: flex;
+  align-items: top;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.cart-notice-left {
+  flex-shrink: 0;
+}
+
+.cart-notice-right {
+  flex: 1;
+}
+
+.cart-notice-date {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.2;
+  color: #ffffff;
+  font-weight: 380;
+}
+
+.cart-notice-date + .cart-notice-date {
+  margin-top: 4px;
 }
 
 .cart-notice {
   margin: 0;
-  font-size: 11px;
-  line-height: 1.7;
+  font-size: 12px;
+  line-height: 1.2;
   color: #ffffff;
   font-weight: 300;
 }
 
 .cart-notice + .cart-notice {
-  margin-top: 6px;
+  margin-top: 3px;
 }
 
 .cart-left-section {
@@ -43,7 +67,7 @@
   background: #ffffff;
   border: 1px solid #d1d5db;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 350;
   color: #919191;
   border-radius: 16px;
@@ -54,11 +78,6 @@
   gap: 4px;
   height: 30px;
   line-height: 1;
-}
-
-.cart-tab-button:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
 }
 
 .cart-tab-button.active {
@@ -76,7 +95,7 @@
 
 .cart-credit-info {
   margin-left: auto;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 350;
   color: #919191;
   white-space: nowrap;
@@ -85,7 +104,7 @@
 
 .cart-credit-number {
   color: #5089d6;
-  font-weight: 500;
+  font-weight: 350;
 }
 
 .cart-content-box {
@@ -134,7 +153,7 @@
 
 .cart-empty-title {
   margin: 0;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 350;
   color: #919191;
   line-height: 1.5;
@@ -142,7 +161,7 @@
 
 .cart-empty-desc {
   margin: 0;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 350;
   color: #919191;
   line-height: 1.6;
