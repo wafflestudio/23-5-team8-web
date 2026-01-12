@@ -31,10 +31,20 @@ export default function Login() {
     try {
       const response = await loginApi({email, password});
 
-      const {user, accessToken} = response.data;
+      const responseData = response.data;
+      const userData =
+        'user' in responseData ? responseData.user : responseData;
+      const accessToken =
+        'accessToken' in responseData ? responseData.accessToken : '';
+
+      if (!userData || !('id' in userData) || !('nickname' in userData)) {
+        console.error('Unexpected login response format:', responseData);
+        setErrorMessage('로그인 중 알 수 없는 오류가 발생했습니다.');
+        return;
+      }
 
       login(
-        {id: user.id.toString(), nickname: user.nickname},
+        {id: userData.id.toString(), nickname: userData.nickname},
         accessToken || ''
       );
 
