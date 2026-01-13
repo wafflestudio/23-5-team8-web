@@ -167,14 +167,14 @@
 
 .social-login {
   display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+  flex-direction: column;
+  gap: 12px;
   margin-top: 24px;
 }
 
 /* Kakao Login Button Styles */
 .kakao-login-button {
-  width: 190px; /* 구글 버튼과 동일한 너비 */
+  width: 100%; /* 구글 버튼과 동일한 너비 */
   height: 50px; /* 구글 버튼과 동일한 높이 */
   background-color: #fee500; /* [색상 가이드] 컨테이너: #FEE500 */
   border-radius: 12px; /* [가이드] Radius 12px */
@@ -228,7 +228,7 @@
   font-family: 'Roboto', arial, sans-serif;
   font-size: 14px;
   height: 50px;
-  width: 190px;
+  width: 100%;
   letter-spacing: 0.25px;
   outline: none;
   overflow: hidden;
