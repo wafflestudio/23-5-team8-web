@@ -257,7 +257,7 @@ export default function Login() {
               <div className='kakao-icon-wrapper'>
                 <img src='/assets/kakao_logo.png' alt='Kakao Symbol' />
               </div>
-              <span className='kakao-label'>Login with Kakao</span>
+              <span className='kakao-label'>카카오 로그인</span>
             </button>
             <button
               className='gsi-material-button'
@@ -293,9 +293,9 @@ export default function Login() {
                   </svg>
                 </div>
                 <span className='gsi-material-button-contents'>
-                  Sign in with Google
+                  Google 계정으로 로그인
                 </span>
-                <span style={{display: 'none'}}>Sign in with Google</span>
+                <span style={{display: 'none'}}>Google 계정으로 로그인</span>
               </div>
             </button>
           </div>
