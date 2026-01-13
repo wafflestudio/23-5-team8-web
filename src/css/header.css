@@ -62,12 +62,21 @@ button {
   border-bottom: 1px solid var(--line);
 }
 .headTop {
-  padding: 12px 0;
+  padding: 6px 0;
 }
 .headBottom {
   position: relative;
   border-top: 1px solid var(--line);
   z-index: 1000;
+}
+
+.distributorLine {
+  background-color: #ffdddd;
+  color: #a70000;
+  text-align: center;
+  padding: 12px 0;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 /* Logo */
@@ -78,8 +87,8 @@ button {
   width: fit-content;
 }
 .logoMark {
-  width: 60px;
-  height: 72px;
+  width: 80px;
+  height: 92px;
   border-radius: 12px;
   background: #fff;
   overflow: hidden;
@@ -89,20 +98,28 @@ button {
   height: 100%;
   object-fit: contain;
 }
+.logoTextArea {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  flex-wrap: wrap;
+  line-height: 1; /* 추가: 글자 높이를 타이트하게 줄임 */
+  margin-bottom: 2px; /* 추가: 아래쪽 여백 미세 조정 (필요시 -2px 등으로 더 줄일 수 있음) */
+}
 .logoTitle {
   display: flex;
   align-items: baseline;
-  gap: 4px;
+  gap: 3px;
   flex-wrap: wrap;
 }
 .logoBold {
   font-weight: 700;
-  font-size: 22px;
+  font-size: 23px;
   letter-spacing: -0.6px;
 }
 .logoSemiBold {
   font-weight: 500;
-  font-size: 22px;
+  font-size: 23px;
 }
 .logoTerm {
   color: var(--blue);
@@ -111,6 +128,7 @@ button {
 .logoSub {
   font-size: 12px;
   color: var(--muted);
+  margin-top: 4px;
 }
 
 /* Header Top Grid & Search */
