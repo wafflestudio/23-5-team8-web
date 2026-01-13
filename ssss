@@ -1,0 +1,17 @@
+* [33md4d84c2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/user_api[m[33m)[m 배포 링크에서 로그인 안되는 문제 해결 시도2
+[31m|[m *   [33mf545160[m[33m ([m[1;31morigin/main[m[33m)[m Merge pull request #12 from wafflestudio/feature/user_api
+[31m|[m [32m|[m[33m\[m  
+[31m|[m [32m|[m * [33m2afb41f[m[33m ([m[1;31morigin/feature/user_api[m[33m)[m Merge branch 'main' into feature/user_api
+[31m|[m [32m|[m[31m/[m[32m|[m 
+[31m|[m[31m/[m[32m|[m[32m/[m  
+[31m|[m *   [33m83fafc7[m Merge pull request #13 from wafflestudio/feature/enrollmentHistory
+[31m|[m [36m|[m[1;31m\[m  
+[31m|[m [36m|[m * [33mf799cbd[m[33m ([m[1;31morigin/feature/enrollmentHistory[m[33m)[m login 수정
+[31m|[m [36m|[m * [33m7dafabe[m login 수정
+[31m|[m [36m|[m * [33m0118ea0[m 수강신청내역
+[31m|[m [36m|[m[36m/[m  
+[31m|[m *   [33md7a9585[m Merge pull request #11 from wafflestudio/feature/user_api
+[31m|[m [1;32m|[m[1;33m\[m  
+[31m|[m * [1;33m\[m   [33m2a86780[m Merge pull request #10 from wafflestudio/feature/user_api
+[31m|[m [1;34m|[m[1;35m\[m [1;33m\[m  
+* [1;34m|[m [1;35m|[m [1;33m|[m [33m2f1a450[m 소셜 로그인 uri 연결
