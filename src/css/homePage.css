@@ -185,6 +185,26 @@
 }
 /* PC Table */
 @media (min-width: 769px) {
+  .periodTable,
+  .periodTable thead,
+  .periodTable tbody,
+  .periodTable tr,
+  .periodTable th,
+  .periodTable td {
+    display: table-cell; /* display 초기화 (필수) */
+  }
+  .periodTable {
+    display: table; /* 테이블 자체는 table로 */
+    width: 100%;
+    table-layout: fixed; /* 열 너비 고정 */
+  }
+  .periodTable thead,
+  .periodTable tbody {
+    display: table-row-group;
+  }
+  .periodTable tr {
+    display: table-row;
+  }
   .periodTable th:nth-child(1) {
     width: 25%;
   } /* 구분 */
@@ -200,19 +220,28 @@
   .periodTable th {
     padding: 14px 18px;
     border-bottom: 1px solid #e5e7eb;
-    vertical-align: middle;
     border-right: 1px solid #eef2f7;
     font-size: 16px;
     font-weight: 400;
     text-align: center;
+    letter-spacing: -1px;
   }
   .periodTable td {
     padding: 12px 5px;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: none;
     vertical-align: middle;
     border-right: 1px solid #eef2f7;
     font-size: 15px;
     font-weight: 400;
+    letter-spacing: -0.6px;
+
+    white-space: pre-wrap;
+  }
+  .periodTable td:first-child {
+    text-align: left;
+    padding-left: 18px;
+  }
+  .periodTable td:nth-child(2) {
     text-align: center;
   }
   .periodTable th:last-child,
