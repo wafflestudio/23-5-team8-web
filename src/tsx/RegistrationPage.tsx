@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import {createPortal} from 'react-dom';
-import '../css/registration.css';
+import '../css/registrationPage.css';
+import showNotSupportedToast from '../utils/notSupporting';
 
 // Captcha 타입 정의
 interface CaptchaDigit {
@@ -11,6 +12,50 @@ interface CaptchaDigit {
   color: string;
   fontSize: number;
 }
+
+interface CourseData {
+  id: number;
+  type: string; // 이수구분 (전선, 전필 등)
+  title: string; // 강좌명
+  professor: string; // 교수명
+  department: string; // 개설학과
+  currentStd: number; // 신청인원
+  maxStd: number; // 정원
+  maxStd_current: number; // 정원(재학생)
+  credit: number; // 학점
+  schedule: string; // 강의시간
+  cartCount: number; // 장바구니 담은 수
+}
+
+const COURSE_MOCK_DATA: CourseData[] = [
+  {
+    id: 1,
+    type: '전선',
+    title: '모바일 컴퓨팅과 응용',
+    professor: '이영기',
+    department: '컴퓨터공학부',
+    currentStd: 0,
+    maxStd: 40,
+    maxStd_current: 40,
+    credit: 3,
+    schedule: '화(11:00~12:15) 목(11:00~12:15)',
+    cartCount: 46,
+  },
+
+  {
+    id: 2,
+    type: '교양',
+    title: '글쓰기의 기초',
+    professor: '김서울',
+    department: '기초교육원',
+    currentStd: 38,
+    maxStd: 20,
+    maxStd_current: 20,
+    credit: 3,
+    schedule: '화(14:00~15:15) 목(14:00~15:15)',
+    cartCount: 12,
+  },
+];
 
 // Captcha 생성 함수
 function makeCaptchaDigits(): CaptchaDigit[] {
@@ -32,9 +77,11 @@ function makeCaptchaDigits(): CaptchaDigit[] {
 
 // 1. 시계 컴포넌트 (PiP 내부용)
 const PracticeClock = () => {
-  const [currentTime, setCurrentTime] = useState(
-    new Date(2026, 0, 9, 8, 28, 0)
-  );
+  const [currentTime, setCurrentTime] = useState(() => {
+    const now = new Date();
+    now.setHours(8, 28, 0, 0);
+    return now;
+  });
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -111,6 +158,16 @@ const PracticeClock = () => {
 export default function Registration() {
   const [pipWindow, setPipWindow] = useState<Window | null>(null);
   const [captchaDigits] = useState<CaptchaDigit[]>(() => makeCaptchaDigits());
+  const [courseList] = useState<CourseData[]>(COURSE_MOCK_DATA);
+  const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
+
+  const handleSelectedCourse = (courseId: number) => {
+    if (selectedCourse === courseId) {
+      setSelectedCourse(null);
+    } else {
+      setSelectedCourse(courseId);
+    }
+  };
 
   // PiP 창 열기/닫기 핸들러
   const togglePiP = async () => {
@@ -203,9 +260,15 @@ export default function Registration() {
         {/* 탭 메뉴 */}
         <div className='regTabs'>
           <button className='regTabItem active'>장바구니 보류강좌</button>
-          <button className='regTabItem'>관심강좌</button>
-          <button className='regTabItem'>교과목검색</button>
-          <button className='regTabItem'>교과목번호 검색</button>
+          <button className='regTabItem' onClick={showNotSupportedToast}>
+            관심강좌
+          </button>
+          <button className='regTabItem' onClick={showNotSupportedToast}>
+            교과목검색
+          </button>
+          <button className='regTabItem' onClick={showNotSupportedToast}>
+            교과목번호 검색
+          </button>
         </div>
 
         {/* 학점 정보 라인 */}
@@ -221,9 +284,118 @@ export default function Registration() {
           <div className='regLeftColumn'>
             {/* 진한 회색 구분선 */}
             <hr className='regDarkSeparator' />
-            <div className='stateMessage'>
-              장바구니에 남은 보류강좌가 없습니다.
-            </div>
+            {courseList.length === 0 ? (
+              <div className='stateMessage'>
+                장바구니에 남은 보류강좌가 없습니다.
+              </div>
+            ) : (
+              <div className='courseListContainer'>
+                {courseList.map((course) => {
+                  const isSelected = selectedCourse === course.id;
+
+                  return (
+                    <div key={course.id} className='courseItem'>
+                      {/* 1. 체크박스 영역 */}
+                      <div className='courseCheckArea'>
+                        <button
+                          className={`customCheckBtn ${
+                            isSelected ? 'checked' : ''
+                          }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectedCourse(course.id);
+                          }}
+                        >
+                          <svg
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            xmlns='http://www.w3.org/2000/svg'
+                            className='checkIcon'
+                          >
+                            <path
+                              d='M4 12L9 17L20 6'
+                              strokeWidth='3'
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                            />
+                          </svg>
+                        </button>
+                      </div>
+
+                      {/* 2. 강좌 정보 영역 */}
+                      <div className='courseInfoArea'>
+                        <div className='infoRow top'>
+                          <span className='c-type'>[{course.type}]</span>
+                          <span className='c-title'>{course.title}</span>
+                        </div>
+                        <div className='infoRow middle'>
+                          <span className='c-prof'>{course.professor}</span>
+                          <span className='c-divider'>|</span>
+                          <span className='c-dept'>{course.department}</span>
+                        </div>
+                        <div className='infoRow bottom'>
+                          <span className='c-label'>
+                            수강신청인원/정원(재학생)
+                          </span>
+                          <span className='c-val-blue'>
+                            {course.currentStd}/{course.maxStd}(
+                            {course.maxStd_current})
+                          </span>
+                          <span className='c-divider-light'>|</span>
+                          <span className='c-label'>학점</span>
+                          <span className='c-val-blue'>{course.credit}</span>
+                          <span className='c-divider-light'>|</span>
+                          <span className='c-schedule'>{course.schedule}</span>
+                        </div>
+                      </div>
+
+                      {/* 3. 우측 장바구니/이동 영역 */}
+                      <div className='courseActionArea'>
+                        <div className='cartInfoBox'>
+                          {/* [수정] 장바구니 아이콘 (3번 사진 스타일) - 단순 외곽선 */}
+                          <svg
+                            className='cartIconSvg'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            stroke='currentColor'
+                            strokeWidth='2'
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                          >
+                            <circle cx='9' cy='21' r='1'></circle>
+                            <circle cx='20' cy='21' r='1'></circle>
+                            <path d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6'></path>
+                          </svg>
+                          <span
+                            className={`cartCountNum ${
+                              course.currentStd > course.maxStd ? 'red' : ''
+                            }`}
+                          >
+                            {course.cartCount}
+                          </span>
+                        </div>
+                        <div className='arrowBox'>
+                          <svg
+                            width='12'
+                            height='12'
+                            viewBox='0 0 10 18'
+                            fill='none'
+                          >
+                            <path
+                              d='M1 1L9 9L1 17'
+                              stroke='#000000'
+                              strokeWidth='1'
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* 오른쪽: 플로팅 메뉴 (수강신청 버튼 & 연습버튼) */}
@@ -263,7 +435,7 @@ export default function Registration() {
                 {pipWindow ? '연습 종료 (Stop)' : '연습 모드 (Start)'}
               </button>
               <p className='practiceDesc'>
-                * 실제 수강신청 전<br /> 서버시간 타이머를 띄워보세요.
+                * 연습 모드를 시작하면 <br /> 8시 28분부터 시계가 시작됩니다.
               </p>
             </div>
           </div>
