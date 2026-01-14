@@ -21,7 +21,7 @@
 /* 탭 메뉴 스타일 */
 .regTabs {
   display: flex;
-  border-bottom: 1px solid #d1d1d1; /* 탭 아래 얇은 회색 선 */
+  border-bottom: 1px solid #d1d1d1;
 }
 
 .regTabItem {
@@ -39,7 +39,7 @@
 }
 
 .regTabItem.active {
-  background-color: #0f3e8e; /* SNU 파란색 */
+  background-color: #0f3e8e;
   color: #fff;
 }
 
@@ -68,7 +68,7 @@
 
 .regDarkSeparator {
   border: none;
-  border-top: 1.5px solid #5a5a5a; /* 진한 회색 실선 */
+  border-top: 1.5px solid #5a5a5a;
   margin: 0;
 }
 
@@ -76,9 +76,191 @@
 .stateMessage {
   display: flex;
   justify-content: center;
-  padding-top: 20px; /* 약간 위쪽에 위치 */
+  padding-top: 20px;
   color: #555;
   font-size: 15px;
+}
+
+.courseListContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.courseItem {
+  display: flex;
+  align-items: stretch;
+  padding: 16px 0 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #fff;
+  transition: background-color 0.1s;
+  cursor: pointer;
+}
+
+/* [구현] 마우스 올리면(hover) 전체가 살짝 투명한 회색 배경 */
+.courseItem:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* 1. 왼쪽 체크박스 영역 */
+.courseCheckArea {
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 18px;
+  margin-right: 24px;
+}
+
+/* [수정] 커스텀 체크 버튼 */
+.customCheckBtn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid #d1d1d1; /* 기본 회색 테두리 */
+  background-color: #fff; /* 기본 흰색 배경 */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: border-color 0.2s; /* 색상 변화 부드럽게 */
+}
+
+/* 체크 아이콘 기본 설정 (단순화) */
+.checkIcon {
+  width: 14px;
+  height: 14px;
+
+  /* 기본 상태: 회색 */
+  stroke: #d1d1d1;
+  stroke-width: 3px; /* 선 두께 유지 */
+
+  /* 색상만 부드럽게 바뀌도록 설정 */
+  transition: stroke 0.2s ease-in-out;
+}
+
+/* =========================================
+   상호작용 (Hover & Click)
+   ========================================= */
+
+/* [Hover] 마우스 올렸을 때 버튼 테두리만 파랗게 (아이콘은 회색 유지) */
+.courseItem:hover .customCheckBtn {
+  border-color: #3b87f5;
+}
+
+/* [Checked] 클릭되었을 때 */
+.customCheckBtn.checked {
+  border-color: #3b87f5; /* 테두리 파랑 */
+  background-color: #fff; /* 배경 흰색 */
+}
+
+/* [Checked] 클릭되었을 때 아이콘 색상 변경 */
+.customCheckBtn.checked .checkIcon {
+  stroke: #3b87f5; /* 체크 아이콘 파란색으로 변경 */
+}
+
+/* 2. 가운데 정보 영역 */
+.courseInfoArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.c-type {
+  font-size: 16px;
+  margin-right: 6px;
+  font-weight: 300;
+}
+
+.c-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+}
+.c-title:hover {
+  text-decoration: underline;
+}
+
+.c-prof {
+  color: #555;
+  font-size: 14px;
+}
+.c-dept {
+  color: #555;
+  font-size: 14px;
+}
+.c-divider {
+  margin: 0 8px;
+  color: #777;
+  font-size: 12px;
+}
+
+.c-label {
+  color: #666;
+  font-size: 14px;
+  margin-right: 4px;
+}
+.c-val-blue {
+  color: #376dc8;
+  font-size: 14px;
+  font-family: 'Noto Sans', sans-serif;
+}
+.c-divider-light {
+  margin: 0 11px;
+  color: #e0e0e0;
+  font-size: 12px;
+}
+.c-schedule {
+  color: #555;
+  font-size: 14px;
+}
+
+/* 3. 오른쪽 액션 영역 */
+.courseActionArea {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-right: 12px;
+}
+
+.cartInfoBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 22px;
+  color: #888;
+}
+
+/* 장바구니 아이콘 스타일 */
+.cartIconSvg {
+  width: 18px;
+  height: 18px;
+  color: #a0a0a0;
+}
+
+.cartCountNum {
+  font-size: 15px;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: #333;
+}
+
+.cartCountNum.red {
+  color: #e02d1b;
+}
+
+.arrowBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 /* 오른쪽 플로팅 컬럼 */
@@ -93,26 +275,23 @@
   gap: 12px;
 }
 
-/* 우측 플로팅 박스 (수강신청) - 실제 디자인 반영 */
 .regFloatingBox {
-  background-color: #174083; /* 짙은 파랑 */
+  background-color: #174083;
   border-radius: 10px;
   padding: 20px 17px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* 보안문자 + 입력창을 감싸는 행 */
 .regCaptchaRow {
   display: flex;
   border-radius: 6px;
   height: 36px;
-  overflow: hidden; /* 자식 요소 둥글게 깎기 */
+  overflow: hidden;
   margin-bottom: 8px;
 }
 
-/* 좌측 보안문자 영역 */
 .regCaptchaDisplay {
-  background: #c0c0c0; /* 회색 배경 */
+  background: #c0c0c0;
   width: 50%;
   display: flex;
   align-items: center;
@@ -129,7 +308,6 @@
   z-index: 2;
 }
 
-/* 우측 입력창 영역 */
 .regInputWrapper {
   width: 50%;
   background: #fff;
@@ -156,14 +334,13 @@
   font-size: 12px;
 }
 
-/* 수강신청 버튼 */
 .regSubmitBtn {
   width: 100%;
-  background: #f34c38; /* 밝은 빨강 */
+  background: #f34c38;
   border: none;
   color: #fff;
   padding: 7px 0;
-  border-radius: 24px; /* 버튼도 둥글게 */
+  border-radius: 24px;
   font-size: 14px;
   font-weight: 400;
   cursor: pointer;
@@ -175,7 +352,6 @@
   background: #d6483c;
 }
 
-/* 연습 모드 버튼 영역 */
 .practiceArea {
   margin-top: 10px;
   text-align: center;
@@ -205,24 +381,20 @@
 }
 
 .practiceDesc {
-  font-size: 11px;
+  font-size: 10px;
   color: #888;
   margin-top: 6px;
   line-height: 1.3;
   letter-spacing: -0.5px;
 }
 
-/* =========================================
-   UTCk PiP 윈도우 스타일 (Local Font Version)
-   ========================================= */
-
+/* PiP 스타일 생략 (기존과 동일) */
 body.pip-mode {
   margin: 0;
   padding: 0;
   overflow: hidden;
   background-color: #ece9d8;
 }
-
 .utck-window {
   width: 100vw;
   height: 100vh;
@@ -232,13 +404,11 @@ body.pip-mode {
   font-family: 'Gulim', 'Dotum', sans-serif;
   user-select: none;
 }
-
 .utck-body {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
-
 .utck-btn {
   background-color: #ece9d8;
   border-top: 1px solid #fff;
@@ -257,7 +427,6 @@ body.pip-mode {
   justify-content: center;
   outline: none;
 }
-
 .utck-btn:active {
   border-top: 1px solid #404040;
   border-left: 1px solid #404040;
@@ -266,7 +435,6 @@ body.pip-mode {
   box-shadow: none;
   transform: translate(1px, 1px);
 }
-
 .utck-top-buttons {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -274,14 +442,12 @@ body.pip-mode {
   margin-bottom: 8px;
   height: 26px;
 }
-
 .utck-lcd-frame {
   display: flex;
   gap: 6px;
   flex: 1;
   margin-bottom: 8px;
 }
-
 .utck-lcd-screen {
   flex: 1;
   background-color: #000;
@@ -297,36 +463,31 @@ body.pip-mode {
   position: relative;
   overflow: hidden;
 }
-
 .utck-date-text {
   color: #00ff00;
   font-size: 14px;
   margin-bottom: 2px;
   display: flex;
-  align-items: baseline; /* 숫자와 한글 높이 맞춤 */
+  align-items: baseline;
   justify-content: center;
 }
-
 .seg-text {
   font-family: 'MyDSEG7', monospace;
   font-weight: normal;
   line-height: 1;
   display: inline-block;
 }
-
 .seg-text.small {
   font-size: 13px;
   margin-right: 2px;
   margin-left: 2px;
 }
-
 .kor-text {
   font-family: 'Dotum', 'Gulim', sans-serif;
   font-size: 13px;
   margin-right: 2px;
-  font-weight: bold; /* 도트 느낌을 위해 굵게 */
+  font-weight: bold;
 }
-
 .utck-time-container {
   display: flex;
   justify-content: center;
@@ -334,22 +495,16 @@ body.pip-mode {
   width: 100%;
   margin-top: 6px;
 }
-
-/* [중요] Registration.tsx에서 정의한 'MyDSEG7' 폰트 사용 */
 .utck-time-fg {
-  /* seg-text 속성을 포함하되 크기 재정의 */
   font-family: 'MyDSEG7', monospace;
   font-weight: normal;
   line-height: 1;
   color: #00ff00;
-  text-shadow: 0 0 2px #003300; /* 살짝 번지는 효과 */
-
-  /* 크기 대폭 확대 및 기울기 */
+  text-shadow: 0 0 2px #003300;
   font-size: 36px;
   display: inline-block;
-  letter-spacing: 2px; /* 숫자 간 간격 확보 */
+  letter-spacing: 2px;
 }
-
 .utck-side-buttons {
   display: flex;
   flex-direction: column;
@@ -359,7 +514,6 @@ body.pip-mode {
 .utck-btn.side {
   flex: 1;
 }
-
 .utck-message-bar {
   background-color: #808080;
   border-top: 1px solid #404040;
@@ -374,14 +528,12 @@ body.pip-mode {
   font-family: 'Dotum', sans-serif;
   letter-spacing: -0.5px;
 }
-
 .utck-logo-area {
   display: flex;
   align-items: center;
   justify-content: center;
   color: #333;
 }
-
 .utck-logo-kriss {
   font-family: Arial, sans-serif;
   font-size: 24px;
@@ -390,7 +542,6 @@ body.pip-mode {
   margin-right: 6px;
   letter-spacing: -1px;
 }
-
 .utck-logo-text {
   font-size: 14px;
   font-weight: bold;
