@@ -15,16 +15,30 @@ import showNotSupportedToast from '../utils/notSupporting.tsx';
 
 export default function App() {
   const location = useLocation();
-  const {user, timeLeft, extendLogin} = useAuth();
+  const navigate = useNavigate();
+  const {user, timeLeft, extendLogin, logout} = useAuth();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const isAuthPage =
     location.pathname === '/login' || location.pathname === '/register';
 
+  const handleLogout = async () => {
+    await logout();
+    setIsLoggedIn(false);
+    navigate('/');
+  };
+
   return (
-    <div className='app'>
+    <div className='app' style={{paddingTop: !isAuthPage ? '170px' : '0'}}>
       <a href='#main' className='skip'>
         본문 영역으로 바로가기
       </a>
-      {!isAuthPage && <Header />}
+      {!isAuthPage && (
+        <Header
+          isLoggedIn={isLoggedIn}
+          setIsLoggedIn={setIsLoggedIn}
+          handleLogout={handleLogout}
+        />
+      )}
       <div id='main'>
         <Routes>
           <Route path='/' element={<HomePage />} />
@@ -38,23 +52,34 @@ export default function App() {
         </Routes>
       </div>
       {!isAuthPage && <Footer />}
-      {user && timeLeft <= 60 && timeLeft > 0 && (
-        <SessionWarningModal timeLeft={timeLeft} onExtend={extendLogin} />
+      {user && timeLeft <= 590 && timeLeft > 0 && (
+        <SessionWarningModal
+          timeLeft={timeLeft}
+          onExtend={extendLogin}
+          onLogout={handleLogout}
+        />
       )}
     </div>
   );
 }
 
-function Header() {
+function Header({
+  isLoggedIn,
+  setIsLoggedIn,
+  handleLogout,
+}: {
+  isLoggedIn: boolean;
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  handleLogout: () => Promise<void>;
+}) {
   const loc = useLocation();
   const navigate = useNavigate();
-  const {user, logout} = useAuth();
+  const {user} = useAuth();
   const [hoverMenu, setHoverMenu] = useState<null | 'search' | 'apply' | 'mba'>(
     null
   );
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchingCourse, setSearchingCourse] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const prevent = (e: React.MouseEvent) => e.preventDefault();
 
   const handleSearch = () => {
@@ -65,13 +90,6 @@ function Header() {
     if (e.key === 'Enter') {
       handleSearch();
     }
-  };
-
-  const handleLogout = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    await logout();
-    setIsLoggedIn(false);
-    navigate('/', {replace: true});
   };
 
   const handleProtectedClick = (e: React.MouseEvent) => {
@@ -85,6 +103,7 @@ function Header() {
     setIsLoggedIn(false);
     navigate('/login');
   };
+
   return (
     <header className='header'>
       <div className='distributorLine'>수강신청 연습 사이트입니다.</div>
@@ -533,88 +552,55 @@ function Footer() {
 function SessionWarningModal({
   timeLeft,
   onExtend,
+  onLogout,
 }: {
   timeLeft: number;
   onExtend: () => void;
+  onLogout: () => void;
 }) {
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.5)', // 반투명 검은 배경
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 9999, // 다른 요소보다 위에 뜨도록
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: 'white',
-          padding: '30px',
-          borderRadius: '8px',
-          textAlign: 'center',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-          width: '400px',
-          maxWidth: '90%',
-        }}
-      >
-        <h3
-          style={{
-            marginTop: 0,
-            marginBottom: '15px',
-            color: '#d32f2f',
-            fontSize: '18px',
-            fontWeight: 'bold',
-          }}
-        >
-          자동 로그아웃 안내
-        </h3>
-        <p
-          style={{
-            margin: '20px 0',
-            fontSize: '15px',
-            lineHeight: '1.5',
-          }}
-        >
-          로그인 유효시간이{' '}
-          <strong
-            style={{
-              color: '#d32f2f',
-              fontSize: '1.2em',
-            }}
-          >
-            {timeLeft}초
-          </strong>{' '}
-          남았습니다.
-          <br />
-          계속 이용하시려면 연장 버튼을 눌러주세요.
-        </p>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '10px',
-          }}
-        >
-          <button
-            onClick={onExtend}
-            style={{
-              padding: '10px 24px',
-              backgroundColor: '#1e88e5', // 파란색 버튼
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '14px',
-            }}
-          >
-            로그인 연장하기
+    <div className='modalOverlay'>
+      <div className='sessionModalBox'>
+        <div className='sessionModalBody'>
+          <h2 className='sessionTitle'>로그인 연장</h2>
+          <p className='sessionMsg'>
+            로그인 연장을 원하지 않으실 경우,
+            <br />
+            자동로그아웃 됩니다.
+          </p>
+          <div className='sessionTimerBox'>
+            <svg
+              width='18'
+              height='18'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='#ff5722'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              style={{marginRight: '4px', verticalAlign: 'middle'}}
+            >
+              <circle cx='12' cy='12' r='10'></circle>
+              <polyline points='12 6 12 12 16 14'></polyline>
+            </svg>
+            <span className='sessionTimerText'>{formatTime(timeLeft)}</span>
+          </div>
+        </div>
+
+        <div className='sessionModalFooter'>
+          {/* 로그아웃 버튼 연결 */}
+          <button className='footerBtn logout' onClick={onLogout}>
+            로그아웃
+          </button>
+          {/* 로그인 연장 버튼 연결 */}
+          <button className='footerBtn extend' onClick={onExtend}>
+            로그인 연장
           </button>
         </div>
       </div>
