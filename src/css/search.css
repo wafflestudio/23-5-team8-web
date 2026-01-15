@@ -129,6 +129,181 @@
   min-height: 600px;
 }
 
+/* 강의 목록 컨테이너 */
+.courseListContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* 강의 아이템 */
+.courseItem {
+  display: flex;
+  align-items: stretch;
+  padding: 16px 0 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #fff;
+  transition: background-color 0.1s;
+  cursor: pointer;
+}
+
+.courseItem:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* 1. 왼쪽 체크박스 영역 */
+.courseCheckArea {
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 18px;
+  margin-right: 24px;
+}
+
+.customCheckBtn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid #d1d1d1;
+  background-color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: border-color 0.2s;
+}
+
+.checkIcon {
+  width: 14px;
+  height: 14px;
+  stroke: #d1d1d1;
+  stroke-width: 3px;
+  transition: stroke 0.2s ease-in-out;
+}
+
+.courseItem:hover .customCheckBtn {
+  border-color: #3b87f5;
+}
+
+.customCheckBtn.checked {
+  border-color: #3b87f5;
+  background-color: #fff;
+}
+
+.customCheckBtn.checked .checkIcon {
+  stroke: #3b87f5;
+}
+
+/* 2. 가운데 정보 영역 */
+.courseInfoArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.c-type {
+  font-size: 16px;
+  margin-right: 6px;
+  font-weight: 300;
+}
+
+.c-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+}
+
+.c-title:hover {
+  text-decoration: underline;
+}
+
+.c-prof {
+  color: #555;
+  font-size: 14px;
+}
+
+.c-dept {
+  color: #555;
+  font-size: 14px;
+}
+
+.c-divider {
+  margin: 0 8px;
+  color: #777;
+  font-size: 12px;
+}
+
+.c-label {
+  color: #666;
+  font-size: 14px;
+  margin-right: 4px;
+}
+
+.c-val-blue {
+  color: #376dc8;
+  font-size: 14px;
+  font-family: "Noto Sans", sans-serif;
+}
+
+.c-divider-light {
+  margin: 0 11px;
+  color: #e0e0e0;
+  font-size: 12px;
+}
+
+.c-schedule {
+  color: #555;
+  font-size: 14px;
+}
+
+/* 3. 오른쪽 액션 영역 */
+.courseActionArea {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-right: 12px;
+}
+
+.cartInfoBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 22px;
+  color: #888;
+}
+
+.cartIconSvg {
+  width: 18px;
+  height: 18px;
+  color: #a0a0a0;
+}
+
+.cartCountNum {
+  font-size: 15px;
+  font-family: "Noto Sans KR", sans-serif;
+  color: #333;
+}
+
+.cartCountNum.red {
+  color: #e02d1b;
+}
+
+.arrowBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 /* 오른쪽 칼럼 내부: 플로팅 메뉴 디자인 */
 .searchFloatingMenu {
   background-color: #0f3c8e;
@@ -147,7 +322,7 @@
   font-size: 14px;
   font-weight: 400;
   cursor: pointer;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
 }
 
 .outlineBtn {
@@ -206,7 +381,7 @@
 }
 .captchaDigit {
   display: inline-block;
-  font-family: 'Courier New', Courier, monospace; /* 픽셀 느낌이 나는 고정폭 글꼴 */
+  font-family: "Courier New", Courier, monospace; /* 픽셀 느낌이 나는 고정폭 글꼴 */
   font-weight: 900;
   margin: 0 4px; /* 기본 간격 */
 
@@ -214,7 +389,8 @@
   filter: blur(0.6px);
 
   /* 텍스트 그림자로 번진 느낌 추가 */
-  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.3),
+  text-shadow: 1px 1px 0px
+      rgba(255, 255, 255, 0.3),
     -1px -1px 0px rgba(0, 0, 0, 0.1);
 }
 
