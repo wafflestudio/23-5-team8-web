@@ -1,9 +1,7 @@
 import axios from 'axios';
 
 export const api = axios.create({
-  // MSW 사용 시: 빈 문자열 ''로 설정 (상대 경로로 요청하면 MSW가 가로챕니다)
-  // 실제 배포/연동 시: 'http://15.164.49.159' 등 실제 백엔드 주소 입력
-  baseURL: '',
+  baseURL: import.meta.env.VITE_API_URL || 'https://allclear.codes/',
   headers: {
     'Content-Type': 'application/json',
   },
