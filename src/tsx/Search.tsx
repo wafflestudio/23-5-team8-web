@@ -306,14 +306,20 @@ export default function SearchPage() {
                           </span>
                         </div>
                         <div className="infoRow">
+                          <span className="c-prof">
+                            {course.instructor}
+                          </span>
+                          <span className="c-divider">
+                            |
+                          </span>
                           <span className="c-dept">
                             {course.department}
                           </span>
                           <span className="c-divider">
                             |
                           </span>
-                          <span className="c-prof">
-                            {course.instructor}
+                          <span className="c-coursenum">
+                            {course.courseNumber}
                           </span>
                         </div>
                         <div className="infoRow">
