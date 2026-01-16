@@ -17,13 +17,11 @@ export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const {user, timeLeft, extendLogin, logout} = useAuth();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const isAuthPage =
     location.pathname === '/login' || location.pathname === '/register';
 
   const handleLogout = async () => {
     await logout();
-    setIsLoggedIn(false);
     navigate('/');
   };
 
@@ -32,13 +30,7 @@ export default function App() {
       <a href='#main' className='skip'>
         본문 영역으로 바로가기
       </a>
-      {!isAuthPage && (
-        <Header
-          isLoggedIn={isLoggedIn}
-          setIsLoggedIn={setIsLoggedIn}
-          handleLogout={handleLogout}
-        />
-      )}
+      {!isAuthPage && <Header handleLogout={handleLogout} />}
       <div id='main'>
         <Routes>
           <Route path='/' element={<HomePage />} />
@@ -52,7 +44,7 @@ export default function App() {
         </Routes>
       </div>
       {!isAuthPage && <Footer />}
-      {user && timeLeft <= 590 && timeLeft > 0 && (
+      {user && timeLeft <= 60 && timeLeft > 0 && (
         <SessionWarningModal
           timeLeft={timeLeft}
           onExtend={extendLogin}
@@ -63,15 +55,7 @@ export default function App() {
   );
 }
 
-function Header({
-  isLoggedIn,
-  setIsLoggedIn,
-  handleLogout,
-}: {
-  isLoggedIn: boolean;
-  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-  handleLogout: () => Promise<void>;
-}) {
+function Header({handleLogout}: {handleLogout: () => void}) {
   const loc = useLocation();
   const navigate = useNavigate();
   const {user} = useAuth();
@@ -79,6 +63,7 @@ function Header({
     null
   );
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showLoginWarningOpen, setShowLoginWarningOpen] = useState(false);
   const [searchingCourse, setSearchingCourse] = useState('');
   const prevent = (e: React.MouseEvent) => e.preventDefault();
 
@@ -95,13 +80,13 @@ function Header({
   const handleProtectedClick = (e: React.MouseEvent) => {
     if (!user) {
       e.preventDefault();
-      setIsLoggedIn(true);
+      setShowLoginWarningOpen(true);
     }
   };
 
   const handleConfirmLogin = () => {
-    setIsLoggedIn(false);
     navigate('/login');
+    setShowLoginWarningOpen(false);
   };
 
   return (
@@ -206,12 +191,18 @@ function Header({
                     </span>
                     <span className='welcome'>환영합니다!</span>
                   </div>
-                  <span className={`userIcon ${showUserMenu ? 'open' : ''}`}>
+                  <span
+                    className={`userIcon ${showUserMenu && user ? 'open' : ''}`}
+                  >
                     ▼
                   </span>
                 </button>
 
-                <div className={`userDropdown ${showUserMenu ? 'active' : ''}`}>
+                <div
+                  className={`userDropdown ${
+                    showUserMenu && user ? 'active' : ''
+                  }`}
+                >
                   <Link to='/mypage' className='userDropItem'>
                     마이페이지
                   </Link>
@@ -412,9 +403,9 @@ function Header({
         )}
       </div>
       <NeedLogin
-        isOpen={isLoggedIn}
-        onClose={() => setIsLoggedIn(false)}
+        isOpen={showLoginWarningOpen}
         onConfirm={handleConfirmLogin}
+        onClose={() => setShowLoginWarningOpen(false)}
       />
     </header>
   );

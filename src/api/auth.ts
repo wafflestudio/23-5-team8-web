@@ -5,7 +5,7 @@ import type {
   SocialLoginRequest,
   SignupRequest,
   SignupResponse,
-} from '../mocks/apiTypes';
+} from '../types/apiTypes';
 
 // 로그인 API
 export const loginApi = async (data: LoginRequest) => {

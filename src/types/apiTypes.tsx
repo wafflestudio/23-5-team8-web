@@ -10,21 +10,13 @@ export interface LoginResponse {
   accessToken: string;
 }
 
-export interface SignupResponse {
-  user: UserDto;
-  accessToken: string;
-}
-
 export interface ErrorResponse {
   timestamp: string;
   status: number;
   error: string;
   message: string;
   errorCode: string;
-  validationErrors?: Record<
-    string,
-    string
-  > | null;
+  validationErrors?: Record<string, string> | null;
 }
 
 export interface LoginRequest {
@@ -42,12 +34,6 @@ export interface SignupRequest {
 export interface SocialLoginRequest {
   code: string;
   redirectUri?: string;
-}
-
-export interface SignupRequest {
-  email: string;
-  password: string;
-  nickname: string;
 }
 
 export interface SignupResponse {

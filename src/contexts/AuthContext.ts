@@ -9,7 +9,6 @@ export interface AuthContextType {
   user: User | null;
   login: (userData: User, accessToken: string) => void;
   logout: () => Promise<void>;
-  isLoggedIn: boolean;
   timeLeft: number;
   extendLogin: () => void;
 }
