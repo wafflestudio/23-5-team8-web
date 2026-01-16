@@ -409,3 +409,56 @@
 .captchaInput::placeholder {
   color: #ccc;
 }
+/* 페이지네이션 스타일 */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 40px;
+  padding: 20px 0;
+}
+
+.pageBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pageBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pageBtn img {
+  width: 20px;
+  height: 20px;
+}
+
+.pageNumber {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  padding: 4px 8px;
+  min-width: 28px;
+  text-align: center;
+  position: relative;
+}
+
+.pageNumber:hover {
+  color: #376dc8;
+}
+
+.pageNumber.active {
+  color: #376dc8;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

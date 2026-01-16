@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useRef, useCallback} from 'react';
 import {createPortal} from 'react-dom';
 import '../css/registrationPage.css';
 import showNotSupportedToast from '../utils/notSupporting';
@@ -181,7 +181,7 @@ export default function Registration() {
   };
 
   // PiP 창 닫기 및 타이머 정지 (연습 종료 공통 로직)
-  const handleStopPractice = async (isManual = false) => {
+  const handleStopPractice = useCallback(async (isManual = false) => {
     if (!isPracticeRunningRef.current) return;
     isPracticeRunningRef.current = false;
 
@@ -213,7 +213,7 @@ export default function Registration() {
         alert('연습 종료 중 네트워크 오류가 발생했습니다.');
       }
     }
-  };
+  }, [pipWindow]);
 
   // PiP 창 열기 로직 (UI 관련만 담당)
   const openPiPWindow = async () => {
@@ -481,7 +481,7 @@ export default function Registration() {
         clearInterval(timerRef.current);
       }
     };
-  }, [pipWindow]); // pipWindow가 변할 때마다 실행됨
+  }, [pipWindow, handleStopPractice]); // pipWindow가 변할 때마다 실행됨
 
   return (
     <div className='registrationPage'>
