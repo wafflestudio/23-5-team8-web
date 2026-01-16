@@ -14,6 +14,9 @@ export default function Cart() {
   const [selectedCourses, setSelectedCourses] =
     useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(false);
+  const [editingValues, setEditingValues] = useState<
+    Map<number, number>
+  >(new Map());
 
   // 장바구니 조회
   useEffect(() => {
@@ -375,13 +378,59 @@ export default function Cart() {
                           </svg>
                           <input
                             type="number"
-                            value={item.cartCount}
+                            value={
+                              editingValues.has(
+                                item.course.id
+                              )
+                                ? editingValues.get(
+                                    item.course.id
+                                  )
+                                : item.cartCount
+                            }
                             onChange={(e) => {
                               e.stopPropagation();
-                              handleCartCountChange(
-                                item.course.id,
-                                e.target.value
+                              const newValue =
+                                parseInt(
+                                  e.target.value
+                                ) || 0;
+                              setEditingValues(
+                                (prev) => {
+                                  const newMap =
+                                    new Map(prev);
+                                  newMap.set(
+                                    item.course.id,
+                                    newValue
+                                  );
+                                  return newMap;
+                                }
                               );
+                            }}
+                            onBlur={(e) => {
+                              e.stopPropagation();
+                              if (
+                                editingValues.has(
+                                  item.course.id
+                                )
+                              ) {
+                                handleCartCountChange(
+                                  item.course.id,
+                                  editingValues
+                                    .get(
+                                      item.course.id
+                                    )!
+                                    .toString()
+                                );
+                                setEditingValues(
+                                  (prev) => {
+                                    const newMap =
+                                      new Map(prev);
+                                    newMap.delete(
+                                      item.course.id
+                                    );
+                                    return newMap;
+                                  }
+                                );
+                              }
                             }}
                             onClick={(e) =>
                               e.stopPropagation()
