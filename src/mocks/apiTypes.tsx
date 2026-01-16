@@ -21,7 +21,10 @@ export interface ErrorResponse {
   error: string;
   message: string;
   errorCode: string;
-  validationErrors?: Record<string, string> | null;
+  validationErrors?: Record<
+    string,
+    string
+  > | null;
 }
 
 export interface LoginRequest {
@@ -53,4 +56,39 @@ export interface SignupResponse {
     nickname: string;
   };
   accessToken: string;
+}
+
+// 강의 검색 관련 타입
+export interface CourseSearchRequest {
+  keyword?: string;
+  page?: number;
+  size?: number;
+}
+
+export interface CourseSearchResponse {
+  content: Course[];
+  pageInfo: PageInfo;
+}
+
+export interface Course {
+  id: number;
+  courseNumber: string;
+  courseName: string;
+  professor: string;
+  credit: number;
+  department: string;
+  year: number;
+  semester: string;
+  classification: string;
+  schedule: string;
+  capacity: number;
+  currentEnrollment: number;
+  remarks?: string;
+}
+
+export interface PageInfo {
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
 }
