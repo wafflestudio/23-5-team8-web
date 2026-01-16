@@ -201,7 +201,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .infoRow {
@@ -222,10 +222,6 @@
   color: #000;
 }
 
-.c-title:hover {
-  text-decoration: underline;
-}
-
 .c-prof {
   color: #555;
   font-size: 14px;
@@ -237,9 +233,14 @@
 }
 
 .c-divider {
-  margin: 0 8px;
+  margin: 0 7px;
   color: #777;
   font-size: 12px;
+}
+
+.c-coursenum {
+  font-size: 14px;
+  color: #444;
 }
 
 .c-label {
@@ -251,7 +252,7 @@
 .c-val-blue {
   color: #376dc8;
   font-size: 14px;
-  font-family: "Noto Sans", sans-serif;
+  font-family: 'Noto Sans', sans-serif;
 }
 
 .c-divider-light {
@@ -289,7 +290,7 @@
 
 .cartCountNum {
   font-size: 15px;
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   color: #333;
 }
 
@@ -322,7 +323,7 @@
   font-size: 14px;
   font-weight: 400;
   cursor: pointer;
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
 }
 
 .outlineBtn {
@@ -381,7 +382,7 @@
 }
 .captchaDigit {
   display: inline-block;
-  font-family: "Courier New", Courier, monospace; /* 픽셀 느낌이 나는 고정폭 글꼴 */
+  font-family: 'Courier New', Courier, monospace; /* 픽셀 느낌이 나는 고정폭 글꼴 */
   font-weight: 900;
   margin: 0 4px; /* 기본 간격 */
 
@@ -389,8 +390,7 @@
   filter: blur(0.6px);
 
   /* 텍스트 그림자로 번진 느낌 추가 */
-  text-shadow: 1px 1px 0px
-      rgba(255, 255, 255, 0.3),
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.3),
     -1px -1px 0px rgba(0, 0, 0, 0.1);
 }
 
@@ -443,7 +443,7 @@
   background: none;
   border: none;
   color: #666;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   cursor: pointer;
   padding: 4px 8px;
@@ -452,10 +452,7 @@
   position: relative;
 }
 
-.pageNumber:hover {
-  color: #376dc8;
-}
-
+.pageNumber:hover,
 .pageNumber.active {
   color: #376dc8;
   font-weight: 700;
