@@ -16,7 +16,10 @@ export interface ErrorResponse {
   error: string;
   message: string;
   errorCode: string;
-  validationErrors?: Record<string, string> | null;
+  validationErrors?: Record<
+    string,
+    string
+  > | null;
 }
 
 export interface LoginRequest {
