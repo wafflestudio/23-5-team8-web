@@ -52,24 +52,27 @@ export interface CourseSearchRequest {
 }
 
 export interface CourseSearchResponse {
-  content: Course[];
+  items: Course[];
   pageInfo: PageInfo;
 }
 
 export interface Course {
   id: number;
   courseNumber: string;
-  courseName: string;
-  professor: string;
+  courseTitle: string;
+  instructor: string;
   credit: number;
   department: string;
   year: number;
   semester: string;
   classification: string;
-  schedule: string;
-  capacity: number;
-  currentEnrollment: number;
-  remarks?: string;
+  placeAndTime: string | null;
+  quota: number;
+  freshmanQuota: number | null;
+  college?: string;
+  academicCourse?: string;
+  academicYear?: string;
+  lectureNumber?: string;
 }
 
 export interface PageInfo {

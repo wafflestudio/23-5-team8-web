@@ -3,7 +3,7 @@ import '../css/search.css';
 import {useLocation} from 'react-router-dom';
 import showNotSupportedToast from '../utils/notSupporting';
 import {searchCoursesApi} from '../api/courses';
-import type {Course} from '../types/apiTypes';
+import type {Course} from '../types/apiTypes.tsx';
 
 interface CaptchaDigit {
   value: string;
@@ -40,35 +40,60 @@ export default function SearchPage() {
   const [selectedCourses, setSelectedCourses] = useState<Set<number>>(
     new Set()
   );
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [allCourses, setAllCourses] = useState<Course[]>([]);
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const keyword = searchParams.get('query') || '';
+  const pageSize = 10;
 
   useEffect(() => {
     const fetchCourses = async () => {
       if (!keyword) return;
 
       setLoading(true);
-      setError(null);
+      setCurrentPage(0);
       try {
         const response = await searchCoursesApi({
           keyword,
           page: 0,
-          size: 20,
+          size: 10000, // 모든 검색 결과를 가져오기
         });
-        setCourses(response.data.content);
-        setTotalCount(response.data.pageInfo.totalElements);
+        
+        // 클라이언트에서 필터링: 강의명, 교수명, 학과명에서 검색
+        const filteredCourses = response.data.items.filter((course) => {
+          const searchLower = keyword.toLowerCase();
+          return (
+            course.courseTitle?.toLowerCase().includes(searchLower) ||
+            course.instructor?.toLowerCase().includes(searchLower) ||
+            course.department?.toLowerCase().includes(searchLower) ||
+            course.college?.toLowerCase().includes(searchLower)
+          );
+        });
+        
+        setAllCourses(filteredCourses);
+        setTotalCount(filteredCourses.length);
+        setTotalPages(Math.ceil(filteredCourses.length / pageSize));
       } catch (err) {
         console.error('강의 검색 실패:', err);
         setError('강의 검색에 실패했습니다.');
+        setAllCourses([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchCourses();
-  }, [keyword]);
+  }, [keyword, pageSize]);
+
+  // 현재 페이지의 강의 목록 계산
+  useEffect(() => {
+    const startIndex = currentPage * pageSize;
+    const endIndex = startIndex + pageSize;
+    setCourses(allCourses.slice(startIndex, endIndex));
+  }, [currentPage, allCourses, pageSize]);
 
   const toggleCourseSelection = (courseId: number) => {
     setSelectedCourses((prev) => {
@@ -178,33 +203,33 @@ export default function SearchPage() {
                       <div className='courseInfoArea'>
                         <div className='infoRow'>
                           <span className='c-type'>
-                            [{course.classification}] [{course.department}]
+                            [{course.academicCourse === '학사' ? '학사' : '대학원'}] [{course.classification}]
                           </span>
-                          <span className='c-title'>{course.courseName}</span>
+                          <span className='c-title'>{course.courseTitle}</span>
                         </div>
                         <div className='infoRow'>
                           <span className='c-dept'>{course.department}</span>
                           <span className='c-divider'>|</span>
-                          <span className='c-prof'>{course.professor}</span>
+                          <span className='c-prof'>{course.instructor}</span>
                         </div>
                         <div className='infoRow'>
                           <span className='c-label'>
                             수강신청인원/정원(재학생)
                           </span>
                           <span className='c-val-blue'>
-                            {course.currentEnrollment}/{course.capacity} (
-                            {course.capacity})
+                            0/{course.quota} (
+                            {course.quota})
                           </span>
                           <span className='c-divider-light'>|</span>
                           <span className='c-label'>총수강인원</span>
                           <span className='c-val-blue'>
-                            {course.currentEnrollment}
+                            0
                           </span>
                           <span className='c-divider-light'>|</span>
                           <span className='c-label'>학점</span>
                           <span className='c-val-blue'>{course.credit}</span>
                           <span className='c-divider-light'>|</span>
-                          <span className='c-schedule'>{course.schedule}</span>
+                          <span className='c-schedule'>{course.placeAndTime ? JSON.parse(course.placeAndTime).time || '시간 미정' : '시간 미정'}</span>
                         </div>
                       </div>
 
@@ -251,6 +276,57 @@ export default function SearchPage() {
                   );
                 })}
             </div>
+
+            {/* 페이지네이션 */}
+            {!loading && !error && totalPages > 1 && (
+              <div className='pagination'>
+                <button
+                  className='pageBtn'
+                  onClick={() => setCurrentPage(0)}
+                  disabled={currentPage === 0}
+                >
+                  <img src='/assets/btn-arrow-first.png' alt='처음' />
+                </button>
+                <button
+                  className='pageBtn'
+                  onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
+                  disabled={currentPage === 0}
+                >
+                  <img src='/assets/btn_page_back.png' alt='이전' />
+                </button>
+
+                {Array.from({length: Math.min(5, totalPages)}, (_, i) => {
+                  const startPage = Math.floor(currentPage / 5) * 5;
+                  const pageNum = startPage + i;
+                  if (pageNum >= totalPages) return null;
+                  
+                  return (
+                    <button
+                      key={pageNum}
+                      className={`pageNumber ${currentPage === pageNum ? 'active' : ''}`}
+                      onClick={() => setCurrentPage(pageNum)}
+                    >
+                      {pageNum + 1}
+                    </button>
+                  );
+                })}
+
+                <button
+                  className='pageBtn'
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
+                  disabled={currentPage >= totalPages - 1}
+                >
+                  <img src='/assets/btn_page_next.png' alt='다음' />
+                </button>
+                <button
+                  className='pageBtn'
+                  onClick={() => setCurrentPage(totalPages - 1)}
+                  disabled={currentPage >= totalPages - 1}
+                >
+                  <img src='/assets/btn-arrow-last.png' alt='마지막' />
+                </button>
+              </div>
+            )}
           </div>
 
           <div className='searchRightColumn'>
