@@ -141,13 +141,13 @@ export default function SearchPage() {
     courseId: number
   ) => {
     setSelectedCourses((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(courseId)) {
-        newSet.delete(courseId);
+      // 이미 선택된 강의를 다시 클릭하면 선택 해제
+      if (prev.has(courseId)) {
+        return new Set();
       } else {
-        newSet.add(courseId);
+        // 새로운 강의 선택 시 기존 선택 초기화하고 새로운 것만 선택
+        return new Set([courseId]);
       }
-      return newSet;
     });
   };
 
@@ -414,7 +414,7 @@ export default function SearchPage() {
                                   /\//g,
                                   " "
                                 ) || "시간 미정"
-                              : "시간 미정"}
+                              : ""}
                           </span>
                         </div>
                       </div>
