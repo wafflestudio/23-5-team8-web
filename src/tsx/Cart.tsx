@@ -14,9 +14,8 @@ export default function Cart() {
   const [selectedCourses, setSelectedCourses] =
     useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(false);
-  const [editingValues, setEditingValues] = useState<
-    Map<number, number>
-  >(new Map());
+  const [editingValues, setEditingValues] =
+    useState<Map<number, string>>(new Map());
 
   // 장바구니 조회
   useEffect(() => {
@@ -188,7 +187,7 @@ export default function Cart() {
             <span className="cart-credit-info">
               신청가능학점{" "}
               <span className="cart-credit-number">
-                0
+                21
               </span>
               학점 / 담은 학점{" "}
               <span className="cart-credit-number">
@@ -390,15 +389,14 @@ export default function Cart() {
                             onChange={(e) => {
                               e.stopPropagation();
                               const newValue =
-                                parseInt(
-                                  e.target.value
-                                ) || 0;
+                                e.target.value;
                               setEditingValues(
                                 (prev) => {
                                   const newMap =
                                     new Map(prev);
                                   newMap.set(
-                                    item.course.id,
+                                    item.course
+                                      .id,
                                     newValue
                                   );
                                   return newMap;
@@ -412,20 +410,27 @@ export default function Cart() {
                                   item.course.id
                                 )
                               ) {
+                                const value =
+                                  editingValues.get(
+                                    item.course.id
+                                  )!;
+                                const finalValue =
+                                  value === ""
+                                    ? "0"
+                                    : value;
                                 handleCartCountChange(
                                   item.course.id,
-                                  editingValues
-                                    .get(
-                                      item.course.id
-                                    )!
-                                    .toString()
+                                  finalValue
                                 );
                                 setEditingValues(
                                   (prev) => {
                                     const newMap =
-                                      new Map(prev);
+                                      new Map(
+                                        prev
+                                      );
                                     newMap.delete(
-                                      item.course.id
+                                      item.course
+                                        .id
                                     );
                                     return newMap;
                                   }

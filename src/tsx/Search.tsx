@@ -414,7 +414,7 @@ export default function SearchPage() {
                                   /\//g,
                                   " "
                                 ) || "시간 미정"
-                              : "시간 미정"}
+                              : ""}
                           </span>
                         </div>
                       </div>
