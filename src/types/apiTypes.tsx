@@ -84,3 +84,19 @@ export interface PageInfo {
   totalElements: number;
   totalPages: number;
 }
+
+// 장바구니 관련 타입
+export interface PreEnrollAddRequest {
+  courseId: number;
+  cartCount: number;
+}
+
+export interface PreEnrollUpdateCartCountRequest {
+  cartCount: number;
+}
+
+export interface PreEnrollCourseResponse {
+  preEnrollId: number;
+  course: Course;
+  cartCount: number;
+}
