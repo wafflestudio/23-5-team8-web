@@ -1,5 +1,6 @@
 import {useState, useEffect, useRef, useCallback} from 'react';
 import {createPortal} from 'react-dom';
+import {useNavigate} from 'react-router-dom';
 import '../css/registrationPage.css';
 import showNotSupportedToast from '../utils/notSupporting';
 import {
@@ -8,6 +9,15 @@ import {
   practiceAttemptApi,
 } from '../api/registration';
 import {isAxiosError} from 'axios';
+import type {Course} from '../types/apiTypes';
+import {getPreEnrollsApi} from '../api/cart';
+import {
+  type Warning,
+  WarningModal,
+  WaitingModal,
+  SuccessModal,
+} from './RegistrationWarning';
+import {calculateQueueInfo} from '../utils/RegistrationUtils';
 
 // Captcha 타입 정의
 interface CaptchaDigit {
@@ -20,48 +30,10 @@ interface CaptchaDigit {
 }
 
 interface CourseData {
-  id: number;
-  type: string; // 이수구분 (전선, 전필 등)
-  title: string; // 강좌명
-  professor: string; // 교수명
-  department: string; // 개설학과
-  currentStd: number; // 신청인원
-  maxStd: number; // 정원
-  maxStd_current: number; // 정원(재학생)
-  credit: number; // 학점
-  schedule: string; // 강의시간
-  cartCount: number; // 장바구니 담은 수
+  preEnrollId: number;
+  course: Course;
+  cartCount: number;
 }
-
-const COURSE_MOCK_DATA: CourseData[] = [
-  {
-    id: 1,
-    type: '전선',
-    title: '모바일 컴퓨팅과 응용',
-    professor: '이영기',
-    department: '컴퓨터공학부',
-    currentStd: 0,
-    maxStd: 40,
-    maxStd_current: 40,
-    credit: 3,
-    schedule: '화(11:00~12:15) 목(11:00~12:15)',
-    cartCount: 46,
-  },
-
-  {
-    id: 2,
-    type: '교양',
-    title: '글쓰기의 기초',
-    professor: '김서울',
-    department: '기초교육원',
-    currentStd: 12,
-    maxStd: 20,
-    maxStd_current: 20,
-    credit: 3,
-    schedule: '화(14:00~15:15) 목(14:00~15:15)',
-    cartCount: 38,
-  },
-];
 
 // Captcha 생성 함수
 function makeCaptchaDigits(): CaptchaDigit[] {
@@ -148,28 +120,69 @@ const PracticeClock = ({currentTime}: {currentTime: Date}) => {
 
 export default function Registration() {
   const [pipWindow, setPipWindow] = useState<Window | null>(null);
-  const [captchaDigits] = useState<CaptchaDigit[]>(() => makeCaptchaDigits());
-  const [courseList] = useState<CourseData[]>(COURSE_MOCK_DATA);
+  const [captchaDigits, setCaptchaDigits] = useState<CaptchaDigit[]>(() =>
+    makeCaptchaDigits(),
+  );
+  const [courseList, setCourseList] = useState<CourseData[] | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
   const [selectedCourseTotalCompetitors, setSelectedCourseTotalCompetitors] =
     useState<number>(0);
   const [selectedCourseCapacity, setSelectedCourseCapacity] =
     useState<number>(0);
+  const [selectedCourseTitle, setSelectedCourseTitle] = useState<string | null>(
+    null,
+  );
+  const [selectedCourseNumber, setSelectedCourseNumber] = useState<
+    string | null
+  >(null);
+  const [selectedLectureTime, setSelectedLectureTime] = useState<string | null>(
+    null,
+  );
   const [captchaInput, setCaptchaInput] = useState('');
   const [currentTime, setCurrentTime] = useState<Date>(() => {
     const now = new Date();
-    now.setHours(8, 28, 0, 0); // 기본값 8:28
+    now.setHours(8, 29, 0, 0); // 기본값 8:29
     return now;
   });
+  const [startOffset, setStartOffset] = useState<number>(0);
+  const [warningType, setWarningType] = useState<Warning>('none');
+  const [waitingInfo, setWaitingInfo] = useState<{
+    count: number;
+    seconds: number;
+  } | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+  const navigate = useNavigate();
   const timerRef = useRef<number | undefined>(undefined);
   const isPracticeRunningRef = useRef(false);
+
+  useEffect(() => {
+    // 함수를 useEffect 내부에서 정의하고 바로 호출합니다.
+    const fetchCartCourses = async () => {
+      try {
+        const response = await getPreEnrollsApi(true);
+        const coursesData: CourseData[] = response.data.map((item) => ({
+          preEnrollId: item.preEnrollId,
+          course: item.course,
+          cartCount: item.cartCount,
+        }));
+        setCourseList(coursesData);
+      } catch (error) {
+        console.error('장바구니 조회 실패:', error);
+      }
+    };
+
+    fetchCartCourses();
+  }, []);
 
   const handleSelectedCourse = (
     courseId: number,
     currentStd: number,
     maxStd_current: number,
-    cartCount: number
+    cartCount: number,
+    courseTitle: string,
+    courseNumber: string,
+    lectureNumber: string,
   ) => {
     if (selectedCourse === courseId) {
       setSelectedCourse(null);
@@ -177,49 +190,55 @@ export default function Registration() {
       setSelectedCourse(courseId);
       setSelectedCourseTotalCompetitors(cartCount);
       setSelectedCourseCapacity(maxStd_current - currentStd);
+      setSelectedCourseTitle(courseTitle);
+      setSelectedCourseNumber(courseNumber);
+      setSelectedLectureTime(lectureNumber);
     }
   };
 
   // PiP 창 닫기 및 타이머 정지 (연습 종료 공통 로직)
-  const handleStopPractice = useCallback(async (isManual = false) => {
-    if (!isPracticeRunningRef.current) return;
-    isPracticeRunningRef.current = false;
+  const handleStopPractice = useCallback(
+    async (isManual = false) => {
+      if (!isPracticeRunningRef.current) return;
+      isPracticeRunningRef.current = false;
 
-    // 1. 타이머 정지
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = undefined;
-    }
-
-    // 2. PiP 창 닫기
-    if (pipWindow) {
-      pipWindow.close();
-      setPipWindow(null);
-    }
-
-    // 3. 종료 API 호출 및 에러 처리
-    try {
-      await practiceEndApi();
-      if (!isManual) {
-        alert('연습 시간이 종료되었습니다! (08:33)');
+      // 1. 타이머 정지
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = undefined;
       }
-    } catch (error) {
-      console.error('연습 종료 오류:', error);
-      if (isAxiosError(error) && error.response) {
-        alert(
-          `연습 종료 실패: ${error.response.data.message || '알 수 없는 오류'}`
-        );
-      } else {
-        alert('연습 종료 중 네트워크 오류가 발생했습니다.');
+
+      // 2. PiP 창 닫기
+      if (pipWindow) {
+        pipWindow.close();
+        setPipWindow(null);
       }
-    }
-  }, [pipWindow]);
+
+      // 3. 종료 API 호출 및 에러 처리
+      try {
+        await practiceEndApi();
+        if (!isManual) {
+          alert('연습 시간이 종료되었습니다! (08:33)');
+        }
+      } catch (error) {
+        console.error('연습 종료 오류:', error);
+        if (isAxiosError(error) && error.response) {
+          alert(
+            `연습 종료 실패: ${error.response.data.message || '알 수 없는 오류'}`,
+          );
+        } else {
+          alert('연습 종료 중 네트워크 오류가 발생했습니다.');
+        }
+      }
+    },
+    [pipWindow],
+  );
 
   // PiP 창 열기 로직 (UI 관련만 담당)
   const openPiPWindow = async () => {
     if (!('documentPictureInPicture' in window)) {
       alert(
-        '이 브라우저는 Document Picture-in-Picture API를 지원하지 않습니다.'
+        '이 브라우저는 Document Picture-in-Picture API를 지원하지 않습니다.',
       );
       return null;
     }
@@ -318,7 +337,7 @@ export default function Registration() {
           alert(
             `연습 시작 실패: ${
               error.response.data.message || '알 수 없는 오류'
-            }`
+            }`,
           );
         } else {
           alert('연습 시작 중 네트워크 오류가 발생했습니다.');
@@ -327,80 +346,30 @@ export default function Registration() {
     }
   };
 
-  // 수강신청 시도 핸들러
-  const handleRegisterAttempt = async () => {
-    // 1. 유효성 검사: 강의 선택 여부 (최우선 순위 - 5번째 화면)
-    if (selectedCourse === null) {
-      alert('신청할 강좌를 선택하시기 바랍니다.');
-      return;
-    }
+  const proceedToApiCall = async () => {
+    setWaitingInfo(null); // 대기열 모달 닫기
 
-    // 2. 유효성 검사: 보안문자 일치 여부 (4번째 화면)
-    // captchaDigits 배열의 value를 합쳐 정답 문자열 생성
-    const correctCaptcha = captchaDigits.map((d) => d.value).join('');
-
-    if (captchaInput !== correctCaptcha) {
-      alert(
-        '보안문자가 일치하지 않습니다.\n(입력된 문자가 생성된 보안문자와 다릅니다.)'
-      );
-      setCaptchaInput(''); // 틀렸을 경우 편의를 위해 입력창 초기화
-      return;
-    }
-
-    // 3. 연습 모드 실행 여부 확인 (선택 사항)
-    if (!pipWindow) {
-      alert('연습 모드(Start)를 먼저 실행해주세요.');
-      return;
-    }
-
-    // 1. 유효성 검사: 강의 선택 여부 (최우선 순위 - 1순위)
-    if (selectedCourse === null) {
-      // 5번째 화면(강의 미선택 알림)에 해당
-      alert('신청할 강좌를 선택하시기 바랍니다.');
-      return;
-    }
-
-    if (captchaInput !== correctCaptcha) {
-      alert(
-        '보안문자가 일치하지 않습니다.\n(입력된 문자가 생성된 보안문자와 다릅니다.)'
-      );
-      setCaptchaInput(''); // 입력창 초기화
-      return;
-    }
-
-    // [디버깅] 실제 서버로 전송되는 데이터 확인 (개발자 도구 Console 확인)
-    const payload = {
-      courseId: selectedCourse,
-      totalCompetitors: selectedCourseTotalCompetitors,
-      capacity: selectedCourseCapacity,
-    };
-    console.log('서버로 전송하는 데이터:', payload);
-
-    // 4. API 호출
     try {
       const payload = {
         courseId: Number(selectedCourse),
         totalCompetitors: Number(selectedCourseTotalCompetitors),
         capacity: Number(selectedCourseCapacity),
       };
-
       console.log('최종 전송 데이터:', payload);
 
-      await practiceAttemptApi(payload);
+      const response = await practiceAttemptApi(payload);
+      setCaptchaInput(''); // 입력 초기화
 
-      // 성공 시 처리
-      alert('수강신청되었습니다.');
-
-      // (선택) 성공 후 입력창 초기화나 선택 해제 등 후속 처리
-      setCaptchaInput('');
-      setSelectedCourse(null);
-      setSelectedCourseTotalCompetitors(0);
-      setSelectedCourseCapacity(0);
+      if (!response.data.isSuccess) {
+        setWarningType('quotaOver');
+      } else {
+        // [Todo 2 적용] 성공 시 성공 모달 띄우기
+        setShowSuccessModal(true);
+      }
     } catch (error) {
+      // ... (기존 에러 처리 로직) ...
       console.error('수강신청 실패:', error);
-
       if (isAxiosError(error) && error.response) {
-        // 서버에서 보내주는 에러 메시지 출력
         alert(error.response.data.message || '수강신청에 실패했습니다.');
       } else {
         alert('수강신청 요청 중 오류가 발생했습니다.');
@@ -408,11 +377,71 @@ export default function Registration() {
     }
   };
 
+  // 수강신청 시도 핸들러
+  const handleRegisterAttempt = async () => {
+    setCaptchaDigits(makeCaptchaDigits()); // 매 시도마다 Captcha 새로 생성
+    // 1. 강의 선택 검사
+    if (selectedCourse === null) {
+      setWarningType('notChosen');
+      return;
+    }
+    // 2. 보안문자 검사
+    const correctCaptcha = captchaDigits.map((d) => d.value).join('');
+    if (captchaInput !== correctCaptcha) {
+      setWarningType('captchaError');
+      setCaptchaInput('');
+      return;
+    }
+    // 3. 연습 모드 확인
+    if (!pipWindow) {
+      setWarningType('practiceNotStarted');
+      return;
+    }
+
+    // [Todo 1 적용] 시간 체크 및 대기열 로직
+    const targetTime = new Date(currentTime);
+    targetTime.setHours(8, 30, 0, 0); // 기준 시간 08:30:00
+
+    const diffMs = currentTime.getTime() - targetTime.getTime();
+
+    // Case A: 8시 30분 이전 -> "수강신청 기간이 아닙니다" (API 호출 X)
+    if (diffMs < 0) {
+      setWarningType('beforeTime');
+      return;
+    }
+
+    // Case B: 8시 30분 이후 -> 대기열 계산
+    const queueData = calculateQueueInfo(diffMs);
+
+    if (queueData) {
+      // 대기열이 존재하면 모달 띄움 -> 모달 종료 시 proceedToApiCall 실행
+      setWaitingInfo({
+        count: queueData.queueCount,
+        seconds: queueData.waitSeconds,
+      });
+    } else {
+      // 대기열 없으면(너무 늦게 누름) 바로 API 호출
+      proceedToApiCall();
+    }
+  };
+
+  // 성공 모달 핸들러
+  const handleSuccessClose = (move: boolean) => {
+    setShowSuccessModal(false);
+    if (move) {
+      navigate('/enrollment-history');
+    } else {
+      // 계속하기: 선택 초기화 등 필요하면 수행
+      setSelectedCourse(null); // 예시: 선택 해제
+    }
+  };
+
   // 타이머와 PiP를 켜는 로직을 별도 함수로 분리 (중복 제거)
   const startTimerAndPip = async () => {
-    // 시간 초기화 (8시 28분)
+    const offsetSeconds = startOffset === 0 ? 60 : startOffset;
     const startTime = new Date();
-    startTime.setHours(8, 28, 0, 0);
+    startTime.setHours(8, 30, 0, 0);
+    startTime.setSeconds(startTime.getSeconds() - offsetSeconds);
     setCurrentTime(startTime);
     isPracticeRunningRef.current = true; // 실행 상태 플래그 true 설정
 
@@ -518,32 +547,37 @@ export default function Registration() {
           <div className='regLeftColumn'>
             {/* 진한 회색 구분선 */}
             <hr className='regDarkSeparator' />
-            {courseList.length === 0 ? (
+            {courseList?.length === 0 ? (
               <div className='stateMessage'>
                 장바구니에 남은 보류강좌가 없습니다.
               </div>
             ) : (
               <div className='courseListContainer'>
-                {courseList.map((course) => {
-                  const isSelected = selectedCourse === course.id;
+                {courseList?.map((c) => {
+                  const isSelected = selectedCourse === c.course.id;
 
                   return (
-                    <div key={course.id} className='courseItem'>
+                    <div key={c.course.id} className='courseItem'>
                       {/* 1. 체크박스 영역 */}
-                      <div className='courseCheckArea'>
+                      <div
+                        className='courseCheckArea'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectedCourse(
+                            c.course.id,
+                            0,
+                            c.course.quota,
+                            c.cartCount,
+                            c.course.courseTitle,
+                            c.course.courseNumber,
+                            c.course.lectureNumber || '',
+                          );
+                        }}
+                      >
                         <button
                           className={`customCheckBtn ${
                             isSelected ? 'checked' : ''
                           }`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSelectedCourse(
-                              course.id,
-                              course.currentStd,
-                              course.maxStd_current,
-                              course.cartCount
-                            );
-                          }}
                         >
                           <svg
                             viewBox='0 0 24 24'
@@ -564,27 +598,35 @@ export default function Registration() {
                       {/* 2. 강좌 정보 영역 */}
                       <div className='courseInfoArea'>
                         <div className='infoRow top'>
-                          <span className='c-type'>[{course.type}]</span>
-                          <span className='c-title'>{course.title}</span>
+                          <span className='c-type'>
+                            [{c.course.classification}]
+                          </span>
+                          <span className='c-title'>
+                            {c.course.courseTitle}
+                          </span>
                         </div>
                         <div className='infoRow middle'>
-                          <span className='c-prof'>{course.professor}</span>
+                          <span className='c-prof'>{c.course.instructor}</span>
                           <span className='c-divider'>|</span>
-                          <span className='c-dept'>{course.department}</span>
+                          <span className='c-dept'>{c.course.department}</span>
                         </div>
                         <div className='infoRow bottom'>
                           <span className='c-label'>
                             수강신청인원/정원(재학생)
                           </span>
                           <span className='c-val-blue'>
-                            {course.currentStd}/{course.maxStd}(
-                            {course.maxStd_current})
+                            0/{c.course.quota}({c.course.quota})
                           </span>
                           <span className='c-divider-light'>|</span>
                           <span className='c-label'>학점</span>
-                          <span className='c-val-blue'>{course.credit}</span>
+                          <span className='c-val-blue'>{c.course.credit}</span>
                           <span className='c-divider-light'>|</span>
-                          <span className='c-schedule'>{course.schedule}</span>
+                          <span className='c-schedule'>
+                            {c.course.placeAndTime
+                              ? JSON.parse(c.course.placeAndTime).time ||
+                                '시간 미정'
+                              : '시간 미정'}
+                          </span>
                         </div>
                       </div>
 
@@ -605,15 +647,8 @@ export default function Registration() {
                             <circle cx='20' cy='21' r='1'></circle>
                             <path d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6'></path>
                           </svg>
-                          <span
-                            className={`cartCountNum ${
-                              course.cartCount >
-                              course.maxStd - course.currentStd
-                                ? 'red'
-                                : ''
-                            }`}
-                          >
-                            {course.cartCount}
+                          <span className={'cartCountNum red'}>
+                            {c.cartCount}
                           </span>
                         </div>
                         <div className='arrowBox'>
@@ -683,9 +718,18 @@ export default function Registration() {
               >
                 {pipWindow ? '연습 종료 (Stop)' : '연습 모드 (Start)'}
               </button>
-              <p className='practiceDesc'>
-                * 연습 모드를 시작하면 <br /> 8시 28분부터 시계가 시작됩니다.
-              </p>
+              <select
+                className='timeSettingDropdown'
+                value={startOffset}
+                onChange={(e) => setStartOffset(Number(e.target.value))}
+              >
+                <option value={0} disabled hidden>
+                  연습 시작 설정
+                </option>
+                <option value={60}>60초 전</option>
+                <option value={30}>30초 전</option>
+                <option value={15}>15초 전</option>
+              </select>
             </div>
           </div>
         </div>
@@ -695,7 +739,40 @@ export default function Registration() {
       {pipWindow &&
         createPortal(
           <PracticeClock currentTime={currentTime} />,
-          pipWindow.document.body
+          pipWindow.document.body,
+        )}
+
+      {/* [Render] 대기열 모달 */}
+      {waitingInfo &&
+        createPortal(
+          <WaitingModal
+            initialQueueCount={waitingInfo.count}
+            initialWaitSeconds={waitingInfo.seconds}
+            onComplete={proceedToApiCall}
+          />,
+          document.body,
+        )}
+
+      {/* [Render] 성공 모달 */}
+      {showSuccessModal &&
+        createPortal(
+          <SuccessModal
+            onKeep={() => handleSuccessClose(false)}
+            onGoToHistory={() => handleSuccessClose(true)}
+          />,
+          document.body,
+        )}
+
+      {warningType !== 'none' &&
+        createPortal(
+          <WarningModal
+            warningType={warningType}
+            onClose={() => setWarningType('none')}
+            courseTitle={selectedCourseTitle}
+            courseNumber={selectedCourseNumber}
+            lectureNumber={selectedLectureTime}
+          />,
+          document.body,
         )}
     </div>
   );

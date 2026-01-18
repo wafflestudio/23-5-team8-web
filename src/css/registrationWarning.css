@@ -1,0 +1,219 @@
+/* 전체 배경 (어둡게 처리) */
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* 모달 박스 */
+.warningContainer {
+  background-color: white;
+  width: 360px; /* 사진과 비슷한 비율 */
+  border-radius: 8px; /* 모서리 둥글게 */
+  overflow: hidden; /* 자식 요소(버튼)가 둥근 모서리를 넘지 않게 */
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* 아이콘과 텍스트를 감싸는 영역 */
+.contentWrapper {
+  padding: 25px 14px 45px; /* 위아래 여백을 넉넉히 줌 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.warningIcon {
+  margin-bottom: 15px; /* 아이콘과 텍스트 사이 간격 */
+}
+
+.warningText {
+  font-size: 18px;
+  color: #222;
+  line-height: 1.5; /* 줄간격 확보 */
+  white-space: pre-wrap; /* \n 줄바꿈 적용 */
+  margin: 0;
+  font-weight: 500;
+}
+
+/* 하단 확인 버튼 */
+.confirmButton {
+  width: 100%;
+  height: 50px;
+  background-color: #154898; /* 연세 블루 계열 (스크린샷 색상) */
+  color: white;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.confirmButton:hover {
+  background-color: #0e3b7e;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- 대기열 모달 (WaitingModal) 스타일 --- */
+.waiting-modal-box {
+  background-color: white;
+  border-radius: 8px; /* 둥근 모서리 */
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.2s ease-out;
+  font-family: 'Malgun Gothic', dotum, sans-serif;
+  width: 400px;
+  padding: 30px 25px;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+
+.waiting-title {
+  font-size: 19px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.waiting-time-highlight {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.waiting-time-highlight u {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* 진행 바 (줄무늬 애니메이션) */
+.waiting-progress-container {
+  width: 100%;
+  height: 15px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 20px 0;
+  position: relative;
+}
+
+.waiting-progress-bar {
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    #b0c4de,
+    #b0c4de 10px,
+    #a3b8d4 10px,
+    #a3b8d4 20px
+  );
+  animation: moveStripe 1s linear infinite;
+}
+
+@keyframes moveStripe {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 28px 0;
+  }
+}
+
+.waiting-info-text {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+  text-align: left;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.waiting-info-text strong {
+  color: #2c3e50;
+  text-decoration: underline;
+}
+
+.waiting-warning-text {
+  margin-top: 15px;
+  font-size: 12px;
+  color: #3f729b;
+  font-weight: bold;
+}
+
+/* --- 성공 모달 (SuccessModal) 스타일 --- */
+.success-modal-box {
+  width: 380px;
+  border: 1px solid #aaa;
+}
+
+.success-header {
+  padding: 30px 20px;
+  text-align: center;
+  background-color: white;
+}
+
+.success-title {
+  font-size: 20px;
+  font-weight: normal;
+  color: #000;
+  margin-bottom: 15px;
+}
+
+.success-desc {
+  font-size: 14px;
+  color: #666;
+}
+
+/* 버튼 영역 (회색/파란색 반반) */
+.success-btn-row {
+  display: flex;
+  height: 50px;
+  border-top: 1px solid #ddd;
+}
+
+.success-btn {
+  flex: 1;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.success-btn.gray {
+  background-color: #a0a0a0;
+  color: white;
+}
+.success-btn.gray:hover {
+  background-color: #888;
+}
+
+.success-btn.blue {
+  background-color: #1b4594; /* SNU Blue 계열 */
+  color: white;
+}
+.success-btn.blue:hover {
+  background-color: #123475;
+}

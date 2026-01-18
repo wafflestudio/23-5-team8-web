@@ -16,10 +16,7 @@ export interface ErrorResponse {
   error: string;
   message: string;
   errorCode: string;
-  validationErrors?: Record<
-    string,
-    string
-  > | null;
+  validationErrors?: Record<string, string> | null;
 }
 
 export interface LoginRequest {
@@ -99,4 +96,11 @@ export interface PreEnrollCourseResponse {
   preEnrollId: number;
   course: Course;
   cartCount: number;
+}
+
+// 연습 수강신청 관련 타입
+export interface PracticeRegisterRequest {
+  courseId: number;
+  totalCompetitors: number;
+  capacity: number;
 }
