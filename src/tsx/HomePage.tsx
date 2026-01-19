@@ -92,29 +92,15 @@ export default function HomePage() {
                 href='#'
                 onClick={showNotSupportedToast}
               >
-                장바구니 초보를 위한 수강신청 안내 →
+                ALLCLEAR 서비스 이용 방법 안내
               </a>
               <a
                 className={user ? 'rightFilledBtn' : 'rightOutlineBtn'}
-                href='#'
-                onClick={showNotSupportedToast}
+                href='https://docs.google.com/forms/d/e/1FAIpQLSediDA6u8VTTy9sAJ5VHDsUuLRQLaSJyBypCXz3EuO6kJ6IJQ/viewform'
+                target='_blank'
+                rel='noopener noreferrer'
               >
-                수강신청방법 매뉴얼
-                <svg
-                  width='24'
-                  height='24'
-                  viewBox='0 0 24 24'
-                  fill='none'
-                  stroke='currentColor'
-                  strokeWidth='2'
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  style={{marginLeft: '5px'}}
-                >
-                  <path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' />
-                  <polyline points='7 10 12 15 17 10' />
-                  <line x1='12' y1='15' x2='12' y2='3' />
-                </svg>
+                개발자에게 피드백
               </a>
             </div>
 
@@ -131,6 +117,14 @@ export default function HomePage() {
                     {n.title}
                   </Link>
                 ))}
+              </div>
+            </section>
+            <section className='panel LeaderBoardPanel'>
+              <div className='panelHead'>
+                <div className='panelTitle'>리더보드</div>
+              </div>
+              <div className='panelBody leaderBoardBody'>
+                리더보드 기능은 곧 업데이트될 예정입니다!
               </div>
             </section>
           </div>
