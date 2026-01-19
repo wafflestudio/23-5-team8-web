@@ -18,10 +18,10 @@ body {
   height: 100%;
 }
 body {
-  margin-top: 40px;
   font-family: 'Noto Sans KR', sans-serif;
   color: var(--text);
   background: var(--bg);
+  margin-top: -10px;
 }
 a {
   color: inherit;
@@ -44,20 +44,6 @@ button {
   margin: 0 auto;
 }
 
-.skip {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  padding: 8px 12px;
-  background: #000;
-  color: #fff;
-}
-.skip:focus {
-  left: 12px;
-  top: 12px;
-  z-index: 9999;
-}
-
 .header {
   position: fixed;
   top: 0;
@@ -74,15 +60,6 @@ button {
   position: relative;
   border-top: 1px solid var(--line);
   z-index: 1000;
-}
-
-.distributorLine {
-  background-color: #ffdddd;
-  color: #a70000;
-  text-align: center;
-  padding: 12px 0;
-  font-size: 16px;
-  font-weight: 500;
 }
 
 /* Logo */
@@ -123,11 +100,8 @@ button {
   font-size: 23px;
   letter-spacing: -0.6px;
 }
-.logoSemiBold {
-  font-weight: 500;
-  font-size: 23px;
-}
 .logoTerm {
+  margin-left: 4px;
   color: var(--blue);
   font-size: 18px;
 }
@@ -446,7 +420,10 @@ button {
   transform: scaleY(0); /* 기본 상태: 세로 크기 0 */
   opacity: 0;
   visibility: hidden;
-  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s; /* 화살표와 동일한 0.3s */
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease,
+    visibility 0.3s; /* 화살표와 동일한 0.3s */
 }
 
 .userDropdown.active {

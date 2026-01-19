@@ -10,6 +10,7 @@ import SearchPage from './Search.tsx';
 import Cart from './Cart.tsx';
 import Registration from './RegistrationPage.tsx';
 import EnrollmentHistory from './EnrollmentHistory.tsx';
+import LeaderBoard from './LeaderBoard.tsx';
 import NeedLogin from '../utils/needLogin.tsx';
 import showNotSupportedToast from '../utils/notSupporting.tsx';
 
@@ -17,19 +18,18 @@ export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const {user, timeLeft, extendLogin, logout} = useAuth();
+  const [showLoginWarningOpen, setShowLoginWarningOpen] = useState(false);
   const isAuthPage =
     location.pathname === '/login' || location.pathname === '/register';
 
   const handleLogout = async () => {
+    setShowLoginWarningOpen(false);
     await logout();
     navigate('/');
   };
 
   return (
     <div className='app' style={{paddingTop: !isAuthPage ? '170px' : '0'}}>
-      <a href='#main' className='skip'>
-        본문 영역으로 바로가기
-      </a>
       {!isAuthPage && <Header handleLogout={handleLogout} />}
       <div id='main'>
         <Routes>
@@ -41,14 +41,18 @@ export default function App() {
           <Route path='/cart' element={<Cart />} />
           <Route path='/registration' element={<Registration />} />
           <Route path='/enrollment-history' element={<EnrollmentHistory />} />
+          <Route path='/leaderboard' element={<LeaderBoard />} />
         </Routes>
       </div>
-      {!isAuthPage && <Footer />}
-      {user && timeLeft <= 60 && timeLeft > 0 && (
+      {!isAuthPage && (
+        <Footer onOpenModal={() => setShowLoginWarningOpen(true)} />
+      )}
+      {user && (timeLeft <= 60 || showLoginWarningOpen) && timeLeft > 0 && (
         <SessionWarningModal
           timeLeft={timeLeft}
           onExtend={extendLogin}
           onLogout={handleLogout}
+          setShowLoginWarningOpen={setShowLoginWarningOpen}
         />
       )}
     </div>
@@ -60,7 +64,7 @@ function Header({handleLogout}: {handleLogout: () => void}) {
   const navigate = useNavigate();
   const {user} = useAuth();
   const [hoverMenu, setHoverMenu] = useState<null | 'search' | 'apply' | 'mba'>(
-    null
+    null,
   );
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLoginWarningOpen, setShowLoginWarningOpen] = useState(false);
@@ -91,7 +95,6 @@ function Header({handleLogout}: {handleLogout: () => void}) {
 
   return (
     <header className='header'>
-      <div className='distributorLine'>수강신청 연습 사이트입니다.</div>
       <div className='headTop'>
         <div className='containerX headTopGrid'>
           <div className='logoArea'>
@@ -99,7 +102,7 @@ function Header({handleLogout}: {handleLogout: () => void}) {
               <Link to='/'>
                 <img
                   src='/assets/logo.png'
-                  alt='SNU CRS'
+                  alt='ALLCLEAR'
                   onError={(e) => {
                     (e.currentTarget as HTMLImageElement).style.display =
                       'none';
@@ -111,7 +114,7 @@ function Header({handleLogout}: {handleLogout: () => void}) {
             <div className='logoTextArea'>
               <div className='logoTitle'>
                 <Link to='/' className='logoBold'>
-                  SNU <span className='logoSemiBold'>CRS</span>
+                  ALLCLEAR
                 </Link>
                 <span className='logoTerm'>2026-1학기</span>
               </div>
@@ -276,6 +279,13 @@ function Header({handleLogout}: {handleLogout: () => void}) {
             >
               수강교과목추천(스누지니)
             </a>
+            <Link
+              to='/leaderboard'
+              className='gnbItem'
+              onClick={handleProtectedClick}
+            >
+              리더보드
+            </Link>
           </nav>
 
           <div className='linkList' aria-label='우측 링크'>
@@ -464,8 +474,8 @@ function NoticePage() {
   );
 }
 
-function Footer() {
-  const {user, timeLeft, extendLogin} = useAuth();
+function Footer({onOpenModal}: {onOpenModal: () => void}) {
+  const {user, timeLeft} = useAuth();
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -528,7 +538,7 @@ function Footer() {
                 10분간 사용하지 않을 경우 자동로그아웃 됩니다.
               </span>
             </div>
-            <button className='extendBtn' onClick={extendLogin}>
+            <button className='extendBtn' onClick={onOpenModal}>
               지금 로그인 연장
             </button>
           </div>
@@ -544,10 +554,12 @@ function SessionWarningModal({
   timeLeft,
   onExtend,
   onLogout,
+  setShowLoginWarningOpen,
 }: {
   timeLeft: number;
   onExtend: () => void;
   onLogout: () => void;
+  setShowLoginWarningOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -590,7 +602,13 @@ function SessionWarningModal({
             로그아웃
           </button>
           {/* 로그인 연장 버튼 연결 */}
-          <button className='footerBtn extend' onClick={onExtend}>
+          <button
+            className='footerBtn extend'
+            onClick={() => {
+              onExtend();
+              setShowLoginWarningOpen(false);
+            }}
+          >
             로그인 연장
           </button>
         </div>
