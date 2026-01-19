@@ -1,10 +1,5 @@
 import {api} from './axios';
-
-export interface PracticeRegisterRequest {
-  courseId: number;
-  totalCompetitors: number;
-  capacity: number;
-}
+import type {PracticeRegisterRequest} from '../types/apiTypes.tsx';
 
 // 연습 세션 시작 API
 export const practiceStartApi = async () => {
@@ -16,7 +11,7 @@ export const practiceStartApi = async () => {
       headers: {
         'Content-Type': 'application/json',
       },
-    }
+    },
   );
 };
 
@@ -30,13 +25,13 @@ export const practiceEndApi = async () => {
       headers: {
         'Content-Type': 'application/json',
       },
-    }
+    },
   );
 };
 
 //수강신청 연습 시도 API
 export const practiceAttemptApi = async (data: PracticeRegisterRequest) => {
-  return await api.post('/api/practice/register', data, {
+  return await api.post('/api/practice/attempt', data, {
     withCredentials: true,
     headers: {
       'Content-Type': 'application/json',
