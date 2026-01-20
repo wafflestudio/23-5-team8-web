@@ -243,7 +243,7 @@
 .c-val-blue {
   color: #376dc8;
   font-size: 14px;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
 }
 
 .c-divider-light {
@@ -281,7 +281,7 @@
 
 .cartCountNum {
   font-size: 15px;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   color: #333;
 }
 
@@ -314,7 +314,7 @@
   font-size: 14px;
   font-weight: 400;
   cursor: pointer;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
 }
 
 .outlineBtn {
@@ -373,8 +373,8 @@
 }
 .captchaDigit {
   display: inline-block;
-  font-family:
-    'Courier New', Courier, monospace; /* 픽셀 느낌이 나는 고정폭 글꼴 */
+  font-family: "Courier New", Courier, monospace; /* 픽셀 느낌이 나는 고정폭 글꼴 */
+
   font-weight: 900;
   margin: 0 4px; /* 기본 간격 */
 
