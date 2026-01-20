@@ -457,22 +457,6 @@ export default function Registration() {
     }
   };
 
-  useEffect(() => {
-    return () => {
-      // 1. 타이머 정리 (메모리 누수 방지)
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-
-      // 2. PiP 창 닫기
-      // 중요: 여기서 setPipWindow(null)을 호출하지 않습니다.
-      // 컴포넌트가 이미 사라지는 중이므로 상태 업데이트는 불필요합니다.
-      if (pipWindow && !pipWindow.closed) {
-        pipWindow.close();
-      }
-    };
-  }, [pipWindow]);
-
   // [추가] PiP 창 상태에 따라 타이머를 자동으로 켜고 끄는 Effect
   useEffect(() => {
     // PiP 창이 없으면 타이머를 돌리지 않음
@@ -502,6 +486,9 @@ export default function Registration() {
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
+      }
+      if (!pipWindow.closed) {
+        pipWindow.close();
       }
     };
   }, [pipWindow, handleStopPractice]); // pipWindow가 변할 때마다 실행됨
