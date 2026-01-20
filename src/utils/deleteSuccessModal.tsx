@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import "../css/needLogin.css";
 
 interface DeleteSuccessModalProps {
@@ -9,13 +10,17 @@ export default function DeleteSuccessModal({
   isOpen,
   onClose,
 }: DeleteSuccessModalProps) {
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
-    <div
-      className="login-modal-overlay"
-      onClick={onClose}
-    >
+    <div className="login-modal-overlay">
       <div
         className="delete-modal-box"
         onClick={(e) => e.stopPropagation()}
