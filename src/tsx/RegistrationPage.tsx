@@ -423,13 +423,20 @@ export default function Registration() {
     }
   };
 
+  const startTimeRef = useRef<number>(0);
+  const virtualOffsetRef = useRef<number>(0);
+
   // 타이머와 PiP를 켜는 로직을 별도 함수로 분리 (중복 제거)
   const startTimerAndPip = async () => {
     const offsetSeconds = startOffset === 0 ? 30 : startOffset;
-    const startTime = new Date();
-    startTime.setHours(8, 30, 0, 0);
-    startTime.setSeconds(startTime.getSeconds() - offsetSeconds);
-    setCurrentTime(startTime);
+    const virtualStart = new Date();
+    virtualStart.setHours(8, 30, 0, 0);
+    virtualStart.setSeconds(virtualStart.getSeconds() - offsetSeconds);
+
+    startTimeRef.current = Date.now();
+    virtualOffsetRef.current = virtualStart.getTime();
+
+    setCurrentTime(virtualStart);
     isPracticeRunningRef.current = true; // 실행 상태 플래그 true 설정
 
     // PiP 창 열기
@@ -450,22 +457,6 @@ export default function Registration() {
     }
   };
 
-  useEffect(() => {
-    return () => {
-      // 1. 타이머 정리 (메모리 누수 방지)
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-
-      // 2. PiP 창 닫기
-      // 중요: 여기서 setPipWindow(null)을 호출하지 않습니다.
-      // 컴포넌트가 이미 사라지는 중이므로 상태 업데이트는 불필요합니다.
-      if (pipWindow && !pipWindow.closed) {
-        pipWindow.close();
-      }
-    };
-  }, [pipWindow]);
-
   // [추가] PiP 창 상태에 따라 타이머를 자동으로 켜고 끄는 Effect
   useEffect(() => {
     // PiP 창이 없으면 타이머를 돌리지 않음
@@ -476,25 +467,28 @@ export default function Registration() {
 
     // 타이머 시작 (window.setInterval 명시)
     timerRef.current = window.setInterval(() => {
-      setCurrentTime((prev) => {
-        const nextTime = new Date(prev.getTime() + 1000);
+      // 현재 실제 시간과 시작 시간의 차이(경과 시간)를 계산
+      const now = Date.now();
+      const elapsed = now - startTimeRef.current;
 
-        // 8시 33분 체크 (자동 종료)
-        if (
-          nextTime.getHours() === 8 &&
-          nextTime.getMinutes() === 33 &&
-          nextTime.getSeconds() === 0
-        ) {
-          handleStopPractice(false);
-        }
-        return nextTime;
-      });
+      // 오차 없이 정확한 가상 현재 시간 계산
+      const nextTime = new Date(virtualOffsetRef.current + elapsed);
+
+      setCurrentTime(nextTime);
+
+      // 종료 로직 (8:33 체크)
+      if (nextTime.getHours() === 8 && nextTime.getMinutes() >= 33) {
+        handleStopPractice(false);
+      }
     }, 1000);
 
     // Cleanup: 창이 닫히거나 컴포넌트가 사라질 때 타이머 정지
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
+      }
+      if (!pipWindow.closed) {
+        pipWindow.close();
       }
     };
   }, [pipWindow, handleStopPractice]); // pipWindow가 변할 때마다 실행됨
