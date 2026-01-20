@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import "../css/needLogin.css";
 
 interface CartConfirmModalProps {
@@ -11,13 +12,17 @@ export default function CartConfirmModal({
   onClose,
   onConfirm,
 }: CartConfirmModalProps) {
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
-    <div
-      className="login-modal-overlay"
-      onClick={onClose}
-    >
+    <div className="login-modal-overlay">
       <div
         className="login-modal-box"
         onClick={(e) => e.stopPropagation()}
