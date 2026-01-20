@@ -15,9 +15,9 @@ export default function NeedLogin({
   if (!isOpen) return null;
 
   return (
-    <div className='login-modal-overlay' onClick={onClose}>
+    <div className='login-modal-overlay'>
       {/* 모달 내부를 클릭했을 때는 닫히지 않도록 stopPropagation 사용 */}
-      <div className='login-modal-box' onClick={(e) => e.stopPropagation()}>
+      <div className='login-modal-box'>
         <div className='login-modal-content'>
           {/* 물음표 아이콘 영역 */}
           <div className='icon-wrapper'>

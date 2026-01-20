@@ -2,10 +2,10 @@ import {api} from './axios';
 import type {PracticeRegisterRequest} from '../types/apiTypes.tsx';
 
 // 연습 세션 시작 API
-export const practiceStartApi = async () => {
+export const practiceStartApi = async (vittualStartTimeOption: string) => {
   return await api.post(
     '/api/practice/start',
-    {},
+    {vittualStartTimeOption: vittualStartTimeOption},
     {
       withCredentials: true,
       headers: {

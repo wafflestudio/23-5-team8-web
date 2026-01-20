@@ -2,7 +2,7 @@ import {useState, useEffect, useRef, useCallback} from 'react';
 import {createPortal} from 'react-dom';
 import {useNavigate} from 'react-router-dom';
 import '../css/registrationPage.css';
-import showNotSupportedToast from '../utils/notSupporting';
+import Notsupporting from '../utils/notSupporting';
 import {
   practiceStartApi,
   practiceEndApi,
@@ -141,7 +141,7 @@ export default function Registration() {
   const [captchaInput, setCaptchaInput] = useState('');
   const [currentTime, setCurrentTime] = useState<Date>(() => {
     const now = new Date();
-    now.setHours(8, 29, 0, 0); // 기본값 8:29
+    now.setHours(8, 29, 30, 0); // 기본값 8:29:30
     return now;
   });
   const [startOffset, setStartOffset] = useState<number>(0);
@@ -151,6 +151,7 @@ export default function Registration() {
     seconds: number;
   } | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showNotSupportedModal, setShowNotSupportedModal] = useState(false);
 
   const navigate = useNavigate();
   const timerRef = useRef<number | undefined>(undefined);
@@ -308,40 +309,26 @@ export default function Registration() {
   const handleStartPractice = async () => {
     try {
       // 1. API 호출 시도
-      await practiceStartApi();
+      let optionString = 'TIME_08_29_30'; // 기본값 (30초 전)
+
+      if (startOffset === 60) {
+        optionString = 'TIME_08_29_00'; // 1분 전
+      } else if (startOffset === 15) {
+        optionString = 'TIME_08_29_45'; // 15초 전
+      }
+      await practiceStartApi(optionString);
 
       // (성공 시 실행되는 로직은 아래로 이동)
       startTimerAndPip();
     } catch (error) {
-      // 409 Conflict (이미 세션이 존재함) 에러 처리
-      if (isAxiosError(error) && error.response?.status === 409) {
-        console.warn('기존 세션이 감지되어 종료 후 재시작합니다.');
-
-        try {
-          // 강제로 종료 API 호출하여 좀비 세션 정리
-          await practiceEndApi();
-
-          // 다시 시작 요청
-          await practiceStartApi();
-
-          // 재시도 성공 시 타이머/PiP 시작
-          startTimerAndPip();
-        } catch (retryError) {
-          console.error('재시도 실패:', retryError);
-          alert('연습 모드를 시작할 수 없습니다. 잠시 후 다시 시도해주세요.');
-        }
+      // 에러 처리
+      console.error('연습 시작 오류:', error);
+      if (isAxiosError(error) && error.response) {
+        alert(
+          `연습 시작 실패: ${error.response.data.message || '알 수 없는 오류'}`,
+        );
       } else {
-        // 그 외 에러 처리
-        console.error('연습 시작 오류:', error);
-        if (isAxiosError(error) && error.response) {
-          alert(
-            `연습 시작 실패: ${
-              error.response.data.message || '알 수 없는 오류'
-            }`,
-          );
-        } else {
-          alert('연습 시작 중 네트워크 오류가 발생했습니다.');
-        }
+        alert('연습 시작 중 네트워크 오류가 발생했습니다.');
       }
     }
   };
@@ -438,7 +425,7 @@ export default function Registration() {
 
   // 타이머와 PiP를 켜는 로직을 별도 함수로 분리 (중복 제거)
   const startTimerAndPip = async () => {
-    const offsetSeconds = startOffset === 0 ? 60 : startOffset;
+    const offsetSeconds = startOffset === 0 ? 30 : startOffset;
     const startTime = new Date();
     startTime.setHours(8, 30, 0, 0);
     startTime.setSeconds(startTime.getSeconds() - offsetSeconds);
@@ -512,6 +499,29 @@ export default function Registration() {
     };
   }, [pipWindow, handleStopPractice]); // pipWindow가 변할 때마다 실행됨
 
+  // [추가] 모달 오픈 시 바디 스크롤 제어
+  useEffect(() => {
+    // 세 가지 모달 상태 중 하나라도 활성화되어 있는지 확인
+    const isModalOpen =
+      waitingInfo !== null ||
+      showSuccessModal ||
+      warningType !== 'none' ||
+      showNotSupportedModal;
+
+    if (isModalOpen) {
+      // 모달이 열리면 스크롤 숨김
+      document.body.style.overflow = 'hidden';
+    } else {
+      // 모달이 없으면 스크롤 복구
+      document.body.style.overflow = 'unset';
+    }
+
+    // 컴포넌트가 언마운트되거나 상태가 변할 때 정리(Cleanup)
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [waitingInfo, showSuccessModal, warningType, showNotSupportedModal]);
+
   return (
     <div className='registrationPage'>
       <div className='containerX'>
@@ -523,13 +533,22 @@ export default function Registration() {
         {/* 탭 메뉴 */}
         <div className='regTabs'>
           <button className='regTabItem active'>장바구니 보류강좌</button>
-          <button className='regTabItem' onClick={showNotSupportedToast}>
+          <button
+            className='regTabItem'
+            onClick={() => setShowNotSupportedModal(true)}
+          >
             관심강좌
           </button>
-          <button className='regTabItem' onClick={showNotSupportedToast}>
+          <button
+            className='regTabItem'
+            onClick={() => setShowNotSupportedModal(true)}
+          >
             교과목검색
           </button>
-          <button className='regTabItem' onClick={showNotSupportedToast}>
+          <button
+            className='regTabItem'
+            onClick={() => setShowNotSupportedModal(true)}
+          >
             교과목번호 검색
           </button>
         </div>
@@ -774,6 +793,10 @@ export default function Registration() {
           />,
           document.body,
         )}
+      <Notsupporting
+        isOpen={showNotSupportedModal}
+        onClose={() => setShowNotSupportedModal(false)}
+      />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 // RegistrationWarning.tsx
 
 import {useEffect, useState, useRef} from 'react';
-import '../css/registrationWarning.css';
+import '../css/Warning.css';
 import {calculateQueueInfo} from '../utils/RegistrationUtils.ts';
 
 export type Warning =
@@ -48,7 +48,7 @@ export function WarningModal({
       case 'beforeTime':
         return '수강신청 시간이 아닙니다.';
       case 'quotaOver':
-        return `${courseTitle}(${courseNumber},${lectureNumber}): 수강정원을\n초과하였습니다.`;
+        return `${courseTitle}(${courseNumber},${lectureNumber}): 수강정원을 초과하였습니다.`;
       case 'notChosen':
         return '수강신청할 강좌를 선택하십시오.';
       case 'practiceNotStarted':
