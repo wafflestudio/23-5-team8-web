@@ -243,7 +243,6 @@ export default function SearchPage() {
           setShowCartModal(false);
           navigate("/cart");
         }}
-        message={`장바구니에 추가되었습니다.\n\n지금 바로 장바구니로\n이동하시겠습니까?`}
       />
 
       {conflictCourse && (
