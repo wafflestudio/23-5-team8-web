@@ -164,12 +164,12 @@
 
 /* --- 성공 모달 (SuccessModal) 스타일 --- */
 .success-modal-box {
-  width: 380px;
+  width: 360px;
   border: 1px solid #aaa;
 }
 
 .success-header {
-  padding: 30px 20px;
+  padding: 15px 20px 20px;
   text-align: center;
   background-color: white;
 }
@@ -182,7 +182,7 @@
 }
 
 .success-desc {
-  font-size: 14px;
+  font-size: 15px;
   color: #666;
 }
 
@@ -196,8 +196,8 @@
 .success-btn {
   flex: 1;
   border: none;
-  font-size: 14px;
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
 }

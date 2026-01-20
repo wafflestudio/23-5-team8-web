@@ -72,15 +72,6 @@
   flex-wrap: wrap;
 }
 
-@media (max-width: 900px) {
-  .legendList {
-    justify-content: flex-end;
-    margin-right: 0;
-    width: 100%;
-    margin-bottom: 10px;
-  }
-}
-
 .legendItem {
   display: flex;
   align-items: center;
@@ -382,8 +373,8 @@
 }
 .captchaDigit {
   display: inline-block;
-  font-family:
-    "Courier New", Courier, monospace; /* 픽셀 느낌이 나는 고정폭 글꼴 */
+  font-family: "Courier New", Courier, monospace; /* 픽셀 느낌이 나는 고정폭 글꼴 */
+
   font-weight: 900;
   margin: 0 4px; /* 기본 간격 */
 

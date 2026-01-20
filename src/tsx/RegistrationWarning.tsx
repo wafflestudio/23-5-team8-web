@@ -1,12 +1,8 @@
 // RegistrationWarning.tsx
+import {useEffect, useState, useRef} from 'react';
+import '../css/Warning.css';
+import {calculateQueueInfo} from '../utils/RegistrationUtils.ts';
 
-import {
-  useEffect,
-  useState,
-  useRef,
-} from "react";
-import "../css/registrationWarning.css";
-import { calculateQueueInfo } from "../utils/RegistrationUtils.ts";
 
 export type Warning =
   | "beforeTime"
@@ -47,16 +43,16 @@ export function WarningModal({
 
   const getMessage = (type: Warning) => {
     switch (type) {
-      case "captchaError":
-        return "수강신청하지 못했습니다.수강신청\n확인문자와 입력하신 문자가 일치하지\n않습니다.다시 입력 후 수강신청\n해주십시오.";
-      case "beforeTime":
-        return "수강신청 시간이 아닙니다.";
-      case "quotaOver":
-        return `${courseTitle}(${courseNumber},${lectureNumber}): 수강정원을\n초과하였습니다.`;
-      case "notChosen":
-        return "수강신청할 강좌를 선택하십시오.";
-      case "practiceNotStarted":
-        return "연습 모드가 시작되지 않았습니다.\nStart 버튼을 눌러주세요.";
+      case 'captchaError':
+        return '수강신청하지 못했습니다.수강신청\n확인문자와 입력하신 문자가 일치하지\n않습니다.다시 입력 후 수강신청\n해주십시오.';
+      case 'beforeTime':
+        return '수강신청 시간이 아닙니다.';
+      case 'quotaOver':
+        return `${courseTitle}(${courseNumber},${lectureNumber}): 수강정원을 초과하였습니다.`;
+      case 'notChosen':
+        return '수강신청할 강좌를 선택하십시오.';
+      case 'practiceNotStarted':
+        return '연습 모드가 시작되지 않았습니다.\nStart 버튼을 눌러주세요.';
       default:
         return "알 수 없는 오류가 발생했습니다.";
     }

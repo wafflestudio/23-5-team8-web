@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import {useAuth} from '../contexts/AuthContext.ts';
 import '../css/header.css';
@@ -12,7 +12,7 @@ import Registration from './RegistrationPage.tsx';
 import EnrollmentHistory from './EnrollmentHistory.tsx';
 import LeaderBoard from './LeaderBoard.tsx';
 import NeedLogin from '../utils/needLogin.tsx';
-import showNotSupportedToast from '../utils/notSupporting.tsx';
+import NotSupporting from '../utils/notSupporting.tsx';
 
 export default function App() {
   const location = useLocation();
@@ -27,6 +27,13 @@ export default function App() {
     await logout();
     navigate('/');
   };
+
+  useEffect(() => {
+    document.body.style.overflow = showLoginWarningOpen ? 'hidden' : 'auto';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [showLoginWarningOpen]);
 
   return (
     <div className='app' style={{paddingTop: !isAuthPage ? '170px' : '0'}}>
@@ -68,6 +75,7 @@ function Header({handleLogout}: {handleLogout: () => void}) {
   );
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLoginWarningOpen, setShowLoginWarningOpen] = useState(false);
+  const [showNotSupportedModal, setShowNotSupportedModal] = useState(false);
   const [searchingCourse, setSearchingCourse] = useState('');
   const prevent = (e: React.MouseEvent) => e.preventDefault();
 
@@ -92,6 +100,14 @@ function Header({handleLogout}: {handleLogout: () => void}) {
     navigate('/login');
     setShowLoginWarningOpen(false);
   };
+
+  useEffect(() => {
+    const isModalOpen = showLoginWarningOpen || showNotSupportedModal;
+    document.body.style.overflow = isModalOpen ? 'hidden' : 'auto';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [showLoginWarningOpen, showNotSupportedModal]);
 
   return (
     <header className='header'>
@@ -118,9 +134,7 @@ function Header({handleLogout}: {handleLogout: () => void}) {
                 </Link>
                 <span className='logoTerm'>2026-1학기</span>
               </div>
-              <Link to='/' className='logoSub'>
-                서울대학교 수강신청 연습 시스템
-              </Link>
+              <div className='logoSub'>서울대학교 수강신청 연습 시스템</div>
             </div>
           </div>
 
@@ -160,7 +174,7 @@ function Header({handleLogout}: {handleLogout: () => void}) {
               <button
                 className='iconBtn'
                 aria-label='필터'
-                onClick={showNotSupportedToast}
+                onClick={() => setShowNotSupportedModal(true)}
               >
                 <svg
                   viewBox='0 0 24 24'
@@ -274,7 +288,7 @@ function Header({handleLogout}: {handleLogout: () => void}) {
             <a
               className='gnbItem'
               href='#'
-              onClick={showNotSupportedToast}
+              onClick={() => setShowNotSupportedModal(true)}
               onMouseEnter={() => setHoverMenu(null)}
             >
               수강교과목추천(스누지니)
@@ -289,7 +303,11 @@ function Header({handleLogout}: {handleLogout: () => void}) {
           </nav>
 
           <div className='linkList' aria-label='우측 링크'>
-            <a className='linkItem' href='#' onClick={showNotSupportedToast}>
+            <a
+              className='linkItem'
+              href='#'
+              onClick={() => setShowNotSupportedModal(true)}
+            >
               학업이수현황
             </a>
             <Link
@@ -298,13 +316,25 @@ function Header({handleLogout}: {handleLogout: () => void}) {
             >
               공지사항
             </Link>
-            <a className='linkItem' href='#' onClick={showNotSupportedToast}>
+            <a
+              className='linkItem'
+              href='#'
+              onClick={() => setShowNotSupportedModal(true)}
+            >
               FAQ
             </a>
-            <a className='linkItem' href='#' onClick={showNotSupportedToast}>
+            <a
+              className='linkItem'
+              href='#'
+              onClick={() => setShowNotSupportedModal(true)}
+            >
               수업교시기준
             </a>
-            <a className='linkItem' href='#' onClick={showNotSupportedToast}>
+            <a
+              className='linkItem'
+              href='#'
+              onClick={() => setShowNotSupportedModal(true)}
+            >
               ENGLISH
             </a>
           </div>
@@ -321,14 +351,14 @@ function Header({handleLogout}: {handleLogout: () => void}) {
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={showNotSupportedToast}
+                    onClick={() => setShowNotSupportedModal(true)}
                   >
                     관심강좌
                   </a>
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={showNotSupportedToast}
+                    onClick={() => setShowNotSupportedModal(true)}
                   >
                     수강지도상담
                   </a>
@@ -339,21 +369,21 @@ function Header({handleLogout}: {handleLogout: () => void}) {
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={showNotSupportedToast}
+                    onClick={() => setShowNotSupportedModal(true)}
                   >
                     예비장바구니
                   </a>
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={showNotSupportedToast}
+                    onClick={() => setShowNotSupportedModal(true)}
                   >
                     예비수강신청
                   </a>
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={showNotSupportedToast}
+                    onClick={() => setShowNotSupportedModal(true)}
                   >
                     예비수강신청내역
                   </a>
@@ -384,7 +414,7 @@ function Header({handleLogout}: {handleLogout: () => void}) {
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={showNotSupportedToast}
+                    onClick={() => setShowNotSupportedModal(true)}
                   >
                     정원 외 신청
                   </a>
@@ -395,14 +425,14 @@ function Header({handleLogout}: {handleLogout: () => void}) {
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={showNotSupportedToast}
+                    onClick={() => setShowNotSupportedModal(true)}
                   >
                     MBA 수강신청
                   </a>
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={showNotSupportedToast}
+                    onClick={() => setShowNotSupportedModal(true)}
                   >
                     EMBA 수강신청
                   </a>
@@ -416,6 +446,10 @@ function Header({handleLogout}: {handleLogout: () => void}) {
         isOpen={showLoginWarningOpen}
         onConfirm={handleConfirmLogin}
         onClose={() => setShowLoginWarningOpen(false)}
+      />
+      <NotSupporting
+        isOpen={showNotSupportedModal}
+        onClose={() => setShowNotSupportedModal(false)}
       />
     </header>
   );
@@ -476,6 +510,7 @@ function NoticePage() {
 
 function Footer({onOpenModal}: {onOpenModal: () => void}) {
   const {user, timeLeft} = useAuth();
+  const [showNotSupportedModal, setShowNotSupportedModal] = useState(false);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -492,7 +527,7 @@ function Footer({onOpenModal}: {onOpenModal: () => void}) {
             <a
               href='#'
               className='footerLinkItem bold'
-              onClick={showNotSupportedToast}
+              onClick={() => setShowNotSupportedModal(true)}
             >
               개인정보처리방침
             </a>
@@ -500,7 +535,7 @@ function Footer({onOpenModal}: {onOpenModal: () => void}) {
             <a
               href='#'
               className='footerLinkItem bold'
-              onClick={showNotSupportedToast}
+              onClick={() => setShowNotSupportedModal(true)}
             >
               이메일무단수집거부
             </a>
@@ -546,6 +581,10 @@ function Footer({onOpenModal}: {onOpenModal: () => void}) {
           <div className='footerRight'></div>
         )}
       </div>
+      <NotSupporting
+        isOpen={showNotSupportedModal}
+        onClose={() => setShowNotSupportedModal(false)}
+      />
     </div>
   );
 }

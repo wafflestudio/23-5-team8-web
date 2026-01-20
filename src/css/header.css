@@ -184,38 +184,34 @@ button {
   padding: 8px;
 }
 
-/* 1080px 이상 (PC) */
-@media (min-width: 1080px) {
-  .headTopGrid {
-    display: grid;
-    grid-template-columns: 342px 1fr;
-    justify-content: flex-start;
-  }
-  .searchArea {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    gap: 12px;
-  }
-  .searchBox {
-    display: flex;
-    flex: 1;
-  } /* Show SearchBox */
-  .mobileSearchBtn {
-    display: none;
-  } /* Hide Icon */
+.headTopGrid {
+  display: grid;
+  grid-template-columns: 342px 1fr;
+  justify-content: flex-start;
 }
+.searchArea {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+.searchBox {
+  display: flex;
+  flex: 1;
+} /* Show SearchBox */
+.mobileSearchBtn {
+  display: none;
+} /* Hide Icon */
 
 /* Head Bottom (GNB, LinkList) */
 .headBottom {
   display: none; /* Mobile Default: Hide Bottom Nav */
 }
-@media (min-width: 1080px) {
-  .headBottom {
-    display: block;
-  } /* PC: Show Bottom Nav */
-}
+
+.headBottom {
+  display: block;
+} /* PC: Show Bottom Nav */
 
 .headBottomFlex {
   display: flex;
@@ -333,14 +329,11 @@ button {
   display: none;
 }
 
-/* PC에서만 보임 */
-@media (min-width: 1080px) {
-  .userInfoArea {
-    display: block; /* 혹은 flex */
-    position: relative;
-    margin-left: 10px;
-    flex-shrink: 0; /* 공간 부족해도 줄어들지 않음 */
-  }
+.userInfoArea {
+  display: block; /* 혹은 flex */
+  position: relative;
+  margin-left: 10px;
+  flex-shrink: 0; /* 공간 부족해도 줄어들지 않음 */
 }
 
 .userInfoBtn {
