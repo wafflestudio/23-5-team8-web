@@ -334,16 +334,6 @@
   text-decoration: underline;
 }
 
-@media (max-width: 520px) {
-  .login-container {
-    padding: 40px 24px;
-  }
-
-  .login-title {
-    font-size: 24px;
-  }
-}
-
 /* Password Input Styles */
 .password-input-wrapper {
   position: relative;

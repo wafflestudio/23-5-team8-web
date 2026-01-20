@@ -134,9 +134,7 @@ function Header({handleLogout}: {handleLogout: () => void}) {
                 </Link>
                 <span className='logoTerm'>2026-1학기</span>
               </div>
-              <Link to='/' className='logoSub'>
-                서울대학교 수강신청 연습 시스템
-              </Link>
+              <div className='logoSub'>서울대학교 수강신청 연습 시스템</div>
             </div>
           </div>
 

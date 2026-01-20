@@ -29,44 +29,41 @@
   order: 5;
 }
 
-/* PC (1080px 이상): Grid 2 Columns */
-@media (min-width: 1080px) {
-  .homeGrid {
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 32px;
-    align-items: start;
-  }
+.homeGrid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 32px;
+  align-items: start;
+}
 
-  /* PC 배치 지정 (Grid Lines) */
-  /* Left Column Items */
-  .periodPanel {
-    grid-column: 1;
-    grid-row: 1;
-    order: unset;
-  }
-  .infoPanel {
-    grid-column: 1;
-    grid-row: 2;
-    order: unset;
-  }
+/* PC 배치 지정 (Grid Lines) */
+/* Left Column Items */
+.periodPanel {
+  grid-column: 1;
+  grid-row: 1;
+  order: unset;
+}
+.infoPanel {
+  grid-column: 1;
+  grid-row: 2;
+  order: unset;
+}
 
-  /* Right Column Items */
-  .loginPanel {
-    grid-column: 2;
-    grid-row: 1;
-    order: unset;
-  }
-  .rightButtons {
-    grid-column: 2;
-    grid-row: 2;
-    order: unset;
-  }
-  .noticePanel {
-    grid-column: 2;
-    grid-row: 3;
-    order: unset;
-  }
+/* Right Column Items */
+.loginPanel {
+  grid-column: 2;
+  grid-row: 1;
+  order: unset;
+}
+.rightButtons {
+  grid-column: 2;
+  grid-row: 2;
+  order: unset;
+}
+.noticePanel {
+  grid-column: 2;
+  grid-row: 3;
+  order: unset;
 }
 
 /* Panel Styles */
@@ -113,141 +110,68 @@
   letter-spacing: -0.6px;
 }
 
-/* Mobile Table (Grid Layout: Left Header / Right Details) */
-@media (max-width: 768px) {
-  /* 1. 테이블 헤더 숨김 */
-  .periodTable thead {
-    display: none;
-  }
-
-  /* 2. 테이블 구조 초기화 */
-  .periodTable,
-  .periodTable tbody {
-    display: block;
-    width: 100%;
-  }
-
-  /* 3. [핵심] 한 줄(tr)을 그리드로 만들어서 좌우 2칸으로 나눔 */
-  .periodTable tr {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
-  /* 4. 왼쪽 칸: "수강취소(개강후)" */
-  /* 첫 번째 td는 오른쪽 3줄(일자, 시간, 대상) 높이만큼 합침 */
-  .periodTable td:first-child {
-    grid-column: 1; /* 1열 */
-    grid-row: 1 / 4; /* 1행부터 4행 직전까지(총 3줄) 합치기 */
-
-    display: flex;
-    align-items: center; /* 수직 중앙 정렬 */
-    justify-content: center; /* 가로 중앙 정렬 */
-
-    text-align: center;
-    font-weight: 400;
-    color: #333;
-    border-right: 1px solid #e5e7eb;
-    padding: 0;
-  }
-
-  /* 왼쪽 칸에는 "수강신청 구분" 라벨(data-label) 표시 안 함 */
-  .periodTable td:first-child::before {
-    content: none;
-  }
-
-  /* 5. 오른쪽 칸들: 일자, 시간, 대상 */
-  .periodTable td:not(:first-child) {
-    grid-column: 2; /* 2열에 배치 */
-    display: flex;
-    align-items: flex-start; /* 글자가 길어지면 위쪽 기준 정렬 */
-    padding: 8px 12px;
-    font-size: 14px;
-    border-bottom: 1px solid #f3f4f6; /* 항목 사이 옅은 줄 */
-  }
-
-  /* 마지막 줄(대상)은 밑줄 제거 */
-  .periodTable td:last-child {
-    border-bottom: none;
-  }
-
-  /* 6. 라벨 스타일 (일자, 시간, 대상) */
-  .periodTable td::before {
-    content: attr(data-label);
-    display: block;
-    width: 40px; /* 라벨 너비 고정 (줄 맞춤용) */
-    flex-shrink: 0; /* 너비 줄어듦 방지 */
-    font-weight: 700;
-    color: #4b5563;
-    margin-right: 10px;
-    text-align: left;
-  }
+.periodTable,
+.periodTable thead,
+.periodTable tbody,
+.periodTable tr,
+.periodTable th,
+.periodTable td {
+  display: table-cell; /* display 초기화 (필수) */
 }
-/* PC Table */
-@media (min-width: 769px) {
-  .periodTable,
-  .periodTable thead,
-  .periodTable tbody,
-  .periodTable tr,
-  .periodTable th,
-  .periodTable td {
-    display: table-cell; /* display 초기화 (필수) */
-  }
-  .periodTable {
-    display: table; /* 테이블 자체는 table로 */
-    width: 100%;
-    table-layout: fixed; /* 열 너비 고정 */
-  }
-  .periodTable thead,
-  .periodTable tbody {
-    display: table-row-group;
-  }
-  .periodTable tr {
-    display: table-row;
-  }
-  .periodTable th:nth-child(1) {
-    width: 25%;
-  } /* 구분 */
-  .periodTable th:nth-child(2) {
-    width: 41%;
-  } /* 일자 */
-  .periodTable th:nth-child(3) {
-    width: 18%;
-  } /* 시간 */
-  .periodTable th:nth-child(4) {
-    width: 16%;
-  } /* 대상 */
-  .periodTable th {
-    padding: 14px 18px;
-    border-bottom: 1px solid #e5e7eb;
-    border-right: 1px solid #eef2f7;
-    font-size: 16px;
-    font-weight: 400;
-    text-align: center;
-    letter-spacing: -1px;
-  }
-  .periodTable td {
-    padding: 12px 5px;
-    border-bottom: none;
-    vertical-align: middle;
-    border-right: 1px solid #eef2f7;
-    font-size: 15px;
-    font-weight: 400;
-    letter-spacing: -0.6px;
+.periodTable {
+  display: table; /* 테이블 자체는 table로 */
+  width: 100%;
+  table-layout: fixed; /* 열 너비 고정 */
+}
+.periodTable thead,
+.periodTable tbody {
+  display: table-row-group;
+}
+.periodTable tr {
+  display: table-row;
+}
+.periodTable th:nth-child(1) {
+  width: 25%;
+} /* 구분 */
+.periodTable th:nth-child(2) {
+  width: 41%;
+} /* 일자 */
+.periodTable th:nth-child(3) {
+  width: 18%;
+} /* 시간 */
+.periodTable th:nth-child(4) {
+  width: 16%;
+} /* 대상 */
+.periodTable th {
+  padding: 14px 18px;
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #eef2f7;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: center;
+  letter-spacing: -1px;
+}
+.periodTable td {
+  padding: 12px 5px;
+  border-bottom: none;
+  vertical-align: middle;
+  border-right: 1px solid #eef2f7;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: -0.6px;
 
-    white-space: pre-wrap;
-  }
-  .periodTable td:first-child {
-    text-align: left;
-    padding-left: 18px;
-  }
-  .periodTable td:nth-child(2) {
-    text-align: center;
-  }
-  .periodTable th:last-child,
-  .periodTable td:last-child {
-    border-right: none;
-  }
+  white-space: pre-wrap;
+}
+.periodTable td:first-child {
+  text-align: left;
+  padding-left: 18px;
+}
+.periodTable td:nth-child(2) {
+  text-align: center;
+}
+.periodTable th:last-child,
+.periodTable td:last-child {
+  border-right: none;
 }
 
 /* Info & Notice Panel */
