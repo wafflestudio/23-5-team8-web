@@ -6,6 +6,7 @@ import {
 } from "../api/cart";
 import type { PreEnrollCourseResponse } from "../types/apiTypes.tsx";
 import { isAxiosError } from "axios";
+import DeleteSuccessModal from "../utils/deleteSuccessModal";
 
 export default function Cart() {
   const [cartCourses, setCartCourses] = useState<
@@ -16,6 +17,8 @@ export default function Cart() {
   const [loading, setLoading] = useState(false);
   const [editingValues, setEditingValues] =
     useState<Map<number, string>>(new Map());
+  const [showDeleteModal, setShowDeleteModal] =
+    useState(false);
 
   // 장바구니 조회
   useEffect(() => {
@@ -28,7 +31,7 @@ export default function Cart() {
       const response = await getPreEnrollsApi();
       console.log(
         "장바구니 API 응답:",
-        response.data
+        response.data,
       );
       setCartCourses(response.data);
     } catch (error) {
@@ -40,7 +43,7 @@ export default function Cart() {
 
   // 체크박스 토글
   const toggleCourseSelection = (
-    courseId: number
+    courseId: number,
   ) => {
     setSelectedCourses((prev) => {
       const newSet = new Set(prev);
@@ -60,22 +63,14 @@ export default function Cart() {
       return;
     }
 
-    if (
-      !confirm(
-        `${selectedCourses.size}개의 강의를 삭제하시겠습니까?`
-      )
-    ) {
-      return;
-    }
-
     try {
       const promises = Array.from(
-        selectedCourses
+        selectedCourses,
       ).map((courseId) =>
-        deletePreEnrollApi(courseId)
+        deletePreEnrollApi(courseId),
       );
       await Promise.all(promises);
-      alert("선택한 강의가 삭제되었습니다.");
+      setShowDeleteModal(true);
       setSelectedCourses(new Set());
       fetchCartCourses();
     } catch (error) {
@@ -85,11 +80,11 @@ export default function Cart() {
           `삭제 실패: ${
             error.response.data.message ||
             "알 수 없는 오류"
-          }`
+          }`,
         );
       } else {
         alert(
-          "삭제 중 네트워크 오류가 발생했습니다."
+          "삭제 중 네트워크 오류가 발생했습니다.",
         );
       }
     }
@@ -98,7 +93,7 @@ export default function Cart() {
   // cartCount 수정
   const handleCartCountChange = async (
     courseId: number,
-    newValue: string
+    newValue: string,
   ) => {
     const newCount = parseInt(newValue);
     if (isNaN(newCount) || newCount < 0) {
@@ -113,14 +108,14 @@ export default function Cart() {
     } catch (error) {
       console.error(
         "cartCount 수정 실패:",
-        error
+        error,
       );
       if (isAxiosError(error) && error.response) {
         alert(
           `수정 실패: ${
             error.response.data.message ||
             "알 수 없는 오류"
-          }`
+          }`,
         );
       }
     }
@@ -128,7 +123,7 @@ export default function Cart() {
 
   const totalCredit = cartCourses.reduce(
     (sum, item) => sum + item.course.credit,
-    0
+    0,
   );
 
   return (
@@ -219,7 +214,7 @@ export default function Cart() {
                 {cartCourses.map((item) => {
                   const isSelected =
                     selectedCourses.has(
-                      item.course.id
+                      item.course.id,
                     );
 
                   return (
@@ -228,7 +223,7 @@ export default function Cart() {
                       className="courseItem"
                       onClick={() =>
                         toggleCourseSelection(
-                          item.course.id
+                          item.course.id,
                         )
                       }
                     >
@@ -243,7 +238,7 @@ export default function Cart() {
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleCourseSelection(
-                              item.course.id
+                              item.course.id,
                             );
                           }}
                         >
@@ -345,7 +340,7 @@ export default function Cart() {
                               .placeAndTime
                               ? JSON.parse(
                                   item.course
-                                    .placeAndTime
+                                    .placeAndTime,
                                 ).time ||
                                 "시간 미정"
                               : "시간 미정"}
@@ -379,10 +374,11 @@ export default function Cart() {
                             type="number"
                             value={
                               editingValues.has(
-                                item.course.id
+                                item.course.id,
                               )
                                 ? editingValues.get(
-                                    item.course.id
+                                    item.course
+                                      .id,
                                   )
                                 : item.cartCount
                             }
@@ -397,22 +393,23 @@ export default function Cart() {
                                   newMap.set(
                                     item.course
                                       .id,
-                                    newValue
+                                    newValue,
                                   );
                                   return newMap;
-                                }
+                                },
                               );
                             }}
                             onBlur={(e) => {
                               e.stopPropagation();
                               if (
                                 editingValues.has(
-                                  item.course.id
+                                  item.course.id,
                                 )
                               ) {
                                 const value =
                                   editingValues.get(
-                                    item.course.id
+                                    item.course
+                                      .id,
                                   )!;
                                 const finalValue =
                                   value === ""
@@ -420,20 +417,20 @@ export default function Cart() {
                                     : value;
                                 handleCartCountChange(
                                   item.course.id,
-                                  finalValue
+                                  finalValue,
                                 );
                                 setEditingValues(
                                   (prev) => {
                                     const newMap =
                                       new Map(
-                                        prev
+                                        prev,
                                       );
                                     newMap.delete(
                                       item.course
-                                        .id
+                                        .id,
                                     );
                                     return newMap;
-                                  }
+                                  },
                                 );
                               }
                             }}
@@ -480,6 +477,11 @@ export default function Cart() {
           </div>
         </div>
       </div>
+
+      <DeleteSuccessModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+      />
     </main>
   );
 }

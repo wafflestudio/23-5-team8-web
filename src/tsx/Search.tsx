@@ -10,6 +10,7 @@ import { addPreEnrollApi } from "../api/cart";
 import type { Course } from "../types/apiTypes.tsx";
 import { isAxiosError } from "axios";
 import CartConfirmModal from "../utils/cartConfirmModal";
+import TimeConflictModal from "../utils/timeConflictModal";
 
 interface CaptchaDigit {
   value: string;
@@ -68,11 +69,20 @@ export default function SearchPage() {
   >([]);
   const [showCartModal, setShowCartModal] =
     useState(false);
+  const [
+    showConflictModal,
+    setShowConflictModal,
+  ] = useState(false);
+  const [conflictCourse, setConflictCourse] =
+    useState<{
+      name: string;
+      code: string;
+    } | null>(null);
 
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(
-    location.search
+    location.search,
   );
   const keyword = searchParams.get("query") || "";
   const pageSize = 10;
@@ -85,7 +95,7 @@ export default function SearchPage() {
         const response = await searchCoursesApi({
           keyword,
           page: 0,
-          size: 10000, // 모든 검색 결과를 가져오기
+          size: 10000,
         });
 
         // 클라이언트에서 필터링: 강의명, 교수명, 학과명에서 검색
@@ -113,8 +123,8 @@ export default function SearchPage() {
         setTotalCount(filteredCourses.length);
         setTotalPages(
           Math.ceil(
-            filteredCourses.length / pageSize
-          )
+            filteredCourses.length / pageSize,
+          ),
         );
       } catch (err) {
         console.error("강의 검색 실패:", err);
@@ -133,12 +143,12 @@ export default function SearchPage() {
     const startIndex = currentPage * pageSize;
     const endIndex = startIndex + pageSize;
     setCourses(
-      allCourses.slice(startIndex, endIndex)
+      allCourses.slice(startIndex, endIndex),
     );
   }, [currentPage, allCourses, pageSize]);
 
   const toggleCourseSelection = (
-    courseId: number
+    courseId: number,
   ) => {
     setSelectedCourses((prev) => {
       // 이미 선택된 강의를 다시 클릭하면 선택 해제
@@ -154,19 +164,19 @@ export default function SearchPage() {
   const handleAddToCart = async () => {
     if (selectedCourses.size === 0) {
       alert(
-        "장바구니에 담을 강의를 선택해주세요."
+        "장바구니에 담을 강의를 선택해주세요.",
       );
       return;
     }
 
     try {
       const promises = Array.from(
-        selectedCourses
+        selectedCourses,
       ).map((courseId) =>
         addPreEnrollApi({
           courseId,
           cartCount: 0,
-        })
+        }),
       );
       await Promise.all(promises);
       setSelectedCourses(new Set());
@@ -174,15 +184,51 @@ export default function SearchPage() {
     } catch (error) {
       console.error("장바구니 추가 실패:", error);
       if (isAxiosError(error) && error.response) {
-        alert(
-          `장바구니 추가 실패: ${
-            error.response.data.message ||
-            "알 수 없는 오류"
-          }`
+        console.log(
+          "Error status:",
+          error.response.status,
         );
+        console.log(
+          "Error data:",
+          error.response.data,
+        );
+
+        // 409 에러: 시간 충돌
+        if (error.response.status === 409) {
+          // 선택된 강의 정보 찾기
+          const courseId = Array.from(
+            selectedCourses,
+          )[0];
+          const course = courses.find(
+            (c) => c.id === courseId,
+          );
+
+          console.log(
+            "Conflict detected for course:",
+            course,
+          );
+
+          if (course) {
+            setConflictCourse({
+              name:
+                course.courseTitle ||
+                "알 수 없는 강의",
+              code: course.courseNumber || "",
+            });
+            setShowConflictModal(true);
+          }
+          setSelectedCourses(new Set());
+        } else {
+          alert(
+            `장바구니 추가 실패: ${
+              error.response.data.message ||
+              "알 수 없는 오류"
+            }`,
+          );
+        }
       } else {
         alert(
-          "장바구니 추가 중 네트워크 오류가 발생했습니다."
+          "장바구니 추가 중 네트워크 오류가 발생했습니다.",
         );
       }
     }
@@ -199,6 +245,24 @@ export default function SearchPage() {
         }}
         message={`장바구니에 추가되었습니다.\n\n지금 바로 장바구니로\n이동하시겠습니까?`}
       />
+
+      {conflictCourse && (
+        <TimeConflictModal
+          isOpen={showConflictModal}
+          onClose={() => {
+            setShowConflictModal(false);
+            setConflictCourse(null);
+          }}
+          onConfirm={() => {
+            setShowConflictModal(false);
+            setConflictCourse(null);
+            navigate("/cart");
+          }}
+          courseName={conflictCourse.name}
+          courseCode={conflictCourse.code}
+        />
+      )}
+
       <div className="containerX">
         <div className="searchHeader">
           <h2 className="searchTitle">
@@ -299,7 +363,7 @@ export default function SearchPage() {
                 courses.map((course) => {
                   const isSelected =
                     selectedCourses.has(
-                      course.id
+                      course.id,
                     );
                   const cartCount = 0; // 장바구니 개수 (나중에 구현)
 
@@ -309,7 +373,7 @@ export default function SearchPage() {
                       className="courseItem"
                       onClick={() =>
                         toggleCourseSelection(
-                          course.id
+                          course.id,
                         )
                       }
                     >
@@ -324,7 +388,7 @@ export default function SearchPage() {
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleCourseSelection(
-                              course.id
+                              course.id,
                             );
                           }}
                         >
@@ -409,10 +473,10 @@ export default function SearchPage() {
                           <span className="c-schedule">
                             {course.placeAndTime
                               ? JSON.parse(
-                                  course.placeAndTime
+                                  course.placeAndTime,
                                 ).time?.replace(
                                   /\//g,
-                                  " "
+                                  " ",
                                 ) || "시간 미정"
                               : ""}
                           </span>
@@ -507,7 +571,7 @@ export default function SearchPage() {
                     className="pageBtn"
                     onClick={() =>
                       setCurrentPage((prev) =>
-                        Math.max(0, prev - 1)
+                        Math.max(0, prev - 1),
                       )
                     }
                     disabled={currentPage === 0}
@@ -522,13 +586,13 @@ export default function SearchPage() {
                     {
                       length: Math.min(
                         5,
-                        totalPages
+                        totalPages,
                       ),
                     },
                     (_, i) => {
                       const startPage =
                         Math.floor(
-                          currentPage / 5
+                          currentPage / 5,
                         ) * 5;
                       const pageNum =
                         startPage + i;
@@ -546,14 +610,14 @@ export default function SearchPage() {
                           }`}
                           onClick={() =>
                             setCurrentPage(
-                              pageNum
+                              pageNum,
                             )
                           }
                         >
                           {pageNum + 1}
                         </button>
                       );
-                    }
+                    },
                   )}
 
                   <button
@@ -562,8 +626,8 @@ export default function SearchPage() {
                       setCurrentPage((prev) =>
                         Math.min(
                           totalPages - 1,
-                          prev + 1
-                        )
+                          prev + 1,
+                        ),
                       )
                     }
                     disabled={
@@ -580,7 +644,7 @@ export default function SearchPage() {
                     className="pageBtn"
                     onClick={() =>
                       setCurrentPage(
-                        totalPages - 1
+                        totalPages - 1,
                       )
                     }
                     disabled={
@@ -629,7 +693,7 @@ export default function SearchPage() {
                       >
                         {digit.value}
                       </span>
-                    )
+                    ),
                   )}
                 </div>
                 <input
