@@ -1,16 +1,20 @@
 import "../css/needLogin.css";
 
-interface CartConfirmModalProps {
+interface TimeConflictModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  courseName: string;
+  courseCode: string;
 }
 
-export default function CartConfirmModal({
+export default function TimeConflictModal({
   isOpen,
   onClose,
   onConfirm,
-}: CartConfirmModalProps) {
+  courseName,
+  courseCode,
+}: TimeConflictModalProps) {
   if (!isOpen) return null;
 
   return (
@@ -23,8 +27,9 @@ export default function CartConfirmModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="login-modal-content">
-          <h2 className="modal-title">
-            장바구니에 담겼습니다.
+          <h2 className="modal-title-conflict">
+            {courseName} ({courseCode}) :<br />
+            수업교시가 중복되었습니다.
           </h2>
           <p className="modal-subtitle">
             지금 바로 장바구니로
