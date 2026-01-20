@@ -64,9 +64,6 @@ export default function SearchPage() {
   const [currentPage, setCurrentPage] =
     useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [allCourses, setAllCourses] = useState<
-    Course[]
-  >([]);
   const [showCartModal, setShowCartModal] =
     useState(false);
   const [
@@ -87,49 +84,29 @@ export default function SearchPage() {
   const keyword = searchParams.get("query") || "";
   const pageSize = 10;
 
+  // 검색어 변경 시 첫 페이지 검색
   useEffect(() => {
     const fetchCourses = async () => {
       setLoading(true);
-      setCurrentPage(0);
+      setCurrentPage(0); // 페이지 리셋
       try {
         const response = await searchCoursesApi({
-          keyword,
+          query: keyword,
           page: 0,
-          size: 10000,
+          size: pageSize,
         });
 
-        // 클라이언트에서 필터링: 강의명, 교수명, 학과명에서 검색
-        const filteredCourses =
-          response.data.items.filter((course) => {
-            const searchLower =
-              keyword.toLowerCase();
-            return (
-              course.courseTitle
-                ?.toLowerCase()
-                .includes(searchLower) ||
-              course.instructor
-                ?.toLowerCase()
-                .includes(searchLower) ||
-              course.department
-                ?.toLowerCase()
-                .includes(searchLower) ||
-              course.college
-                ?.toLowerCase()
-                .includes(searchLower)
-            );
-          });
-
-        setAllCourses(filteredCourses);
-        setTotalCount(filteredCourses.length);
+        setCourses(response.data.items);
+        setTotalCount(
+          response.data.pageInfo.totalElements,
+        );
         setTotalPages(
-          Math.ceil(
-            filteredCourses.length / pageSize,
-          ),
+          response.data.pageInfo.totalPages,
         );
       } catch (err) {
         console.error("강의 검색 실패:", err);
         setError("강의 검색에 실패했습니다.");
-        setAllCourses([]);
+        setCourses([]);
       } finally {
         setLoading(false);
       }
@@ -138,14 +115,37 @@ export default function SearchPage() {
     fetchCourses();
   }, [keyword, pageSize]);
 
-  // 현재 페이지의 강의 목록 계산
+  // 페이지 변경 시 해당 페이지 로드 (검색어 변경이 아닐 때만)
   useEffect(() => {
-    const startIndex = currentPage * pageSize;
-    const endIndex = startIndex + pageSize;
-    setCourses(
-      allCourses.slice(startIndex, endIndex),
-    );
-  }, [currentPage, allCourses, pageSize]);
+    if (currentPage === 0) return; // 페이지 0은 검색어 변경 시 처리됨
+
+    const fetchCourses = async () => {
+      setLoading(true);
+      try {
+        const response = await searchCoursesApi({
+          query: keyword,
+          page: currentPage,
+          size: pageSize,
+        });
+
+        setCourses(response.data.items);
+        setTotalCount(
+          response.data.pageInfo.totalElements,
+        );
+        setTotalPages(
+          response.data.pageInfo.totalPages,
+        );
+      } catch (err) {
+        console.error("강의 검색 실패:", err);
+        setError("강의 검색에 실패했습니다.");
+        setCourses([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, [currentPage, keyword, pageSize]);
 
   const toggleCourseSelection = (
     courseId: number,
@@ -243,7 +243,6 @@ export default function SearchPage() {
           setShowCartModal(false);
           navigate("/cart");
         }}
-        message={`장바구니에 추가되었습니다.\n\n지금 바로 장바구니로\n이동하시겠습니까?`}
       />
 
       {conflictCourse && (
