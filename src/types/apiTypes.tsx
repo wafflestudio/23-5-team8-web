@@ -16,7 +16,10 @@ export interface ErrorResponse {
   error: string;
   message: string;
   errorCode: string;
-  validationErrors?: Record<string, string> | null;
+  validationErrors?: Record<
+    string,
+    string
+  > | null;
 }
 
 export interface LoginRequest {
@@ -46,7 +49,7 @@ export interface SignupResponse {
 
 // 강의 검색 관련 타입
 export interface CourseSearchRequest {
-  keyword?: string;
+  query?: string;
   page?: number;
   size?: number;
 }
