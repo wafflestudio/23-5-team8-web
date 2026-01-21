@@ -107,3 +107,28 @@ export interface PracticeRegisterRequest {
   totalCompetitors: number;
   capacity: number;
 }
+
+export interface PracticeAttemptResponse {
+  isSuccess: boolean;
+  message: string;
+}
+
+export interface PracticeDetailResponse {
+  id: number;
+  course: Course;
+  isSuccess: boolean;
+  userLatencyMs: number;
+  rank: number;
+  totalCompetitors: number;
+  capacity: number;
+  percentile: number;
+  createdAt: string;
+}
+
+export interface PracticeResultResponse {
+  practiceLogId: number;
+  startTime: string;
+  endTime: string | null;
+  earlyClickDiff: number | null;
+  details: PracticeDetailResponse[];
+}

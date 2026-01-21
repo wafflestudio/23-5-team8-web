@@ -69,7 +69,7 @@
   border: none;
   border-top: 2px solid #6b7280;
   min-height: 100px;
-  padding-top: 30px;
+  padding-top: 0;
   padding-bottom: 30px;
 }
 
@@ -84,4 +84,166 @@
   font-weight: 350;
   color: #919191;
   line-height: 1.5;
+}
+
+/* 강의 목록 스타일 (search.css 스타일 사용) */
+.resultListArea {
+  min-height: 400px;
+}
+
+.courseListContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.courseItem {
+  display: flex;
+  align-items: stretch;
+  padding: 16px 0 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #fff;
+  transition: background-color 0.1s;
+  cursor: pointer;
+}
+
+.courseItem:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.courseCheckArea {
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 18px;
+  margin-right: 24px;
+}
+
+.customCheckBtn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid #d1d1d1;
+  background-color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: border-color 0.2s;
+}
+
+.checkIcon {
+  width: 14px;
+  height: 14px;
+  stroke: #d1d1d1;
+  stroke-width: 3px;
+  transition: stroke 0.2s ease-in-out;
+}
+
+.courseItem:hover .customCheckBtn {
+  border-color: #3b87f5;
+}
+
+.customCheckBtn.checked {
+  border-color: #3b87f5;
+  background-color: #fff;
+}
+
+.customCheckBtn.checked .checkIcon {
+  stroke: #3b87f5;
+}
+
+.courseInfoArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.c-type {
+  font-size: 16px;
+  margin-right: 6px;
+  font-weight: 300;
+}
+
+.c-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+}
+
+.c-prof {
+  color: #555;
+  font-size: 14px;
+}
+
+.c-dept {
+  color: #555;
+  font-size: 14px;
+}
+
+.c-divider {
+  margin: 0 7px;
+  color: #777;
+  font-size: 12px;
+}
+
+.c-coursenum {
+  font-size: 14px;
+  color: #444;
+}
+
+.c-label {
+  color: #666;
+  font-size: 14px;
+  margin-right: 4px;
+}
+
+.c-val-blue {
+  color: #376dc8;
+  font-size: 14px;
+  font-family: "Noto Sans", sans-serif;
+}
+
+.c-divider-light {
+  margin: 0 11px;
+  color: #ddd;
+  font-size: 14px;
+}
+
+.c-schedule {
+  color: #555;
+  font-size: 14px;
+}
+
+.courseActionArea {
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-right: 24px;
+}
+
+.successBadge {
+  padding: 6px 12px;
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.successText {
+  font-size: 13px;
+  color: #16a34a;
+  font-weight: 500;
 }

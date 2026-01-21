@@ -38,3 +38,24 @@ export const practiceAttemptApi = async (data: PracticeRegisterRequest) => {
     },
   });
 };
+
+// 연습 결과 조회 API
+export const getPracticeResultApi = async (practiceLogId: number) => {
+  return await api.get(`/api/practice/results/${practiceLogId}`, {
+    withCredentials: true,
+  });
+};
+
+// 최근 연습 로그 조회 API (가장 최근 세션 가져오기)
+export const getLatestPracticeLogApi = async () => {
+  return await api.get('/api/practice/logs/latest', {
+    withCredentials: true,
+  });
+};
+
+// 수강신청 내역에서 삭제 API (practice detail 삭제)
+export const deletePracticeDetailApi = async (detailId: number) => {
+  return await api.delete(`/api/practice/details/${detailId}`, {
+    withCredentials: true,
+  });
+};
