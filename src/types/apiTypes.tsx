@@ -131,3 +131,25 @@ export interface PracticeResultResponse {
   successCount: number;
   attempts: PracticeAttemptDetail[];
 }
+// 리더보드 관련 타입
+export interface LeaderboardEntryResponse {
+  userId: number;
+  nickname: string;
+  profileImageUrl: string;
+  value: number;
+}
+
+export interface LeaderboardResponse {
+  topFirstReactionTime: LeaderboardEntryResponse[];
+  topSecondReactionTime: LeaderboardEntryResponse[];
+  topCompetitionRate: LeaderboardEntryResponse[];
+}
+
+export interface MyLeaderboardResponse {
+  bestFirstReactionTime: number | null;
+  bestFirstReactionTimeRank: number | null;
+  bestSecondReactionTime: number | null;
+  bestSecondReactionTimeRank: number | null;
+  bestCompetitionRate: number | null;
+  bestCompetitionRateRank: number | null;
+}
