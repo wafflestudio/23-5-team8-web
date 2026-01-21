@@ -11,9 +11,11 @@ export default function DeleteSuccessModal({
   onClose,
 }: DeleteSuccessModalProps) {
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+    document.body.style.overflow = isOpen
+      ? "hidden"
+      : "auto";
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     };
   }, [isOpen]);
 

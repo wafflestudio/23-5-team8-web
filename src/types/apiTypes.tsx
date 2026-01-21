@@ -130,3 +130,27 @@ export interface MyLeaderboardResponse {
   bestCompetitionRate: number | null;
   bestCompetitionRateRank: number | null;
 }
+
+export interface PracticeAttemptResponse {
+  isSuccess: boolean;
+  message: string;
+}
+
+export interface PracticeAttemptDetail {
+  courseId: number;
+  courseTitle: string;
+  lectureNumber: string;
+  isSuccess: boolean;
+  rank: number;
+  percentile: number;
+  reactionTime: number;
+}
+
+export interface PracticeResultResponse {
+  practiceLogId: number;
+  practiceAt: string;
+  earlyClickDiff: number | null;
+  totalAttempts: number;
+  successCount: number;
+  attempts: PracticeAttemptDetail[];
+}

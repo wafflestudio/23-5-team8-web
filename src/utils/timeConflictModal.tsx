@@ -17,9 +17,11 @@ export default function TimeConflictModal({
   courseCode,
 }: TimeConflictModalProps) {
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+    document.body.style.overflow = isOpen
+      ? "hidden"
+      : "auto";
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = "auto";
     };
   }, [isOpen]);
 
