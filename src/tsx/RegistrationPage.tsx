@@ -298,7 +298,6 @@ export default function Registration() {
     } else {
       // 대기열 없으면(너무 늦게 누름) 바로 API 호출
       proceedToApiCall();
-      setCaptchaInput(''); // 입력 초기화
     }
   };
 
