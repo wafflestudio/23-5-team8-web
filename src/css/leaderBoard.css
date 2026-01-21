@@ -1,0 +1,318 @@
+.leaderboard-page {
+  padding: 40px 0 60px;
+}
+
+.leaderboard-title {
+  font-size: 28px;
+  font-weight: 400;
+  margin: 0 0 24px 0;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+/* Filter Tabs (전체/주간) */
+.leaderboard-filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.leaderboard-filter-tab {
+  padding: 8px 16px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 400;
+  color: #6b7280;
+  border-radius: 20px;
+  transition: all 0.2s;
+}
+
+.leaderboard-filter-tab:hover {
+  border-color: #9ca3af;
+}
+
+.leaderboard-filter-tab.active {
+  background: var(--blue);
+  color: #ffffff;
+  border-color: var(--blue);
+}
+
+/* Category Tabs (1픽/2픽/경쟁률) */
+.leaderboard-category-tabs {
+  display: flex;
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 0;
+}
+
+.leaderboard-category-tab {
+  flex: 1;
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 400;
+  color: #6b7280;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.leaderboard-category-tab:hover {
+  color: #374151;
+}
+
+.leaderboard-category-tab.active {
+  color: var(--blue);
+  font-weight: 500;
+}
+
+.leaderboard-category-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--blue);
+}
+
+/* Leaderboard Container */
+.leaderboard-container {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+}
+
+/* List Header */
+.leaderboard-list-header {
+  display: grid;
+  grid-template-columns: 60px 1fr 120px;
+  padding: 12px 20px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+/* List */
+.leaderboard-list {
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.leaderboard-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.leaderboard-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.leaderboard-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.leaderboard-list::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* List Item */
+.leaderboard-item {
+  display: grid;
+  grid-template-columns: 60px 1fr 120px;
+  padding: 14px 20px;
+  align-items: center;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.15s;
+}
+
+.leaderboard-item:last-child {
+  border-bottom: none;
+}
+
+.leaderboard-item:hover {
+  background: #f9fafb;
+}
+
+.leaderboard-item.top-3 {
+  background: #fffbeb;
+}
+
+.leaderboard-item.top-3:hover {
+  background: #fef3c7;
+}
+
+/* Rank */
+.leaderboard-rank {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.leaderboard-item.top-3 .leaderboard-rank {
+  color: #d97706;
+}
+
+.leaderboard-rank-1 {
+  color: #eab308 !important;
+}
+
+.leaderboard-rank-2 {
+  color: #9ca3af !important;
+}
+
+.leaderboard-rank-3 {
+  color: #cd7f32 !important;
+}
+
+/* User Info */
+.leaderboard-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.leaderboard-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e5e7eb;
+}
+
+.leaderboard-nickname {
+  font-size: 14px;
+  font-weight: 400;
+  color: #111827;
+}
+
+/* Value */
+.leaderboard-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--blue);
+  text-align: right;
+}
+
+/* My Rank Section */
+.leaderboard-my-rank {
+  margin-top: 16px;
+  background: #f0f7ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+
+.leaderboard-my-rank-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.leaderboard-my-rank-item {
+  display: grid;
+  grid-template-columns: 60px 1fr 120px;
+  align-items: center;
+}
+
+.leaderboard-my-rank .leaderboard-rank {
+  color: var(--blue);
+}
+
+.leaderboard-my-rank .leaderboard-nickname {
+  font-weight: 500;
+}
+
+/* Loading & Empty States */
+.leaderboard-loading,
+.leaderboard-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.leaderboard-loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e5e7eb;
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 12px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Load More */
+.leaderboard-load-more {
+  padding: 16px;
+  text-align: center;
+  border-top: 1px solid #e5e7eb;
+}
+
+.leaderboard-load-more-btn {
+  padding: 10px 24px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 400;
+  color: #374151;
+  transition: all 0.2s;
+}
+
+.leaderboard-load-more-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.leaderboard-load-more-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Login Required */
+.leaderboard-login-required {
+  padding: 16px 20px;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.leaderboard-login-text {
+  font-size: 14px;
+  color: #92400e;
+}
+
+.leaderboard-login-btn {
+  padding: 8px 16px;
+  background: var(--blue);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  transition: background 0.2s;
+}
+
+.leaderboard-login-btn:hover {
+  background: #2563eb;
+}
