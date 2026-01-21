@@ -1,19 +1,23 @@
 import { useState, useEffect } from "react";
 import "../css/enrollmentHistory.css";
-import {
-  getLatestPracticeLogApi,
-  getPracticeResultApi,
-  deletePracticeDetailApi,
-} from "../api/registration";
-import type { PracticeDetailResponse } from "../types/apiTypes.tsx";
+import { getPracticeResultApi } from "../api/registration";
+import { searchCoursesApi } from "../api/courses";
+import type {
+  PracticeAttemptDetail,
+  Course,
+} from "../types/apiTypes.tsx";
 import { isAxiosError } from "axios";
 import DeleteSuccessModal from "../utils/deleteSuccessModal";
+
+interface EnrolledCourse extends PracticeAttemptDetail {
+  course: Course;
+}
 
 export default function EnrollmentHistory() {
   const [activeTab, setActiveTab] =
     useState("선택삭제");
   const [enrolledCourses, setEnrolledCourses] =
-    useState<PracticeDetailResponse[]>([]);
+    useState<EnrolledCourse[]>([]);
   const [selectedCourses, setSelectedCourses] =
     useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(false);
@@ -28,35 +32,132 @@ export default function EnrollmentHistory() {
   const fetchEnrolledCourses = async () => {
     setLoading(true);
     try {
-      // 1. 가장 최근 연습 로그 가져오기
-      const latestLogResponse =
-        await getLatestPracticeLogApi();
-      const practiceLogId =
-        latestLogResponse.data.id;
+      // localStorage에서 현재 연습 세션 ID 가져오기
+      const practiceLogId = localStorage.getItem(
+        "currentPracticeLogId",
+      );
 
-      // 2. 해당 로그의 결과 조회
+      if (!practiceLogId) {
+        console.log("활성 연습 세션이 없습니다.");
+        setEnrolledCourses([]);
+        setLoading(false);
+        return;
+      }
+
+      // 해당 로그의 결과 조회
       const resultResponse =
-        await getPracticeResultApi(practiceLogId);
-      const details = resultResponse.data.details;
-
-      // 3. 성공한 강의만 필터링
-      const successfulEnrollments =
-        details.filter(
-          (detail: PracticeDetailResponse) =>
-            detail.isSuccess,
+        await getPracticeResultApi(
+          Number(practiceLogId),
         );
 
-      setEnrolledCourses(successfulEnrollments);
+      console.log(
+        "결과 응답:",
+        resultResponse.data,
+      );
+
+      const attempts =
+        resultResponse.data.attempts;
+
+      // 성공한 강의만 필터링
+      const successfulAttempts = attempts.filter(
+        (attempt: PracticeAttemptDetail) =>
+          attempt.isSuccess,
+      );
+
+      console.log(
+        "성공한 시도들:",
+        successfulAttempts,
+      );
+
+      // 각 성공한 시도에 대해 강의 정보 검색으로 가져오기
+      const coursesWithDetails =
+        await Promise.all(
+          successfulAttempts.map(
+            async (attempt: PracticeAttemptDetail) => {
+              try {
+                // 강의명으로 검색
+                const searchResponse =
+                  await searchCoursesApi({
+                    query: attempt.courseTitle,
+                    page: 0,
+                    size: 100,
+                  });
+
+                // 검색 결과에서 courseId와 lectureNumber가 모두 일치하는 강의 찾기
+                const matchedCourse =
+                  searchResponse.data.items.find(
+                    (course) =>
+                      course.id ===
+                        attempt.courseId &&
+                      course.lectureNumber ===
+                        attempt.lectureNumber,
+                  );
+
+                if (matchedCourse) {
+                  return {
+                    ...attempt,
+                    course: matchedCourse,
+                  } as EnrolledCourse;
+                } else {
+                  // courseId만으로라도 찾아보기
+                  const courseByIdMatch =
+                    searchResponse.data.items.find(
+                      (course) =>
+                        course.id ===
+                        attempt.courseId,
+                    );
+
+                  if (courseByIdMatch) {
+                    return {
+                      ...attempt,
+                      course: courseByIdMatch,
+                    } as EnrolledCourse;
+                  }
+
+                  console.warn(
+                    `강의를 찾을 수 없습니다: ${attempt.courseTitle} (ID: ${attempt.courseId}, 분반: ${attempt.lectureNumber})`,
+                  );
+                  return null;
+                }
+              } catch (error) {
+                console.error(
+                  `강의 정보 조회 실패 (courseId: ${attempt.courseId}):`,
+                  error,
+                );
+                return null;
+              }
+            },
+          ),
+        );
+
+      // null이 아닌 항목만 필터링
+      const validCourses =
+        coursesWithDetails.filter(
+          (course): course is EnrolledCourse =>
+            course !== null,
+        );
+
+      setEnrolledCourses(validCourses);
     } catch (error) {
       console.error(
         "수강신청 내역 조회 실패:",
         error,
       );
-      if (
-        isAxiosError(error) &&
-        error.response?.status === 404
-      ) {
-        // 연습 로그가 없는 경우
+      if (isAxiosError(error)) {
+        console.error("에러 상세:", {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message,
+        });
+
+        if (error.response?.status === 404) {
+          // 연습 로그가 없는 경우
+          setEnrolledCourses([]);
+        } else {
+          // 다른 에러는 조용히 처리 (빈 상태로)
+          setEnrolledCourses([]);
+        }
+      } else {
         setEnrolledCourses([]);
       }
     } finally {
@@ -66,14 +167,14 @@ export default function EnrollmentHistory() {
 
   // 체크박스 토글
   const toggleCourseSelection = (
-    detailId: number,
+    courseId: number,
   ) => {
     setSelectedCourses((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(detailId)) {
-        newSet.delete(detailId);
+      if (newSet.has(courseId)) {
+        newSet.delete(courseId);
       } else {
-        newSet.add(detailId);
+        newSet.add(courseId);
       }
       return newSet;
     });
@@ -86,34 +187,16 @@ export default function EnrollmentHistory() {
       return;
     }
 
-    try {
-      const promises = Array.from(
-        selectedCourses,
-      ).map((detailId) =>
-        deletePracticeDetailApi(detailId),
+    // 연습 모드에서는 프론트엔드에서만 삭제 처리
+    const remainingCourses =
+      enrolledCourses.filter(
+        (course) =>
+          !selectedCourses.has(course.courseId),
       );
-      await Promise.all(promises);
-      setShowDeleteModal(true);
-      setSelectedCourses(new Set());
-      fetchEnrolledCourses();
-    } catch (error) {
-      console.error(
-        "수강신청 내역 삭제 실패:",
-        error,
-      );
-      if (isAxiosError(error) && error.response) {
-        alert(
-          `삭제 실패: ${
-            error.response.data.message ||
-            "알 수 없는 오류"
-          }`,
-        );
-      } else {
-        alert(
-          "삭제 중 네트워크 오류가 발생했습니다.",
-        );
-      }
-    }
+
+    setEnrolledCourses(remainingCourses);
+    setSelectedCourses(new Set());
+    setShowDeleteModal(true);
   };
 
   const totalCredit = enrolledCourses.reduce(
@@ -191,15 +274,17 @@ export default function EnrollmentHistory() {
               <div className="resultListArea">
                 {enrolledCourses.map((item) => {
                   const isSelected =
-                    selectedCourses.has(item.id);
+                    selectedCourses.has(
+                      item.courseId,
+                    );
 
                   return (
                     <div
-                      key={item.id}
+                      key={item.courseId}
                       className="courseItem"
                       onClick={() =>
                         toggleCourseSelection(
-                          item.id,
+                          item.courseId,
                         )
                       }
                     >
@@ -214,7 +299,7 @@ export default function EnrollmentHistory() {
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleCourseSelection(
-                              item.id,
+                              item.courseId,
                             );
                           }}
                         >
@@ -287,8 +372,9 @@ export default function EnrollmentHistory() {
                             수강신청인원/정원(재학생)
                           </span>
                           <span className="c-val-blue">
-                            {item.rank}/{item.capacity}{" "}
-                            ({item.capacity})
+                            {item.rank}/
+                            {item.course.quota} (
+                            {item.course.quota})
                           </span>
                           <span className="c-divider-light">
                             |
@@ -333,6 +419,7 @@ export default function EnrollmentHistory() {
       </div>
       {showDeleteModal && (
         <DeleteSuccessModal
+          isOpen={showDeleteModal}
           onClose={() =>
             setShowDeleteModal(false)
           }

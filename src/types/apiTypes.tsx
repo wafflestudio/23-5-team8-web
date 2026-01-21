@@ -113,22 +113,21 @@ export interface PracticeAttemptResponse {
   message: string;
 }
 
-export interface PracticeDetailResponse {
-  id: number;
-  course: Course;
+export interface PracticeAttemptDetail {
+  courseId: number;
+  courseTitle: string;
+  lectureNumber: string;
   isSuccess: boolean;
-  userLatencyMs: number;
   rank: number;
-  totalCompetitors: number;
-  capacity: number;
   percentile: number;
-  createdAt: string;
+  reactionTime: number;
 }
 
 export interface PracticeResultResponse {
   practiceLogId: number;
-  startTime: string;
-  endTime: string | null;
+  practiceAt: string;
   earlyClickDiff: number | null;
-  details: PracticeDetailResponse[];
+  totalAttempts: number;
+  successCount: number;
+  attempts: PracticeAttemptDetail[];
 }
