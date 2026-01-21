@@ -36,7 +36,8 @@ export default function LeaderBoard() {
 
   const [filter, setFilter] = useState<FilterType>('all');
   const [category, setCategory] = useState<CategoryType>('firstReaction');
-  const [leaderboardData, setLeaderboardData] = useState<LeaderboardResponse | null>(null);
+  const [leaderboardData, setLeaderboardData] =
+    useState<LeaderboardResponse | null>(null);
   const [myData, setMyData] = useState<MyLeaderboardResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -53,7 +54,7 @@ export default function LeaderBoard() {
             ? getLeaderboardApi(limit)
             : getWeeklyLeaderboardApi(limit);
 
-        const [leaderboardRes] = await Promise.all([leaderboardPromise]);
+        const leaderboardRes = await leaderboardPromise;
         setLeaderboardData(leaderboardRes.data);
 
         // Check if there's more data to load (use first reaction time as reference)
@@ -79,7 +80,9 @@ export default function LeaderBoard() {
 
       try {
         const myDataPromise =
-          filter === 'all' ? getMyLeaderboardApi() : getMyWeeklyLeaderboardApi();
+          filter === 'all'
+            ? getMyLeaderboardApi()
+            : getMyWeeklyLeaderboardApi();
         const myRes = await myDataPromise;
         setMyData(myRes.data);
       } catch (error) {
@@ -100,7 +103,9 @@ export default function LeaderBoard() {
     setHasMore(true);
   }, [filter]);
 
-  const getCurrentEntries = (data: LeaderboardResponse | null): LeaderboardEntryResponse[] => {
+  const getCurrentEntries = (
+    data: LeaderboardResponse | null,
+  ): LeaderboardEntryResponse[] => {
     if (!data) return [];
     switch (category) {
       case 'firstReaction':
@@ -159,52 +164,61 @@ export default function LeaderBoard() {
   const myRank = getMyValue();
 
   return (
-    <div className="containerX">
-      <div className="leaderboard-page">
-        <h1 className="leaderboard-title">리더보드</h1>
+    <div className='containerX'>
+      <div className='leaderboard-page'>
+        <h1 className='leaderboard-title'>리더보드</h1>
 
         {/* Filter Tabs */}
-        <div className="leaderboard-filter-tabs">
+        <div className='leaderboard-filter-tabs'>
           <button
             className={`leaderboard-filter-tab ${filter === 'all' ? 'active' : ''}`}
             onClick={() => setFilter('all')}
+            role='tab'
+            aria-selected={filter === 'all'}
           >
             전체
           </button>
           <button
             className={`leaderboard-filter-tab ${filter === 'weekly' ? 'active' : ''}`}
             onClick={() => setFilter('weekly')}
+            role='tab'
           >
             주간
           </button>
         </div>
 
         {/* Category Tabs */}
-        <div className="leaderboard-category-tabs">
+        <div className='leaderboard-category-tabs'>
           <button
             className={`leaderboard-category-tab ${category === 'firstReaction' ? 'active' : ''}`}
             onClick={() => setCategory('firstReaction')}
+            role='tab'
+            aria-selected={category === 'firstReaction'}
           >
             1픽 반응속도
           </button>
           <button
             className={`leaderboard-category-tab ${category === 'secondReaction' ? 'active' : ''}`}
             onClick={() => setCategory('secondReaction')}
+            role='tab'
+            aria-selected={category === 'secondReaction'}
           >
             2픽 반응속도
           </button>
           <button
             className={`leaderboard-category-tab ${category === 'competitionRate' ? 'active' : ''}`}
             onClick={() => setCategory('competitionRate')}
+            role='tab'
+            aria-selected={category === 'competitionRate'}
           >
             경쟁률
           </button>
         </div>
 
         {/* Leaderboard Container */}
-        <div className="leaderboard-container">
+        <div className='leaderboard-container'>
           {/* List Header */}
-          <div className="leaderboard-list-header">
+          <div className='leaderboard-list-header'>
             <span>순위</span>
             <span>유저</span>
             <span style={{textAlign: 'right'}}>
@@ -214,17 +228,17 @@ export default function LeaderBoard() {
 
           {/* List */}
           {loading ? (
-            <div className="leaderboard-loading">
-              <div className="leaderboard-loading-spinner" />
+            <div className='leaderboard-loading'>
+              <div className='leaderboard-loading-spinner' />
               <p>로딩 중...</p>
             </div>
           ) : entries.length === 0 ? (
-            <div className="leaderboard-empty">
+            <div className='leaderboard-empty'>
               <p>아직 기록이 없습니다.</p>
             </div>
           ) : (
             <>
-              <div className="leaderboard-list">
+              <div className='leaderboard-list'>
                 {entries.map((entry, index) => {
                   const rank = index + 1;
                   const isTop3 = rank <= 3;
@@ -246,18 +260,21 @@ export default function LeaderBoard() {
                       >
                         {rank}
                       </span>
-                      <div className="leaderboard-user">
+                      <div className='leaderboard-user'>
                         <img
-                          className="leaderboard-avatar"
+                          className='leaderboard-avatar'
                           src={entry.profileImageUrl || DEFAULT_AVATAR}
                           alt={entry.nickname}
                           onError={(e) => {
-                            (e.currentTarget as HTMLImageElement).src = DEFAULT_AVATAR;
+                            (e.currentTarget as HTMLImageElement).src =
+                              DEFAULT_AVATAR;
                           }}
                         />
-                        <span className="leaderboard-nickname">{entry.nickname}</span>
+                        <span className='leaderboard-nickname'>
+                          {entry.nickname}
+                        </span>
                       </div>
-                      <span className="leaderboard-value">
+                      <span className='leaderboard-value'>
                         {formatValue(entry.value, category)}
                       </span>
                     </div>
@@ -267,9 +284,9 @@ export default function LeaderBoard() {
 
               {/* Load More */}
               {hasMore && (
-                <div className="leaderboard-load-more">
+                <div className='leaderboard-load-more'>
                   <button
-                    className="leaderboard-load-more-btn"
+                    className='leaderboard-load-more-btn'
                     onClick={handleLoadMore}
                     disabled={loadingMore}
                   >
@@ -284,33 +301,33 @@ export default function LeaderBoard() {
         {/* My Rank Section */}
         {user ? (
           myRank.rank !== null && myRank.value !== null ? (
-            <div className="leaderboard-my-rank">
-              <div className="leaderboard-my-rank-title">내 순위</div>
-              <div className="leaderboard-my-rank-item">
-                <span className="leaderboard-rank">{myRank.rank}</span>
-                <div className="leaderboard-user">
-                  <span className="leaderboard-nickname">{user.nickname}</span>
+            <div className='leaderboard-my-rank'>
+              <div className='leaderboard-my-rank-title'>내 순위</div>
+              <div className='leaderboard-my-rank-item'>
+                <span className='leaderboard-rank'>{myRank.rank}</span>
+                <div className='leaderboard-user'>
+                  <span className='leaderboard-nickname'>{user.nickname}</span>
                 </div>
-                <span className="leaderboard-value">
+                <span className='leaderboard-value'>
                   {formatValue(myRank.value, category)}
                 </span>
               </div>
             </div>
           ) : (
-            <div className="leaderboard-my-rank">
-              <div className="leaderboard-my-rank-title">내 순위</div>
-              <div className="leaderboard-empty" style={{padding: '20px'}}>
+            <div className='leaderboard-my-rank'>
+              <div className='leaderboard-my-rank-title'>내 순위</div>
+              <div className='leaderboard-empty' style={{padding: '20px'}}>
                 아직 기록이 없습니다. 수강신청 연습을 해보세요!
               </div>
             </div>
           )
         ) : (
-          <div className="leaderboard-login-required">
-            <span className="leaderboard-login-text">
+          <div className='leaderboard-login-required'>
+            <span className='leaderboard-login-text'>
               로그인하면 내 순위를 확인할 수 있습니다.
             </span>
             <button
-              className="leaderboard-login-btn"
+              className='leaderboard-login-btn'
               onClick={() => navigate('/login')}
             >
               로그인
