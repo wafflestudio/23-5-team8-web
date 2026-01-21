@@ -1,10 +1,12 @@
 import {Link} from 'react-router-dom';
 import {useAuth} from '../contexts/AuthContext.ts';
 import '../css/homePage.css';
-import showNotSupportedToast from '../utils/notSupporting.tsx';
+import NotSupporting from '../utils/notSupporting.tsx';
+import {useState} from 'react';
 
 export default function HomePage() {
   const {user} = useAuth();
+  const [showNotSupporting, setShowNotSupporting] = useState(false);
 
   return (
     <main className='page'>
@@ -90,7 +92,7 @@ export default function HomePage() {
               <a
                 className={user ? 'rightFilledBtn' : 'rightOutlineBtn'}
                 href='#'
-                onClick={showNotSupportedToast}
+                onClick={() => setShowNotSupporting(true)}
               >
                 ALLCLEAR 서비스 이용 방법 안내
               </a>
@@ -130,6 +132,10 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+      <NotSupporting
+        isOpen={showNotSupporting}
+        onClose={() => setShowNotSupporting(false)}
+      />
     </main>
   );
 }

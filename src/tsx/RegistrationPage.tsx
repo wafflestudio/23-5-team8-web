@@ -18,6 +18,8 @@ import {
   SuccessModal,
 } from './RegistrationWarning';
 import {calculateQueueInfo} from '../utils/RegistrationUtils';
+import PracticeClock from './PracticeClock';
+import {usePracticeWindow} from '../hooks/usePracticeWindow';
 
 // Captcha 타입 정의
 interface CaptchaDigit {
@@ -53,73 +55,8 @@ function makeCaptchaDigits(): CaptchaDigit[] {
   }));
 }
 
-// 1. 시계 컴포넌트 (PiP 내부용)
-const PracticeClock = ({currentTime}: {currentTime: Date}) => {
-  const renderDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const weekDay = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
-
-    return (
-      <>
-        <span className='seg-text small'>{year}</span>
-        <span className='kor-text'>년 </span>
-        <span className='seg-text small'>{month}</span>
-        <span className='kor-text'>월 </span>
-        <span className='seg-text small'>{day}</span>
-        <span className='kor-text'>일 </span>
-        <span className='kor-text'>{weekDay}요일</span>
-      </>
-    );
-  };
-
-  const formatTime = (date: Date) => {
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    return `${hours}:${minutes}:${seconds}`;
-  };
-
-  return (
-    <div className='utck-window'>
-      <div className='utck-body'>
-        <div className='utck-top-buttons'>
-          <button className='utck-btn'>세계시</button>
-          <button className='utck-btn'>설 정</button>
-          <button className='utck-btn'>도움말</button>
-          <button className='utck-btn'>숨기기</button>
-        </div>
-
-        <div className='utck-lcd-frame'>
-          <div className='utck-lcd-screen'>
-            {/* [수정 2] 날짜 렌더링 방식 변경 */}
-            <div className='utck-date-text'>{renderDate(currentTime)}</div>
-
-            {/* 시간 영역 */}
-            <div className='utck-time-container'>
-              <span className='utck-time-fg'>{formatTime(currentTime)}</span>
-            </div>
-          </div>
-          <div className='utck-side-buttons'>
-            <button className='utck-btn side'>비 교</button>
-            <button className='utck-btn side'>동 기</button>
-          </div>
-        </div>
-
-        <div className='utck-message-bar'>서버에 시각이 동기되었습니다.</div>
-
-        <div className='utck-logo-area'>
-          <span className='utck-logo-kriss'>SNU</span>
-          <span className='utck-logo-text'>수강신청 연습</span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 export default function Registration() {
-  const [pipWindow, setPipWindow] = useState<Window | null>(null);
+  const {pipWindow, openWindow, closeWindow} = usePracticeWindow();
   const [captchaDigits, setCaptchaDigits] = useState<CaptchaDigit[]>(() =>
     makeCaptchaDigits(),
   );
@@ -209,11 +146,7 @@ export default function Registration() {
         timerRef.current = undefined;
       }
 
-      // 2. PiP 창 닫기
-      if (pipWindow) {
-        pipWindow.close();
-        setPipWindow(null);
-      }
+      closeWindow();
 
       // 3. 종료 API 호출 및 에러 처리
       try {
@@ -232,77 +165,8 @@ export default function Registration() {
         }
       }
     },
-    [pipWindow],
+    [closeWindow],
   );
-
-  // PiP 창 열기 로직 (UI 관련만 담당)
-  const openPiPWindow = async () => {
-    if (!('documentPictureInPicture' in window)) {
-      alert(
-        '이 브라우저는 Document Picture-in-Picture API를 지원하지 않습니다.',
-      );
-      return null;
-    }
-
-    try {
-      const TARGET_WIDTH = 380;
-      const TARGET_HEIGHT = 230;
-
-      // @ts-expect-error: 표준 API 미등록 이슈 대응
-      const win = await window.documentPictureInPicture.requestWindow({
-        width: TARGET_WIDTH,
-        height: TARGET_HEIGHT,
-      });
-
-      // 스타일 주입
-      win.document.title = 'utck 디자인 수강신청 연습 타이머';
-      win.document.body.classList.add('pip-mode');
-
-      // 폰트 및 스타일 복사 로직
-      const style = win.document.createElement('style');
-      style.textContent = `
-        @font-face {
-          font-family: 'MyDSEG7';
-          src: url('/fonts/DSEG7.ttf') format('truetype');
-          font-weight: normal;
-          font-style: normal;
-        }
-      `;
-      win.document.head.appendChild(style);
-
-      [...document.styleSheets].forEach((styleSheet) => {
-        try {
-          if (styleSheet.href) {
-            const newLink = win.document.createElement('link');
-            newLink.rel = 'stylesheet';
-            newLink.href = styleSheet.href;
-            win.document.head.appendChild(newLink);
-          } else if (styleSheet.cssRules) {
-            const cssRules = [...styleSheet.cssRules]
-              .map((r) => r.cssText)
-              .join('');
-            const style = win.document.createElement('style');
-            style.textContent = cssRules;
-            win.document.head.appendChild(style);
-          }
-        } catch (e) {
-          console.warn(e);
-        }
-      });
-
-      win.addEventListener('pagehide', () => {
-        setPipWindow(null);
-        if (isPracticeRunningRef.current) {
-          handleStopPractice(true);
-        }
-      });
-
-      return win;
-    } catch (error) {
-      console.error('PiP Error:', error);
-      return null;
-    }
-  };
 
   // 연습 시작 핸들러 (API 호출 -> 성공 -> PiP 오픈 -> 타이머 시작)
   // 연습 시작 핸들러 (수정됨: 409 에러 자동 복구 추가)
@@ -324,9 +188,31 @@ export default function Registration() {
       // 에러 처리
       console.error('연습 시작 오류:', error);
       if (isAxiosError(error) && error.response) {
-        alert(
-          `연습 시작 실패: ${error.response.data.message || '알 수 없는 오류'}`,
-        );
+        if (error.response.status === 409) {
+          // 409 에러: 이미 연습 중인 상태 -> 자동으로 종료 후 재시도
+          try {
+            await practiceEndApi();
+            // 종료 후 재시도
+            let optionString = 'TIME_08_29_30'; // 기본값 (30초 전)
+
+            if (startOffset === 60) {
+              optionString = 'TIME_08_29_00'; // 1분 전
+            } else if (startOffset === 15) {
+              optionString = 'TIME_08_29_45'; // 15초 전
+            }
+            await practiceStartApi(optionString);
+
+            // 재시도 성공 시 타이머 및 PiP 시작
+            startTimerAndPip();
+          } catch (retryError) {
+            console.error('연습 재시작 실패:', retryError);
+            alert('이미 연습 중인 상태를 종료하는 데 실패했습니다.');
+          }
+        } else {
+          alert(
+            `연습 시작 실패: ${error.response.data.message || '알 수 없는 오류'}`,
+          );
+        }
       } else {
         alert('연습 시작 중 네트워크 오류가 발생했습니다.');
       }
@@ -370,18 +256,20 @@ export default function Registration() {
     // 1. 강의 선택 검사
     if (selectedCourse === null) {
       setWarningType('notChosen');
+      setCaptchaInput(''); // 입력 초기화
       return;
     }
     // 2. 보안문자 검사
     const correctCaptcha = captchaDigits.map((d) => d.value).join('');
     if (captchaInput !== correctCaptcha) {
       setWarningType('captchaError');
-      setCaptchaInput('');
+      setCaptchaInput(''); // 입력 초기화
       return;
     }
     // 3. 연습 모드 확인
     if (!pipWindow) {
       setWarningType('practiceNotStarted');
+      setCaptchaInput(''); // 입력 초기화
       return;
     }
 
@@ -394,6 +282,7 @@ export default function Registration() {
     // Case A: 8시 30분 이전 -> "수강신청 기간이 아닙니다" (API 호출 X)
     if (diffMs < 0) {
       setWarningType('beforeTime');
+      setCaptchaInput(''); // 입력 초기화
       return;
     }
 
@@ -417,9 +306,11 @@ export default function Registration() {
     setShowSuccessModal(false);
     if (move) {
       navigate('/enrollment-history');
+      setCaptchaInput(''); // 입력 초기화
     } else {
       // 계속하기: 선택 초기화 등 필요하면 수행
       setSelectedCourse(null); // 예시: 선택 해제
+      setCaptchaInput(''); // 입력 초기화
     }
   };
 
@@ -439,11 +330,7 @@ export default function Registration() {
     setCurrentTime(virtualStart);
     isPracticeRunningRef.current = true; // 실행 상태 플래그 true 설정
 
-    // PiP 창 열기
-    const win = await openPiPWindow();
-    if (win) {
-      setPipWindow(win);
-    }
+    openWindow();
   };
 
   // 버튼 클릭 핸들러 (Toggle)

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {useLocation} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {AuthContext, type User} from './AuthContext';
 import {logoutApi} from '../api/auth';
 
@@ -7,6 +7,7 @@ const MAX_LOGIN_TIME = 10 * 60;
 
 export function AuthProvider({children}: {children: React.ReactNode}) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = sessionStorage.getItem('userInfo');
     if (!storedUser) return null;
@@ -61,7 +62,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
         if (prev <= 1) {
           clearInterval(timer);
           logout(); // 시간 종료 시 로그아웃
-          alert('장시간 미사용으로 자동 로그아웃 되었습니다.');
+          navigate('/'); // 메인 페이지로 이동
           return 0;
         }
         return prev - 1;
@@ -69,7 +70,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [user, logout]);
+  }, [user, logout, navigate]);
 
   return (
     <AuthContext.Provider value={{user, login, logout, timeLeft, extendLogin}}>
