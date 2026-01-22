@@ -2,13 +2,12 @@ import { api } from "./axios";
 import type { PracticeRegisterRequest } from "../types/apiTypes.tsx";
 
 export const practiceStartApi = async (
-  vittualStartTimeOption: string,
+  virtualStartTimeOption: string,
 ) => {
   return await api.post(
     "/api/practice/start",
     {
-      vittualStartTimeOption:
-        vittualStartTimeOption,
+      virtualStartTimeOption,
     },
     {
       withCredentials: true,
