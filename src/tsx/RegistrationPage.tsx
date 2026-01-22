@@ -1,17 +1,26 @@
-import {useState, useEffect, useRef, useCallback} from 'react';
-import {createPortal} from 'react-dom';
-import {useNavigate} from 'react-router-dom';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
+import { useNavigate } from 'react-router-dom';
 import '../css/registrationPage.css';
 import Notsupporting from '../utils/notSupporting';
-import {practiceStartApi, practiceEndApi, practiceAttemptApi} from '../api/registration';
-import {isAxiosError} from 'axios';
-import type {Course} from '../types/apiTypes';
-import {useCartQuery} from '../hooks/useCartQuery';
-import {useModalStore} from '../stores/modalStore';
-import {type Warning, WarningModal, WaitingModal, SuccessModal} from './RegistrationWarning';
-import {calculateQueueInfo} from '../utils/RegistrationUtils';
+import {
+  practiceStartApi,
+  practiceEndApi,
+  practiceAttemptApi,
+} from '../api/registration';
+import { isAxiosError } from 'axios';
+import type { Course } from '../types/apiTypes';
+import { useCartQuery } from '../hooks/useCartQuery';
+import { useModalStore } from '../stores/modalStore';
+import {
+  type Warning,
+  WarningModal,
+  WaitingModal,
+  SuccessModal,
+} from './RegistrationWarning';
+import { calculateQueueInfo } from '../utils/RegistrationUtils';
 import PracticeClock from './PracticeClock';
-import {usePracticeWindow} from '../hooks/usePracticeWindow';
+import { usePracticeWindow } from '../hooks/usePracticeWindow';
 
 interface CaptchaDigit {
   value: string;
@@ -28,36 +37,37 @@ interface CourseData {
   cartCount: number;
 }
 
+interface SelectedCourseInfo {
+  id: number;
+  totalCompetitors: number;
+  capacity: number;
+  title: string;
+  courseNumber: string;
+  lectureNumber: string;
+}
+
 function makeCaptchaDigits(): CaptchaDigit[] {
   const num1 = Math.floor(Math.random() * 10);
   const num2 = Math.floor(Math.random() * 10);
   const chars = [num1, num2];
-  const colors = [
-    "#4a235a",
-    "#154360",
-    "#1b2631",
-    "#78281f",
-    "#0e6251",
-  ];
+  const colors = ['#4a235a', '#154360', '#1b2631', '#78281f', '#0e6251'];
 
   return chars.map((char) => ({
     value: char.toString(),
     rotation: Math.random() * 30 - 15,
     yOffset: Math.random() * 6 - 3,
     xOffset: Math.random() * 6 - 3,
-    color:
-      colors[
-        Math.floor(Math.random() * colors.length)
-      ],
+    color: colors[Math.floor(Math.random() * colors.length)],
     fontSize: Math.floor(Math.random() * 5) + 24,
   }));
 }
 
 export default function Registration() {
-  const {pipWindow, openWindow, closeWindow} = usePracticeWindow();
-  const {showNotSupported, openNotSupported, closeNotSupported} = useModalStore();
+  const { pipWindow, openWindow, closeWindow } = usePracticeWindow();
+  const { showNotSupported, openNotSupported, closeNotSupported } =
+    useModalStore();
 
-  const {data: cartData} = useCartQuery(true);
+  const { data: cartData } = useCartQuery(true);
   const courseList: CourseData[] | null = cartData
     ? cartData.map((item) => ({
         preEnrollId: item.preEnrollId,
@@ -66,13 +76,11 @@ export default function Registration() {
       }))
     : null;
 
-  const [captchaDigits, setCaptchaDigits] = useState<CaptchaDigit[]>(() => makeCaptchaDigits());
-  const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
-  const [selectedCourseTotalCompetitors, setSelectedCourseTotalCompetitors] = useState<number>(0);
-  const [selectedCourseCapacity, setSelectedCourseCapacity] = useState<number>(0);
-  const [selectedCourseTitle, setSelectedCourseTitle] = useState<string | null>(null);
-  const [selectedCourseNumber, setSelectedCourseNumber] = useState<string | null>(null);
-  const [selectedLectureTime, setSelectedLectureTime] = useState<string | null>(null);
+  const [captchaDigits, setCaptchaDigits] = useState<CaptchaDigit[]>(() =>
+    makeCaptchaDigits()
+  );
+  const [selectedCourse, setSelectedCourse] =
+    useState<SelectedCourseInfo | null>(null);
   const [captchaInput, setCaptchaInput] = useState('');
   const [currentTime, setCurrentTime] = useState<Date>(() => {
     const now = new Date();
@@ -98,21 +106,19 @@ export default function Registration() {
     cartCount: number,
     courseTitle: string,
     courseNumber: string,
-    lectureNumber: string,
+    lectureNumber: string
   ) => {
-    if (selectedCourse === courseId) {
+    if (selectedCourse?.id === courseId) {
       setSelectedCourse(null);
     } else {
-      setSelectedCourse(courseId);
-      setSelectedCourseTotalCompetitors(
-        cartCount,
-      );
-      setSelectedCourseCapacity(
-        maxStd_current - currentStd,
-      );
-      setSelectedCourseTitle(courseTitle);
-      setSelectedCourseNumber(courseNumber);
-      setSelectedLectureTime(lectureNumber);
+      setSelectedCourse({
+        id: courseId,
+        totalCompetitors: cartCount,
+        capacity: maxStd_current - currentStd,
+        title: courseTitle,
+        courseNumber: courseNumber,
+        lectureNumber: lectureNumber,
+      });
     }
   };
 
@@ -131,131 +137,95 @@ export default function Registration() {
       try {
         await practiceEndApi();
         if (!isManual) {
-          alert(
-            "연습 시간이 종료되었습니다! (08:33)",
-          );
+          alert('연습 시간이 종료되었습니다! (08:33)');
         }
       } catch (error) {
-        console.error("연습 종료 오류:", error);
-        if (
-          isAxiosError(error) &&
-          error.response
-        ) {
+        console.error('연습 종료 오류:', error);
+        if (isAxiosError(error) && error.response) {
           alert(
-            `연습 종료 실패: ${error.response.data.message || "알 수 없는 오류"}`,
+            `연습 종료 실패: ${error.response.data.message || '알 수 없는 오류'}`
           );
         } else {
-          alert(
-            "연습 종료 중 네트워크 오류가 발생했습니다.",
-          );
+          alert('연습 종료 중 네트워크 오류가 발생했습니다.');
         }
       }
     },
-    [closeWindow],
+    [closeWindow]
   );
 
   const handleStartPractice = async () => {
     try {
-      let optionString = "TIME_08_29_30";
+      let optionString = 'TIME_08_29_30';
 
       if (startOffset === 60) {
-        optionString = "TIME_08_29_00";
+        optionString = 'TIME_08_29_00';
       } else if (startOffset === 15) {
-        optionString = "TIME_08_29_45";
+        optionString = 'TIME_08_29_45';
       }
-      const startResponse =
-        await practiceStartApi(optionString);
+      const startResponse = await practiceStartApi(optionString);
 
-      console.log(
-        "연습 시작 응답:",
-        startResponse.data,
-      );
+      console.log('연습 시작 응답:', startResponse.data);
 
       if (startResponse.data?.practiceLogId) {
         localStorage.setItem(
-          "currentPracticeLogId",
-          String(
-            startResponse.data.practiceLogId,
-          ),
+          'currentPracticeLogId',
+          String(startResponse.data.practiceLogId)
         );
-        console.log(
-          "practiceLogId 저장됨:",
-          startResponse.data.practiceLogId,
-        );
+        console.log('practiceLogId 저장됨:', startResponse.data.practiceLogId);
       } else {
         console.error(
-          "practiceLogId를 찾을 수 없습니다. 응답:",
-          startResponse.data,
+          'practiceLogId를 찾을 수 없습니다. 응답:',
+          startResponse.data
         );
       }
 
       startTimerAndPip();
     } catch (error) {
-      console.error("[RegistrationPage] Practice start error:", error);
+      console.error('[RegistrationPage] Practice start error:', error);
       if (isAxiosError(error) && error.response) {
         if (error.response.status === 409) {
           // Already practicing - auto-recover by ending current session
           try {
             await practiceEndApi();
-            let optionString = "TIME_08_29_30";
+            let optionString = 'TIME_08_29_30';
 
             if (startOffset === 60) {
-              optionString = "TIME_08_29_00";
+              optionString = 'TIME_08_29_00';
             } else if (startOffset === 15) {
-              optionString = "TIME_08_29_45";
+              optionString = 'TIME_08_29_45';
             }
-            const retryStartResponse =
-              await practiceStartApi(
-                optionString,
-              );
+            const retryStartResponse = await practiceStartApi(optionString);
 
-            console.log(
-              "연습 재시작 응답:",
-              retryStartResponse.data,
-            );
+            console.log('연습 재시작 응답:', retryStartResponse.data);
 
-            if (
-              retryStartResponse.data
-                ?.practiceLogId
-            ) {
+            if (retryStartResponse.data?.practiceLogId) {
               localStorage.setItem(
-                "currentPracticeLogId",
-                String(
-                  retryStartResponse.data
-                    .practiceLogId,
-                ),
+                'currentPracticeLogId',
+                String(retryStartResponse.data.practiceLogId)
               );
               console.log(
-                "practiceLogId 저장됨 (재시도):",
-                retryStartResponse.data
-                  .practiceLogId,
+                'practiceLogId 저장됨 (재시도):',
+                retryStartResponse.data.practiceLogId
               );
             } else {
               console.error(
-                "practiceLogId를 찾을 수 없습니다 (재시도). 응답:",
-                retryStartResponse.data,
+                'practiceLogId를 찾을 수 없습니다 (재시도). 응답:',
+                retryStartResponse.data
               );
             }
 
             startTimerAndPip();
           } catch (retryError) {
-            console.error(
-              "연습 재시작 실패:",
-              retryError,
-            );
-            alert(
-              "이미 연습 중인 상태를 종료하는 데 실패했습니다.",
-            );
+            console.error('연습 재시작 실패:', retryError);
+            alert('이미 연습 중인 상태를 종료하는 데 실패했습니다.');
           }
         } else {
           alert(
-            `연습 시작 실패: ${error.response.data.message || "알 수 없는 오류"}`,
+            `연습 시작 실패: ${error.response.data.message || '알 수 없는 오류'}`
           );
         }
       } else {
-        alert(
-          "연습 시작 중 네트워크 오류가 발생했습니다.",
-        );
+        alert('연습 시작 중 네트워크 오류가 발생했습니다.');
       }
     }
   };
@@ -265,72 +235,61 @@ export default function Registration() {
 
     try {
       const payload = {
-        courseId: Number(selectedCourse),
-        totalCompetitors: Number(
-          selectedCourseTotalCompetitors,
-        ),
-        capacity: Number(selectedCourseCapacity),
+        courseId: selectedCourse!.id,
+        totalCompetitors: selectedCourse!.totalCompetitors,
+        capacity: selectedCourse!.capacity,
       };
-      console.log("최종 전송 데이터:", payload);
+      console.log('최종 전송 데이터:', payload);
 
-      const response =
-        await practiceAttemptApi(payload);
-      setCaptchaInput(""); // 입력 초기화
+      const response = await practiceAttemptApi(payload);
+      setCaptchaInput(''); // 입력 초기화
 
       if (!response.data.isSuccess) {
-        setWarningType("quotaOver");
+        setWarningType('quotaOver');
       } else {
         setShowSuccessModal(true);
       }
     } catch (error) {
-      console.error("[RegistrationPage] Registration failed:", error);
+      console.error('[RegistrationPage] Registration failed:', error);
       if (isAxiosError(error) && error.response) {
-        alert(
-          error.response.data.message ||
-            "수강신청에 실패했습니다.",
-        );
+        alert(error.response.data.message || '수강신청에 실패했습니다.');
       } else {
-        alert(
-          "수강신청 요청 중 오류가 발생했습니다.",
-        );
+        alert('수강신청 요청 중 오류가 발생했습니다.');
       }
     }
   };
 
   const handleRegisterAttempt = async () => {
     setCaptchaDigits(makeCaptchaDigits());
+    setSelectedCourse(null);
 
     if (selectedCourse === null) {
-      setWarningType("notChosen");
-      setCaptchaInput("");
+      setWarningType('notChosen');
+      setCaptchaInput('');
       return;
     }
 
-    const correctCaptcha = captchaDigits
-      .map((d) => d.value)
-      .join("");
+    const correctCaptcha = captchaDigits.map((d) => d.value).join('');
     if (captchaInput !== correctCaptcha) {
-      setWarningType("captchaError");
-      setCaptchaInput("");
+      setWarningType('captchaError');
+      setCaptchaInput('');
       return;
     }
 
     if (!pipWindow) {
-      setWarningType("practiceNotStarted");
-      setCaptchaInput("");
+      setWarningType('practiceNotStarted');
+      setCaptchaInput('');
       return;
     }
 
     const targetTime = new Date(currentTime);
     targetTime.setHours(8, 30, 0, 0);
 
-    const diffMs =
-      currentTime.getTime() -
-      targetTime.getTime();
+    const diffMs = currentTime.getTime() - targetTime.getTime();
 
     if (diffMs < 0) {
-      setWarningType("beforeTime");
-      setCaptchaInput("");
+      setWarningType('beforeTime');
+      setCaptchaInput('');
       return;
     }
 
@@ -349,11 +308,11 @@ export default function Registration() {
   const handleSuccessClose = (move: boolean) => {
     setShowSuccessModal(false);
     if (move) {
-      navigate("/enrollment-history");
-      setCaptchaInput("");
+      navigate('/enrollment-history');
+      setCaptchaInput('');
     } else {
       setSelectedCourse(null);
-      setCaptchaInput("");
+      setCaptchaInput('');
     }
   };
 
@@ -361,17 +320,13 @@ export default function Registration() {
   const virtualOffsetRef = useRef<number>(0);
 
   const startTimerAndPip = async () => {
-    const offsetSeconds =
-      startOffset === 0 ? 30 : startOffset;
+    const offsetSeconds = startOffset === 0 ? 30 : startOffset;
     const virtualStart = new Date();
     virtualStart.setHours(8, 30, 0, 0);
-    virtualStart.setSeconds(
-      virtualStart.getSeconds() - offsetSeconds,
-    );
+    virtualStart.setSeconds(virtualStart.getSeconds() - offsetSeconds);
 
     startTimeRef.current = Date.now();
-    virtualOffsetRef.current =
-      virtualStart.getTime();
+    virtualOffsetRef.current = virtualStart.getTime();
 
     setCurrentTime(virtualStart);
     isPracticeRunningRef.current = true;
@@ -390,22 +345,16 @@ export default function Registration() {
   useEffect(() => {
     if (!pipWindow) return;
 
-    if (timerRef.current)
-      clearInterval(timerRef.current);
+    if (timerRef.current) clearInterval(timerRef.current);
 
     timerRef.current = window.setInterval(() => {
       const now = Date.now();
       const elapsed = now - startTimeRef.current;
-      const nextTime = new Date(
-        virtualOffsetRef.current + elapsed,
-      );
+      const nextTime = new Date(virtualOffsetRef.current + elapsed);
 
       setCurrentTime(nextTime);
 
-      if (
-        nextTime.getHours() === 8 &&
-        nextTime.getMinutes() >= 33
-      ) {
+      if (nextTime.getHours() === 8 && nextTime.getMinutes() >= 33) {
         handleStopPractice(false);
       }
     }, 1000);
@@ -422,7 +371,10 @@ export default function Registration() {
 
   useEffect(() => {
     const isModalOpen =
-      waitingInfo !== null || showSuccessModal || warningType !== 'none' || showNotSupported;
+      waitingInfo !== null ||
+      showSuccessModal ||
+      warningType !== 'none' ||
+      showNotSupported;
 
     if (isModalOpen) {
       document.body.style.overflow = 'hidden';
@@ -443,41 +395,21 @@ export default function Registration() {
         </div>
 
         <div className="regTabs">
-          <button className="regTabItem active">
-            장바구니 보류강좌
-          </button>
-          <button
-            className="regTabItem"
-            onClick={() =>
-              openNotSupported()
-            }
-          >
+          <button className="regTabItem active">장바구니 보류강좌</button>
+          <button className="regTabItem" onClick={() => openNotSupported()}>
             관심강좌
           </button>
-          <button
-            className="regTabItem"
-            onClick={() =>
-              openNotSupported()
-            }
-          >
+          <button className="regTabItem" onClick={() => openNotSupported()}>
             교과목검색
           </button>
-          <button
-            className="regTabItem"
-            onClick={() =>
-              openNotSupported()
-            }
-          >
+          <button className="regTabItem" onClick={() => openNotSupported()}>
             교과목번호 검색
           </button>
         </div>
 
         <div className="regInfoLine">
-          신청가능학점{" "}
-          <span className="infoNum">21</span>학점
-          / 신청학점{" "}
-          <span className="infoNum">0</span>학점 /
-          신청강좌{" "}
+          신청가능학점 <span className="infoNum">21</span>학점 / 신청학점{' '}
+          <span className="infoNum">0</span>학점 / 신청강좌{' '}
           <span className="infoNum">0</span>강좌
         </div>
 
@@ -486,21 +418,15 @@ export default function Registration() {
             <hr className="regDarkSeparator" />
             {courseList?.length === 0 ? (
               <div className="stateMessage">
-                장바구니에 남은 보류강좌가
-                없습니다.
+                장바구니에 남은 보류강좌가 없습니다.
               </div>
             ) : (
               <div className="courseListContainer">
                 {courseList?.map((c) => {
-                  const isSelected =
-                    selectedCourse ===
-                    c.course.id;
+                  const isSelected = selectedCourse?.id === c.course.id;
 
                   return (
-                    <div
-                      key={c.course.id}
-                      className="courseItem"
-                    >
+                    <div key={c.course.id} className="courseItem">
                       <div
                         className="courseCheckArea"
                         onClick={(e) => {
@@ -512,17 +438,13 @@ export default function Registration() {
                             c.cartCount,
                             c.course.courseTitle,
                             c.course.courseNumber,
-                            c.course
-                              .lectureNumber ||
-                              "",
+                            c.course.lectureNumber || ''
                           );
                         }}
                       >
                         <button
                           className={`customCheckBtn ${
-                            isSelected
-                              ? "checked"
-                              : ""
+                            isSelected ? 'checked' : ''
                           }`}
                         >
                           <svg
@@ -544,56 +466,33 @@ export default function Registration() {
                       <div className="courseInfoArea">
                         <div className="infoRow top">
                           <span className="c-type">
-                            [
-                            {
-                              c.course
-                                .classification
-                            }
-                            ]
+                            [{c.course.classification}]
                           </span>
                           <span className="c-title">
                             {c.course.courseTitle}
                           </span>
                         </div>
                         <div className="infoRow middle">
-                          <span className="c-prof">
-                            {c.course.instructor}
-                          </span>
-                          <span className="c-divider">
-                            |
-                          </span>
-                          <span className="c-dept">
-                            {c.course.department}
-                          </span>
+                          <span className="c-prof">{c.course.instructor}</span>
+                          <span className="c-divider">|</span>
+                          <span className="c-dept">{c.course.department}</span>
                         </div>
                         <div className="infoRow bottom">
                           <span className="c-label">
                             수강신청인원/정원(재학생)
                           </span>
                           <span className="c-val-blue">
-                            0/{c.course.quota}(
-                            {c.course.quota})
+                            0/{c.course.quota}({c.course.quota})
                           </span>
-                          <span className="c-divider-light">
-                            |
-                          </span>
-                          <span className="c-label">
-                            학점
-                          </span>
-                          <span className="c-val-blue">
-                            {c.course.credit}
-                          </span>
-                          <span className="c-divider-light">
-                            |
-                          </span>
+                          <span className="c-divider-light">|</span>
+                          <span className="c-label">학점</span>
+                          <span className="c-val-blue">{c.course.credit}</span>
+                          <span className="c-divider-light">|</span>
                           <span className="c-schedule">
                             {c.course.placeAndTime
-                              ? JSON.parse(
-                                  c.course
-                                    .placeAndTime,
-                                ).time ||
-                                "시간 미정"
-                              : "시간 미정"}
+                              ? JSON.parse(c.course.placeAndTime).time ||
+                                '시간 미정'
+                              : '시간 미정'}
                           </span>
                         </div>
                       </div>
@@ -609,23 +508,11 @@ export default function Registration() {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                           >
-                            <circle
-                              cx="9"
-                              cy="21"
-                              r="1"
-                            ></circle>
-                            <circle
-                              cx="20"
-                              cy="21"
-                              r="1"
-                            ></circle>
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
                             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                           </svg>
-                          <span
-                            className={
-                              "cartCountNum red"
-                            }
-                          >
+                          <span className={'cartCountNum red'}>
                             {c.cartCount}
                           </span>
                         </div>
@@ -657,74 +544,53 @@ export default function Registration() {
             <div className="regFloatingBox">
               <div className="regCaptchaRow">
                 <div className="regCaptchaDisplay">
-                  {captchaDigits.map(
-                    (digit, index) => (
-                      <span
-                        key={index}
-                        className="regCaptchaDigit"
-                        style={{
-                          transform: `rotate(${digit.rotation}deg) translateY(${digit.yOffset}px) translateX(${digit.xOffset}px)`,
-                          color: digit.color,
-                          fontSize: `${digit.fontSize}px`,
-                        }}
-                      >
-                        {digit.value}
-                      </span>
-                    ),
-                  )}
+                  {captchaDigits.map((digit, index) => (
+                    <span
+                      key={index}
+                      className="regCaptchaDigit"
+                      style={{
+                        transform: `rotate(${digit.rotation}deg) translateY(${digit.yOffset}px) translateX(${digit.xOffset}px)`,
+                        color: digit.color,
+                        fontSize: `${digit.fontSize}px`,
+                      }}
+                    >
+                      {digit.value}
+                    </span>
+                  ))}
                 </div>
                 <div className="regInputWrapper">
                   <input
                     className="regCaptchaInput"
                     placeholder="입 력"
                     value={captchaInput}
-                    onChange={(e) =>
-                      setCaptchaInput(
-                        e.target.value,
-                      )
-                    }
+                    onChange={(e) => setCaptchaInput(e.target.value)}
                   />
                 </div>
               </div>
 
-              <button
-                className="regSubmitBtn"
-                onClick={handleRegisterAttempt}
-              >
+              <button className="regSubmitBtn" onClick={handleRegisterAttempt}>
                 수강신청
               </button>
             </div>
 
             <div className="practiceArea">
               <button
-                className={`practiceToggleBtn ${pipWindow ? "active" : ""}`}
+                className={`practiceToggleBtn ${pipWindow ? 'active' : ''}`}
                 onClick={togglePractice}
               >
-                {pipWindow
-                  ? "연습 종료 (Stop)"
-                  : "연습 모드 (Start)"}
+                {pipWindow ? '연습 종료 (Stop)' : '연습 모드 (Start)'}
               </button>
               <select
                 className="timeSettingDropdown"
                 value={startOffset}
-                onChange={(e) =>
-                  setStartOffset(
-                    Number(e.target.value),
-                  )
-                }
+                onChange={(e) => setStartOffset(Number(e.target.value))}
               >
                 <option value={0} disabled hidden>
                   연습 시작 설정
                 </option>
-                <option value={60}>
-                  60초 전
-                </option>
-                <option value={30}>
-                  30초 전
-                </option>
-                <option value={15}>
-                  15초 전
-                </option>
+                <option value={60}>60초 전</option>
+                <option value={30}>30초 전</option>
+                <option value={15}>15초 전</option>
               </select>
             </div>
           </div>
@@ -733,47 +599,39 @@ export default function Registration() {
 
       {pipWindow &&
         createPortal(
-          <PracticeClock
-            currentTime={currentTime}
-          />,
-          pipWindow.document.body,
+          <PracticeClock currentTime={currentTime} />,
+          pipWindow.document.body
         )}
 
       {waitingInfo &&
         createPortal(
           <WaitingModal
             initialQueueCount={waitingInfo.count}
-            initialWaitSeconds={
-              waitingInfo.seconds
-            }
+            initialWaitSeconds={waitingInfo.seconds}
             onComplete={proceedToApiCall}
           />,
-          document.body,
+          document.body
         )}
 
       {showSuccessModal &&
         createPortal(
           <SuccessModal
-            onKeep={() =>
-              handleSuccessClose(false)
-            }
-            onGoToHistory={() =>
-              handleSuccessClose(true)
-            }
+            onKeep={() => handleSuccessClose(false)}
+            onGoToHistory={() => handleSuccessClose(true)}
           />,
-          document.body,
+          document.body
         )}
 
-      {warningType !== "none" &&
+      {warningType !== 'none' &&
         createPortal(
           <WarningModal
             warningType={warningType}
-            onClose={() => setWarningType("none")}
-            courseTitle={selectedCourseTitle}
-            courseNumber={selectedCourseNumber}
-            lectureNumber={selectedLectureTime}
+            onClose={() => setWarningType('none')}
+            courseTitle={selectedCourse?.title ?? null}
+            courseNumber={selectedCourse?.courseNumber ?? null}
+            lectureNumber={selectedCourse?.lectureNumber ?? null}
           />,
-          document.body,
+          document.body
         )}
       <Notsupporting isOpen={showNotSupported} onClose={closeNotSupported} />
     </div>
