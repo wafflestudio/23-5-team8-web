@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Link, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import {useAuth} from '../contexts/AuthContext.ts';
+import {useModalStore} from '../stores/modalStore';
 import '../css/header.css';
 import '../css/footer.css';
 import HomePage from './HomePage.tsx';
@@ -70,12 +71,16 @@ function Header({handleLogout}: {handleLogout: () => void}) {
   const loc = useLocation();
   const navigate = useNavigate();
   const {user} = useAuth();
-  const [hoverMenu, setHoverMenu] = useState<null | 'search' | 'apply' | 'mba'>(
-    null,
-  );
+  const {
+    showLoginWarning,
+    showNotSupported,
+    openLoginWarning,
+    closeLoginWarning,
+    openNotSupported,
+    closeNotSupported,
+  } = useModalStore();
+  const [hoverMenu, setHoverMenu] = useState<null | 'search' | 'apply' | 'mba'>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showLoginWarningOpen, setShowLoginWarningOpen] = useState(false);
-  const [showNotSupportedModal, setShowNotSupportedModal] = useState(false);
   const [searchingCourse, setSearchingCourse] = useState('');
   const prevent = (e: React.MouseEvent) => e.preventDefault();
 
@@ -92,22 +97,22 @@ function Header({handleLogout}: {handleLogout: () => void}) {
   const handleProtectedClick = (e: React.MouseEvent) => {
     if (!user) {
       e.preventDefault();
-      setShowLoginWarningOpen(true);
+      openLoginWarning();
     }
   };
 
   const handleConfirmLogin = () => {
     navigate('/login');
-    setShowLoginWarningOpen(false);
+    closeLoginWarning();
   };
 
   useEffect(() => {
-    const isModalOpen = showLoginWarningOpen || showNotSupportedModal;
+    const isModalOpen = showLoginWarning || showNotSupported;
     document.body.style.overflow = isModalOpen ? 'hidden' : 'auto';
     return () => {
       document.body.style.overflow = 'auto';
     };
-  }, [showLoginWarningOpen, showNotSupportedModal]);
+  }, [showLoginWarning, showNotSupported]);
 
   return (
     <header className='header'>
@@ -173,7 +178,7 @@ function Header({handleLogout}: {handleLogout: () => void}) {
               <button
                 className='iconBtn'
                 aria-label='필터'
-                onClick={() => setShowNotSupportedModal(true)}
+                onClick={() => openNotSupported()}
               >
                 <svg
                   viewBox='0 0 24 24'
@@ -286,7 +291,7 @@ function Header({handleLogout}: {handleLogout: () => void}) {
             <a
               className='gnbItem'
               href='#'
-              onClick={() => setShowNotSupportedModal(true)}
+              onClick={() => openNotSupported()}
               onMouseEnter={() => setHoverMenu(null)}
             >
               수강교과목추천(스누지니)
@@ -304,7 +309,7 @@ function Header({handleLogout}: {handleLogout: () => void}) {
             <a
               className='linkItem'
               href='#'
-              onClick={() => setShowNotSupportedModal(true)}
+              onClick={() => openNotSupported()}
             >
               학업이수현황
             </a>
@@ -317,21 +322,21 @@ function Header({handleLogout}: {handleLogout: () => void}) {
             <a
               className='linkItem'
               href='#'
-              onClick={() => setShowNotSupportedModal(true)}
+              onClick={() => openNotSupported()}
             >
               FAQ
             </a>
             <a
               className='linkItem'
               href='#'
-              onClick={() => setShowNotSupportedModal(true)}
+              onClick={() => openNotSupported()}
             >
               수업교시기준
             </a>
             <a
               className='linkItem'
               href='#'
-              onClick={() => setShowNotSupportedModal(true)}
+              onClick={() => openNotSupported()}
             >
               ENGLISH
             </a>
@@ -349,14 +354,14 @@ function Header({handleLogout}: {handleLogout: () => void}) {
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={() => setShowNotSupportedModal(true)}
+                    onClick={() => openNotSupported()}
                   >
                     관심강좌
                   </a>
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={() => setShowNotSupportedModal(true)}
+                    onClick={() => openNotSupported()}
                   >
                     수강지도상담
                   </a>
@@ -367,21 +372,21 @@ function Header({handleLogout}: {handleLogout: () => void}) {
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={() => setShowNotSupportedModal(true)}
+                    onClick={() => openNotSupported()}
                   >
                     예비장바구니
                   </a>
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={() => setShowNotSupportedModal(true)}
+                    onClick={() => openNotSupported()}
                   >
                     예비수강신청
                   </a>
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={() => setShowNotSupportedModal(true)}
+                    onClick={() => openNotSupported()}
                   >
                     예비수강신청내역
                   </a>
@@ -412,7 +417,7 @@ function Header({handleLogout}: {handleLogout: () => void}) {
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={() => setShowNotSupportedModal(true)}
+                    onClick={() => openNotSupported()}
                   >
                     정원 외 신청
                   </a>
@@ -423,14 +428,14 @@ function Header({handleLogout}: {handleLogout: () => void}) {
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={() => setShowNotSupportedModal(true)}
+                    onClick={() => openNotSupported()}
                   >
                     MBA 수강신청
                   </a>
                   <a
                     className='subNavItem'
                     href='#'
-                    onClick={() => setShowNotSupportedModal(true)}
+                    onClick={() => openNotSupported()}
                   >
                     EMBA 수강신청
                   </a>
@@ -441,14 +446,11 @@ function Header({handleLogout}: {handleLogout: () => void}) {
         )}
       </div>
       <NeedLogin
-        isOpen={showLoginWarningOpen}
+        isOpen={showLoginWarning}
         onConfirm={handleConfirmLogin}
-        onClose={() => setShowLoginWarningOpen(false)}
+        onClose={closeLoginWarning}
       />
-      <NotSupporting
-        isOpen={showNotSupportedModal}
-        onClose={() => setShowNotSupportedModal(false)}
-      />
+      <NotSupporting isOpen={showNotSupported} onClose={closeNotSupported} />
     </header>
   );
 }
@@ -508,7 +510,7 @@ function NoticePage() {
 
 function Footer({onOpenModal}: {onOpenModal: () => void}) {
   const {user, timeLeft} = useAuth();
-  const [showNotSupportedModal, setShowNotSupportedModal] = useState(false);
+  const {showNotSupported, openNotSupported, closeNotSupported} = useModalStore();
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -524,7 +526,7 @@ function Footer({onOpenModal}: {onOpenModal: () => void}) {
             <a
               href='#'
               className='footerLinkItem bold'
-              onClick={() => setShowNotSupportedModal(true)}
+              onClick={() => openNotSupported()}
             >
               개인정보처리방침
             </a>
@@ -532,7 +534,7 @@ function Footer({onOpenModal}: {onOpenModal: () => void}) {
             <a
               href='#'
               className='footerLinkItem bold'
-              onClick={() => setShowNotSupportedModal(true)}
+              onClick={() => openNotSupported()}
             >
               이메일무단수집거부
             </a>
@@ -577,10 +579,7 @@ function Footer({onOpenModal}: {onOpenModal: () => void}) {
           <div className='footerRight'></div>
         )}
       </div>
-      <NotSupporting
-        isOpen={showNotSupportedModal}
-        onClose={() => setShowNotSupportedModal(false)}
-      />
+      <NotSupporting isOpen={showNotSupported} onClose={closeNotSupported} />
     </div>
   );
 }

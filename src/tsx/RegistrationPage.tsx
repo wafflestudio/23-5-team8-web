@@ -1,30 +1,17 @@
-import {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-} from "react";
-import { createPortal } from "react-dom";
-import { useNavigate } from "react-router-dom";
-import "../css/registrationPage.css";
-import Notsupporting from "../utils/notSupporting";
-import {
-  practiceStartApi,
-  practiceEndApi,
-  practiceAttemptApi,
-} from "../api/registration";
-import { isAxiosError } from "axios";
-import type { Course } from "../types/apiTypes";
-import { getPreEnrollsApi } from "../api/cart";
-import {
-  type Warning,
-  WarningModal,
-  WaitingModal,
-  SuccessModal,
-} from "./RegistrationWarning";
-import { calculateQueueInfo } from "../utils/RegistrationUtils";
-import PracticeClock from "./PracticeClock";
-import { usePracticeWindow } from "../hooks/usePracticeWindow";
+import {useState, useEffect, useRef, useCallback} from 'react';
+import {createPortal} from 'react-dom';
+import {useNavigate} from 'react-router-dom';
+import '../css/registrationPage.css';
+import Notsupporting from '../utils/notSupporting';
+import {practiceStartApi, practiceEndApi, practiceAttemptApi} from '../api/registration';
+import {isAxiosError} from 'axios';
+import type {Course} from '../types/apiTypes';
+import {useCartQuery} from '../hooks/useCartQuery';
+import {useModalStore} from '../stores/modalStore';
+import {type Warning, WarningModal, WaitingModal, SuccessModal} from './RegistrationWarning';
+import {calculateQueueInfo} from '../utils/RegistrationUtils';
+import PracticeClock from './PracticeClock';
+import {usePracticeWindow} from '../hooks/usePracticeWindow';
 
 interface CaptchaDigit {
   value: string;
@@ -67,88 +54,42 @@ function makeCaptchaDigits(): CaptchaDigit[] {
 }
 
 export default function Registration() {
-  const { pipWindow, openWindow, closeWindow } =
-    usePracticeWindow();
-  const [captchaDigits, setCaptchaDigits] =
-    useState<CaptchaDigit[]>(() =>
-      makeCaptchaDigits(),
-    );
-  const [courseList, setCourseList] = useState<
-    CourseData[] | null
-  >(null);
-  const [selectedCourse, setSelectedCourse] =
-    useState<number | null>(null);
-  const [
-    selectedCourseTotalCompetitors,
-    setSelectedCourseTotalCompetitors,
-  ] = useState<number>(0);
-  const [
-    selectedCourseCapacity,
-    setSelectedCourseCapacity,
-  ] = useState<number>(0);
-  const [
-    selectedCourseTitle,
-    setSelectedCourseTitle,
-  ] = useState<string | null>(null);
-  const [
-    selectedCourseNumber,
-    setSelectedCourseNumber,
-  ] = useState<string | null>(null);
-  const [
-    selectedLectureTime,
-    setSelectedLectureTime,
-  ] = useState<string | null>(null);
-  const [captchaInput, setCaptchaInput] =
-    useState("");
-  const [currentTime, setCurrentTime] =
-    useState<Date>(() => {
-      const now = new Date();
-      now.setHours(8, 29, 30, 0); // 기본값 8:29:30
-      return now;
-    });
-  const [startOffset, setStartOffset] =
-    useState<number>(0);
-  const [warningType, setWarningType] =
-    useState<Warning>("none");
+  const {pipWindow, openWindow, closeWindow} = usePracticeWindow();
+  const {showNotSupported, openNotSupported, closeNotSupported} = useModalStore();
+
+  const {data: cartData} = useCartQuery(true);
+  const courseList: CourseData[] | null = cartData
+    ? cartData.map((item) => ({
+        preEnrollId: item.preEnrollId,
+        course: item.course,
+        cartCount: item.cartCount,
+      }))
+    : null;
+
+  const [captchaDigits, setCaptchaDigits] = useState<CaptchaDigit[]>(() => makeCaptchaDigits());
+  const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
+  const [selectedCourseTotalCompetitors, setSelectedCourseTotalCompetitors] = useState<number>(0);
+  const [selectedCourseCapacity, setSelectedCourseCapacity] = useState<number>(0);
+  const [selectedCourseTitle, setSelectedCourseTitle] = useState<string | null>(null);
+  const [selectedCourseNumber, setSelectedCourseNumber] = useState<string | null>(null);
+  const [selectedLectureTime, setSelectedLectureTime] = useState<string | null>(null);
+  const [captchaInput, setCaptchaInput] = useState('');
+  const [currentTime, setCurrentTime] = useState<Date>(() => {
+    const now = new Date();
+    now.setHours(8, 29, 30, 0);
+    return now;
+  });
+  const [startOffset, setStartOffset] = useState<number>(0);
+  const [warningType, setWarningType] = useState<Warning>('none');
   const [waitingInfo, setWaitingInfo] = useState<{
     count: number;
     seconds: number;
   } | null>(null);
-  const [showSuccessModal, setShowSuccessModal] =
-    useState(false);
-  const [
-    showNotSupportedModal,
-    setShowNotSupportedModal,
-  ] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const navigate = useNavigate();
-  const timerRef = useRef<number | undefined>(
-    undefined,
-  );
+  const timerRef = useRef<number | undefined>(undefined);
   const isPracticeRunningRef = useRef(false);
-
-  useEffect(() => {
-    const fetchCartCourses = async () => {
-      try {
-        const response =
-          await getPreEnrollsApi(true);
-        const coursesData: CourseData[] =
-          response.data.map((item) => ({
-            preEnrollId: item.preEnrollId,
-            course: item.course,
-            cartCount: item.cartCount,
-          }));
-        setCourseList(coursesData);
-      } catch (error) {
-        console.error(
-          "장바구니 조회 실패:",
-          error,
-        );
-      }
-    };
-
-    fetchCartCourses();
-  }, []);
 
   const handleSelectedCourse = (
     courseId: number,
@@ -481,26 +422,18 @@ export default function Registration() {
 
   useEffect(() => {
     const isModalOpen =
-      waitingInfo !== null ||
-      showSuccessModal ||
-      warningType !== "none" ||
-      showNotSupportedModal;
+      waitingInfo !== null || showSuccessModal || warningType !== 'none' || showNotSupported;
 
     if (isModalOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = 'unset';
     }
 
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = 'unset';
     };
-  }, [
-    waitingInfo,
-    showSuccessModal,
-    warningType,
-    showNotSupportedModal,
-  ]);
+  }, [waitingInfo, showSuccessModal, warningType, showNotSupported]);
 
   return (
     <div className="registrationPage">
@@ -516,7 +449,7 @@ export default function Registration() {
           <button
             className="regTabItem"
             onClick={() =>
-              setShowNotSupportedModal(true)
+              openNotSupported()
             }
           >
             관심강좌
@@ -524,7 +457,7 @@ export default function Registration() {
           <button
             className="regTabItem"
             onClick={() =>
-              setShowNotSupportedModal(true)
+              openNotSupported()
             }
           >
             교과목검색
@@ -532,7 +465,7 @@ export default function Registration() {
           <button
             className="regTabItem"
             onClick={() =>
-              setShowNotSupportedModal(true)
+              openNotSupported()
             }
           >
             교과목번호 검색
@@ -842,12 +775,7 @@ export default function Registration() {
           />,
           document.body,
         )}
-      <Notsupporting
-        isOpen={showNotSupportedModal}
-        onClose={() =>
-          setShowNotSupportedModal(false)
-        }
-      />
+      <Notsupporting isOpen={showNotSupported} onClose={closeNotSupported} />
     </div>
   );
 }
