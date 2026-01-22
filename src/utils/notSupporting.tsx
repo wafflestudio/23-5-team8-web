@@ -11,7 +11,6 @@ export default function NotSupporting({
 
   return (
     <div className='background'>
-      {/* 모달 내부를 클릭했을 때는 닫히지 않도록 stopPropagation 사용 */}
       <div className='warningContainer'>
         <div className='contentWrapper'>
           <svg

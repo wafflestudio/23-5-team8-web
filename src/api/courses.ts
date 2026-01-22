@@ -5,7 +5,6 @@ import type {
   Course,
 } from "../types/apiTypes";
 
-// 강의 검색 API
 export const searchCoursesApi = async (
   params: CourseSearchRequest,
 ) => {
@@ -17,7 +16,6 @@ export const searchCoursesApi = async (
   );
 };
 
-// 강의 ID로 단일 강의 조회 API
 export const getCourseByIdApi = async (
   courseId: number,
 ) => {

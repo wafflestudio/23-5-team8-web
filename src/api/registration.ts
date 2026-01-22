@@ -1,7 +1,6 @@
 import { api } from "./axios";
 import type { PracticeRegisterRequest } from "../types/apiTypes.tsx";
 
-// 연습 세션 시작 API
 export const practiceStartApi = async (
   vittualStartTimeOption: string,
 ) => {
@@ -20,7 +19,6 @@ export const practiceStartApi = async (
   );
 };
 
-// 연습 세션 종료 API
 export const practiceEndApi = async () => {
   return await api.post(
     "/api/practice/end",
@@ -34,7 +32,6 @@ export const practiceEndApi = async () => {
   );
 };
 
-//수강신청 연습 시도 API
 export const practiceAttemptApi = async (
   data: PracticeRegisterRequest,
 ) => {
@@ -50,7 +47,6 @@ export const practiceAttemptApi = async (
   );
 };
 
-// 연습 결과 조회 API
 export const getPracticeResultApi = async (
   practiceLogId: number,
 ) => {
@@ -62,7 +58,6 @@ export const getPracticeResultApi = async (
   );
 };
 
-// 최근 연습 로그 조회 API (가장 최근 세션 가져오기)
 export const getLatestPracticeLogApi =
   async () => {
     return await api.get(
@@ -73,7 +68,6 @@ export const getLatestPracticeLogApi =
     );
   };
 
-// 수강신청 내역에서 삭제 API (practice detail 삭제)
 export const deletePracticeDetailApi = async (
   detailId: number,
 ) => {

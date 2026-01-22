@@ -30,11 +30,10 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
 
   const logout = useCallback(async () => {
     try {
-      await logoutApi(); // 1. 서버에 로그아웃 요청
+      await logoutApi();
     } catch (error) {
-      console.error('Logout API failed:', error);
+      console.error('[AuthProvider] Logout API failed:', error);
     } finally {
-      // 2. 클라이언트 정리 (성공/실패 여부와 상관없이 실행)
       setUser(null);
       sessionStorage.removeItem('userInfo');
       sessionStorage.removeItem('authToken');
@@ -47,13 +46,11 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     }
   }, [user]);
 
-  // ✅ 페이지 이동 시마다 로그인 시간 연장
   useEffect(() => {
     if (!user) return;
     extendLogin();
   }, [location, user, extendLogin]);
 
-  // ✅ 1초마다 시간 감소 및 자동 로그아웃 처리
   useEffect(() => {
     if (!user) return;
 
@@ -61,8 +58,8 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          logout(); // 시간 종료 시 로그아웃
-          navigate('/'); // 메인 페이지로 이동
+          logout();
+          navigate('/');
           return 0;
         }
         return prev - 1;

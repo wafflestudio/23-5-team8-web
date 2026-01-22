@@ -1,14 +1,10 @@
-// [Logic 1] 남은 인원에 따른 '표시용' 대기 시간 계산 (비선형)
+// Non-linear display time based on observed queue processing rates:
+// 6532 users -> 73s (~89.4/s), 5414 -> 39s (~138.8/s),
+// 3237 -> 13s (~249/s), 1767 -> 6s (~294.5/s)
 const calculateDisplayTime = (count: number): number => {
   if (count <= 0) return 0;
 
-  // 요청하신 데이터 포인트에 맞춘 구간별 나누기 값(divisor) 설정
-  // 6532명 -> 73초 (약 89.4명/초)
-  // 5414명 -> 39초 (약 138.8명/초)
-  // 3237명 -> 13초 (약 249명/초)
-  // 1767명 -> 6초 (약 294.5명/초)
-
-  let divisor = 100; // 기본값
+  let divisor = 100;
 
   if (count > 6000) {
     divisor = 120;
@@ -23,22 +19,19 @@ const calculateDisplayTime = (count: number): number => {
   return Math.ceil(count / divisor);
 };
 
-// [Logic 2] 대기열 상태 업데이트 로직 (처리된 인원 차감 로직 추가)
 export const calculateQueueInfo = (
   delayTimeMs: number,
   currentQueueCount?: number,
 ) => {
-  // === 설정값 ===
   const MAX_POSSIBLE_USERS = 12500;
   const PEAK_REACTION_MS = 250;
-  const SKEW_SHAPE = 4; // 500은 너무 수직이라 S자 곡선을 위해 4로 조정
+  // SKEW_SHAPE=4 creates S-curve; higher values (e.g., 500) are too steep
+  const SKEW_SHAPE = 4;
   const MEAN_CAPACITY = 1600;
   const STD_DEV = 200;
-
-  // 서버 처리 속도 (위쪽 로직과 싱크 맞춤: 1200명 / 500ms = 2.4명/ms)
+  // ~2.4 users/ms matches observed server processing rate
   const SERVER_SPEED_PER_MS = MEAN_CAPACITY / 500;
 
-  // Case 1: 업데이트 모드 (기존 동일)
   if (currentQueueCount !== undefined) {
     let u = 0,
       v = 0;
@@ -56,27 +49,17 @@ export const calculateQueueInfo = (
     };
   }
 
-  // 1. 지금까지 도착한 총 누적 인원 (Arrivals) 계산
   const ratio = delayTimeMs / PEAK_REACTION_MS;
   const probability =
     Math.pow(ratio, SKEW_SHAPE) / (1 + Math.pow(ratio, SKEW_SHAPE));
   const totalArrivals = Math.floor(MAX_POSSIBLE_USERS * probability);
-
-  // 2. [추가] 지연 시간 동안 서버가 이미 처리한 인원 (Processed) 계산
   const processedCount = Math.floor(delayTimeMs * SERVER_SPEED_PER_MS);
 
-  // 3. 실제 내 앞의 대기열 = (총 도착 인원) - (이미 처리된 인원)
   let queueCount = totalArrivals - processedCount;
-
-  // 랜덤 노이즈 추가
   const noise = Math.floor(Math.random() * 300) - 150;
   queueCount += noise;
-
-  // 음수 방지 (처리 속도가 더 빨라서 대기열이 해소된 경우 0명)
-  queueCount = Math.max(0, queueCount);
-
-  // Max Cap 적용
-  if (queueCount > MAX_POSSIBLE_USERS) queueCount = MAX_POSSIBLE_USERS;
+  // Clamp to valid range (server may process faster than arrivals)
+  queueCount = Math.max(0, Math.min(queueCount, MAX_POSSIBLE_USERS));
 
   return {
     queueCount,
