@@ -1,4 +1,4 @@
-import {useState, useCallback, useEffect} from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 const copyStyles = (targetDoc: Document) => {
   const fontStyle = targetDoc.createElement('style');
@@ -52,6 +52,9 @@ export const usePracticeWindow = () => {
 
       let win: Window | null = null;
 
+      const targetLeft = window.screen.availWidth - width - 20;
+      const targetTop = 20;
+
       try {
         // Document Picture-in-Picture API (Chrome/Edge)
         if ('documentPictureInPicture' in window) {
@@ -60,15 +63,15 @@ export const usePracticeWindow = () => {
             width,
             height,
           });
-        } else {
-          // Fallback: window.open popup (Safari/Firefox)
-          const left = window.screenX + window.outerWidth / 2 - width / 2;
-          const top = window.screenY + window.outerHeight / 2 - height / 2;
 
+          if (win) {
+            win.moveTo(targetLeft, targetTop);
+          }
+        } else {
           win = window.open(
             '',
             '_blank',
-            `width=${width},height=${height},left=${left},top=${top},toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no`,
+            `width=${width},height=${height},left=${targetLeft},top=${targetTop},toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no`
           );
         }
 
@@ -91,7 +94,7 @@ export const usePracticeWindow = () => {
       }
       return null;
     },
-    [pipWindow],
+    [pipWindow]
   );
 
   const closeWindow = useCallback(() => {
@@ -109,5 +112,5 @@ export const usePracticeWindow = () => {
     };
   }, [pipWindow]);
 
-  return {pipWindow, openWindow, closeWindow};
+  return { pipWindow, openWindow, closeWindow };
 };
