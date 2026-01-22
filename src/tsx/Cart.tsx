@@ -20,7 +20,6 @@ export default function Cart() {
   const [showDeleteModal, setShowDeleteModal] =
     useState(false);
 
-  // 장바구니 조회
   useEffect(() => {
     fetchCartCourses();
   }, []);
@@ -41,7 +40,6 @@ export default function Cart() {
     }
   };
 
-  // 체크박스 토글
   const toggleCourseSelection = (
     courseId: number,
   ) => {
@@ -56,7 +54,6 @@ export default function Cart() {
     });
   };
 
-  // 선택 삭제
   const handleDeleteSelected = async () => {
     if (selectedCourses.size === 0) {
       alert("삭제할 강의를 선택해주세요.");
@@ -90,7 +87,6 @@ export default function Cart() {
     }
   };
 
-  // cartCount 수정
   const handleCartCountChange = async (
     courseId: number,
     newValue: string,
@@ -227,7 +223,6 @@ export default function Cart() {
                         )
                       }
                     >
-                      {/* 1. 체크박스 */}
                       <div className="courseCheckArea">
                         <button
                           className={`customCheckBtn ${
@@ -253,7 +248,6 @@ export default function Cart() {
                         </button>
                       </div>
 
-                      {/* 2. 강의 정보 */}
                       <div className="courseInfoArea">
                         <div className="infoRow">
                           <span className="c-type">
@@ -348,7 +342,6 @@ export default function Cart() {
                         </div>
                       </div>
 
-                      {/* 3. 장바구니 & 화살표 */}
                       <div className="courseActionArea">
                         <div className="cartInfoBox">
                           <svg

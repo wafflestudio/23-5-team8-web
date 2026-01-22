@@ -1,4 +1,3 @@
-// RegistrationWarning.tsx
 import {useEffect, useState, useRef} from 'react';
 import '../css/Warning.css';
 import {calculateQueueInfo} from '../utils/RegistrationUtils.ts';
@@ -31,7 +30,6 @@ interface SuccessModalProps {
   onGoToHistory: () => void;
 }
 
-// ... (WarningModal 컴포넌트는 기존과 동일) ...
 export function WarningModal({
   warningType,
   onClose,
@@ -62,7 +60,6 @@ export function WarningModal({
     <div className="background">
       <div className="warningContainer">
         <div className="contentWrapper">
-          {/* 아이콘 및 텍스트 기존과 동일 */}
           <svg
             width="38"
             height="38"
@@ -107,7 +104,6 @@ export function WarningModal({
   );
 }
 
-// [Component 수정] 대기열 모달
 export const WaitingModal = ({
   initialWaitSeconds,
   initialQueueCount,
@@ -118,26 +114,21 @@ export const WaitingModal = ({
     count: initialQueueCount,
   });
 
-  // 완료 여부를 추적하는 Ref (useEffect 의존성 문제 해결 및 중복 실행 방지)
   const isCompletedRef = useRef(false);
 
   useEffect(() => {
-    // 0.5초(500ms)마다 실행되는 타이머
     const timer = setInterval(() => {
-      // 이미 완료 처리 되었다면 정지
       if (isCompletedRef.current) {
         clearInterval(timer);
         return;
       }
 
       setQueueInfo((prev) => {
-        // 다음 상태 계산 (현재 인원 기준)
         const nextInfo = calculateQueueInfo(
           0,
           prev.count,
         );
 
-        // 종료 조건: 인원이 0명이거나 시간이 0초일 때
         if (
           nextInfo &&
           (nextInfo.queueCount <= 0 ||
@@ -145,11 +136,7 @@ export const WaitingModal = ({
         ) {
           clearInterval(timer);
           isCompletedRef.current = true;
-
-          // 상태 업데이트 없이 바로 완료 콜백 실행 (모달 닫힘)
-          // setTimeout을 사용하여 렌더 사이클 이후 실행 보장
           setTimeout(() => onComplete(), 0);
-
           return { count: 0, seconds: 0 };
         }
 
@@ -161,7 +148,7 @@ export const WaitingModal = ({
         }
         return prev;
       });
-    }, 500); // 0.5초마다 갱신
+    }, 500);
 
     return () => clearInterval(timer);
   }, [onComplete]);
@@ -205,7 +192,6 @@ export const SuccessModal = ({
   onKeep,
   onGoToHistory,
 }: SuccessModalProps) => {
-  // 기존 코드 유지
   return (
     <div className="background">
       <div className="warningContainer">

@@ -5,7 +5,6 @@ import type {
   PreEnrollUpdateCartCountRequest,
 } from "../types/apiTypes.tsx";
 
-// 장바구니 조회 API
 export const getPreEnrollsApi = async (
   overQuotaOnly = false,
 ) => {
@@ -19,7 +18,6 @@ export const getPreEnrollsApi = async (
   );
 };
 
-// 장바구니에 강의 추가 API
 export const addPreEnrollApi = async (
   data: PreEnrollAddRequest,
 ) => {
@@ -29,7 +27,6 @@ export const addPreEnrollApi = async (
   );
 };
 
-// 장바구니 항목 cartCount 수정 API
 export const updateCartCountApi = async (
   courseId: number,
   data: PreEnrollUpdateCartCountRequest,
@@ -40,7 +37,6 @@ export const updateCartCountApi = async (
   );
 };
 
-// 장바구니에서 강의 삭제 API
 export const deletePreEnrollApi = async (
   courseId: number,
 ) => {

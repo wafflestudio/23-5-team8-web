@@ -100,7 +100,6 @@ export default function Login() {
 
         switch (status) {
           case 400:
-            // 400 Bad Request: 유효성 검사 실패
             setErrorMessage(
               "올바른 이메일 형식이 아닙니다",
             );
@@ -108,7 +107,6 @@ export default function Login() {
             break;
 
           case 401:
-            // 401 Unauthorized: 인증 실패
             setErrorMessage(
               "이메일 또는 비밀번호가 올바르지 않습니다",
             );
@@ -116,7 +114,6 @@ export default function Login() {
             break;
 
           default:
-            // 그 외 서버 에러
             setErrorMessage(
               "로그인 중 알 수 없는 오류가 발생했습니다.",
             );
@@ -170,7 +167,6 @@ export default function Login() {
           },
           accessToken,
         );
-        // navigate('/')는 login 함수 내부나 이후 흐름에서 처리
         navigate("/");
       } catch (error) {
         if (
@@ -208,7 +204,6 @@ export default function Login() {
           );
         }
       } finally {
-        // 처리가 끝나면 임시 저장 데이터 삭제 및 URL 정리
         sessionStorage.removeItem(
           "pendingSocialProvider",
         );
@@ -217,23 +212,18 @@ export default function Login() {
     [login, navigate, redirectUri],
   );
 
-  // 인증 코드로 돌아왔을 때 소셜 로그인 처리
   useEffect(() => {
     const searchParams = new URLSearchParams(
       location.search,
     );
     const code = searchParams.get("code");
-
-    // 이전에 어떤 버튼을 눌렀는지 확인
     const provider = sessionStorage.getItem(
       "pendingSocialProvider",
     ) as socialProvider | null;
 
     if (code && provider) {
-      // 코드가 있고, 진행 중인 provider가 있다면 로그인 시도
       handleSocialLogin(provider, code);
-
-      // 재요청 방지를 위해 URL의 쿼리 파라미터 제거 (선택 사항)
+      // Prevent duplicate requests on page reload
       window.history.replaceState(
         {},
         document.title,

@@ -24,7 +24,6 @@ export default function EnrollmentHistory() {
   const [showDeleteModal, setShowDeleteModal] =
     useState(false);
 
-  // 수강신청 성공 내역 조회
   useEffect(() => {
     fetchEnrolledCourses();
   }, []);
@@ -32,7 +31,6 @@ export default function EnrollmentHistory() {
   const fetchEnrolledCourses = async () => {
     setLoading(true);
     try {
-      // localStorage에서 현재 연습 세션 ID 가져오기
       const practiceLogId = localStorage.getItem(
         "currentPracticeLogId",
       );
@@ -44,7 +42,6 @@ export default function EnrollmentHistory() {
         return;
       }
 
-      // 해당 로그의 결과 조회
       const resultResponse =
         await getPracticeResultApi(
           Number(practiceLogId),
@@ -58,7 +55,6 @@ export default function EnrollmentHistory() {
       const attempts =
         resultResponse.data.attempts;
 
-      // 성공한 강의만 필터링
       const successfulAttempts = attempts.filter(
         (attempt: PracticeAttemptDetail) =>
           attempt.isSuccess,
@@ -69,7 +65,6 @@ export default function EnrollmentHistory() {
         successfulAttempts,
       );
 
-      // 각 성공한 시도에 대해 강의 정보 검색으로 가져오기
       const coursesWithDetails =
         await Promise.all(
           successfulAttempts.map(
@@ -99,7 +94,6 @@ export default function EnrollmentHistory() {
                     course: matchedCourse,
                   } as EnrolledCourse;
                 } else {
-                  // courseId만으로라도 찾아보기
                   const courseByIdMatch =
                     searchResponse.data.items.find(
                       (course) =>
@@ -130,7 +124,6 @@ export default function EnrollmentHistory() {
           ),
         );
 
-      // null이 아닌 항목만 필터링
       const validCourses =
         coursesWithDetails.filter(
           (course): course is EnrolledCourse =>
@@ -151,10 +144,8 @@ export default function EnrollmentHistory() {
         });
 
         if (error.response?.status === 404) {
-          // 연습 로그가 없는 경우
           setEnrolledCourses([]);
         } else {
-          // 다른 에러는 조용히 처리 (빈 상태로)
           setEnrolledCourses([]);
         }
       } else {
@@ -165,7 +156,6 @@ export default function EnrollmentHistory() {
     }
   };
 
-  // 체크박스 토글
   const toggleCourseSelection = (
     courseId: number,
   ) => {
@@ -180,14 +170,12 @@ export default function EnrollmentHistory() {
     });
   };
 
-  // 선택 삭제
   const handleDeleteSelected = async () => {
     if (selectedCourses.size === 0) {
       alert("삭제할 강의를 선택해주세요.");
       return;
     }
 
-    // 연습 모드에서는 프론트엔드에서만 삭제 처리
     const remainingCourses =
       enrolledCourses.filter(
         (course) =>
@@ -288,7 +276,6 @@ export default function EnrollmentHistory() {
                         )
                       }
                     >
-                      {/* 1. 체크박스 */}
                       <div className="courseCheckArea">
                         <button
                           className={`customCheckBtn ${
@@ -314,7 +301,6 @@ export default function EnrollmentHistory() {
                         </button>
                       </div>
 
-                      {/* 2. 강의 정보 */}
                       <div className="courseInfoArea">
                         <div className="infoRow">
                           <span className="c-type">

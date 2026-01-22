@@ -11,9 +11,7 @@ export default function HomePage() {
   return (
     <main className='page'>
       <div className='containerX'>
-        {/* [구조 변경] Grid 컨테이너 안에 Left/Right 컬럼을 나눔 */}
         <div className='homeGrid'>
-          {/* [왼쪽 컬럼] 기간안내 + 수강안내 */}
           <div className='homeLeft'>
             <section className='panel periodPanel'>
               <div className='panelHead'>
@@ -62,8 +60,6 @@ export default function HomePage() {
             </section>
           </div>
 
-          {/* [오른쪽 컬럼] 로그인(조건부) + 버튼들 + 공지사항 */}
-          {/* Flex Column으로 쌓이므로 로그인 패널 없으면 나머지가 위로 붙음 */}
           <div className='homeRight'>
             {!user && (
               <section className='panel loginPanel'>

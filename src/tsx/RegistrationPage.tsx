@@ -26,7 +26,6 @@ import { calculateQueueInfo } from "../utils/RegistrationUtils";
 import PracticeClock from "./PracticeClock";
 import { usePracticeWindow } from "../hooks/usePracticeWindow";
 
-// Captcha 타입 정의
 interface CaptchaDigit {
   value: string;
   rotation: number;
@@ -42,12 +41,10 @@ interface CourseData {
   cartCount: number;
 }
 
-// Captcha 생성 함수
 function makeCaptchaDigits(): CaptchaDigit[] {
   const num1 = Math.floor(Math.random() * 10);
   const num2 = Math.floor(Math.random() * 10);
   const chars = [num1, num2];
-  // 실제 사이트처럼 조금 더 진하고 보라/검정 계열의 색상
   const colors = [
     "#4a235a",
     "#154360",
@@ -58,14 +55,14 @@ function makeCaptchaDigits(): CaptchaDigit[] {
 
   return chars.map((char) => ({
     value: char.toString(),
-    rotation: Math.random() * 30 - 15, // 회전 각도 조금 줄임
+    rotation: Math.random() * 30 - 15,
     yOffset: Math.random() * 6 - 3,
     xOffset: Math.random() * 6 - 3,
     color:
       colors[
         Math.floor(Math.random() * colors.length)
       ],
-    fontSize: Math.floor(Math.random() * 5) + 24, // 폰트 크기 약간 키움
+    fontSize: Math.floor(Math.random() * 5) + 24,
   }));
 }
 
@@ -131,7 +128,6 @@ export default function Registration() {
   const isPracticeRunningRef = useRef(false);
 
   useEffect(() => {
-    // 함수를 useEffect 내부에서 정의하고 바로 호출합니다.
     const fetchCartCourses = async () => {
       try {
         const response =
@@ -179,13 +175,11 @@ export default function Registration() {
     }
   };
 
-  // PiP 창 닫기 및 타이머 정지 (연습 종료 공통 로직)
   const handleStopPractice = useCallback(
     async (isManual = false) => {
       if (!isPracticeRunningRef.current) return;
       isPracticeRunningRef.current = false;
 
-      // 1. 타이머 정지
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = undefined;
@@ -193,7 +187,6 @@ export default function Registration() {
 
       closeWindow();
 
-      // 3. 종료 API 호출 및 에러 처리
       try {
         await practiceEndApi();
         if (!isManual) {
@@ -220,17 +213,14 @@ export default function Registration() {
     [closeWindow],
   );
 
-  // 연습 시작 핸들러 (API 호출 -> 성공 -> PiP 오픈 -> 타이머 시작)
-  // 연습 시작 핸들러 (수정됨: 409 에러 자동 복구 추가)
   const handleStartPractice = async () => {
     try {
-      // 1. API 호출 시도
-      let optionString = "TIME_08_29_30"; // 기본값 (30초 전)
+      let optionString = "TIME_08_29_30";
 
       if (startOffset === 60) {
-        optionString = "TIME_08_29_00"; // 1분 전
+        optionString = "TIME_08_29_00";
       } else if (startOffset === 15) {
-        optionString = "TIME_08_29_45"; // 15초 전
+        optionString = "TIME_08_29_45";
       }
       const startResponse =
         await practiceStartApi(optionString);
@@ -240,7 +230,6 @@ export default function Registration() {
         startResponse.data,
       );
 
-      // practiceLogId 저장
       if (startResponse.data?.practiceLogId) {
         localStorage.setItem(
           "currentPracticeLogId",
@@ -259,23 +248,20 @@ export default function Registration() {
         );
       }
 
-      // (성공 시 실행되는 로직은 아래로 이동)
       startTimerAndPip();
     } catch (error) {
-      // 에러 처리
-      console.error("연습 시작 오류:", error);
+      console.error("[RegistrationPage] Practice start error:", error);
       if (isAxiosError(error) && error.response) {
         if (error.response.status === 409) {
-          // 409 에러: 이미 연습 중인 상태 -> 자동으로 종료 후 재시도
+          // Already practicing - auto-recover by ending current session
           try {
             await practiceEndApi();
-            // 종료 후 재시도
-            let optionString = "TIME_08_29_30"; // 기본값 (30초 전)
+            let optionString = "TIME_08_29_30";
 
             if (startOffset === 60) {
-              optionString = "TIME_08_29_00"; // 1분 전
+              optionString = "TIME_08_29_00";
             } else if (startOffset === 15) {
-              optionString = "TIME_08_29_45"; // 15초 전
+              optionString = "TIME_08_29_45";
             }
             const retryStartResponse =
               await practiceStartApi(
@@ -287,7 +273,6 @@ export default function Registration() {
               retryStartResponse.data,
             );
 
-            // practiceLogId 저장
             if (
               retryStartResponse.data
                 ?.practiceLogId
@@ -311,7 +296,6 @@ export default function Registration() {
               );
             }
 
-            // 재시도 성공 시 타이머 및 PiP 시작
             startTimerAndPip();
           } catch (retryError) {
             console.error(
@@ -336,7 +320,7 @@ export default function Registration() {
   };
 
   const proceedToApiCall = async () => {
-    setWaitingInfo(null); // 대기열 모달 닫기
+    setWaitingInfo(null);
 
     try {
       const payload = {
@@ -355,12 +339,10 @@ export default function Registration() {
       if (!response.data.isSuccess) {
         setWarningType("quotaOver");
       } else {
-        // [Todo 2 적용] 성공 시 성공 모달 띄우기
         setShowSuccessModal(true);
       }
     } catch (error) {
-      // ... (기존 에러 처리 로직) ...
-      console.error("수강신청 실패:", error);
+      console.error("[RegistrationPage] Registration failed:", error);
       if (isAxiosError(error) && error.response) {
         alert(
           error.response.data.message ||
@@ -374,78 +356,69 @@ export default function Registration() {
     }
   };
 
-  // 수강신청 시도 핸들러
   const handleRegisterAttempt = async () => {
-    setCaptchaDigits(makeCaptchaDigits()); // 매 시도마다 Captcha 새로 생성
-    // 1. 강의 선택 검사
+    setCaptchaDigits(makeCaptchaDigits());
+
     if (selectedCourse === null) {
       setWarningType("notChosen");
-      setCaptchaInput(""); // 입력 초기화
+      setCaptchaInput("");
       return;
     }
-    // 2. 보안문자 검사
+
     const correctCaptcha = captchaDigits
       .map((d) => d.value)
       .join("");
     if (captchaInput !== correctCaptcha) {
       setWarningType("captchaError");
-      setCaptchaInput(""); // 입력 초기화
-      return;
-    }
-    // 3. 연습 모드 확인
-    if (!pipWindow) {
-      setWarningType("practiceNotStarted");
-      setCaptchaInput(""); // 입력 초기화
+      setCaptchaInput("");
       return;
     }
 
-    // [Todo 1 적용] 시간 체크 및 대기열 로직
+    if (!pipWindow) {
+      setWarningType("practiceNotStarted");
+      setCaptchaInput("");
+      return;
+    }
+
     const targetTime = new Date(currentTime);
-    targetTime.setHours(8, 30, 0, 0); // 기준 시간 08:30:00
+    targetTime.setHours(8, 30, 0, 0);
 
     const diffMs =
       currentTime.getTime() -
       targetTime.getTime();
 
-    // Case A: 8시 30분 이전 -> "수강신청 기간이 아닙니다" (API 호출 X)
     if (diffMs < 0) {
       setWarningType("beforeTime");
-      setCaptchaInput(""); // 입력 초기화
+      setCaptchaInput("");
       return;
     }
 
-    // Case B: 8시 30분 이후 -> 대기열 계산
     const queueData = calculateQueueInfo(diffMs);
 
     if (queueData) {
-      // 대기열이 존재하면 모달 띄움 -> 모달 종료 시 proceedToApiCall 실행
       setWaitingInfo({
         count: queueData.queueCount,
         seconds: queueData.waitSeconds,
       });
     } else {
-      // 대기열 없으면(너무 늦게 누름) 바로 API 호출
       proceedToApiCall();
     }
   };
 
-  // 성공 모달 핸들러
   const handleSuccessClose = (move: boolean) => {
     setShowSuccessModal(false);
     if (move) {
       navigate("/enrollment-history");
-      setCaptchaInput(""); // 입력 초기화
+      setCaptchaInput("");
     } else {
-      // 계속하기: 선택 초기화 등 필요하면 수행
-      setSelectedCourse(null); // 예시: 선택 해제
-      setCaptchaInput(""); // 입력 초기화
+      setSelectedCourse(null);
+      setCaptchaInput("");
     }
   };
 
   const startTimeRef = useRef<number>(0);
   const virtualOffsetRef = useRef<number>(0);
 
-  // 타이머와 PiP를 켜는 로직을 별도 함수로 분리 (중복 제거)
   const startTimerAndPip = async () => {
     const offsetSeconds =
       startOffset === 0 ? 30 : startOffset;
@@ -460,45 +433,34 @@ export default function Registration() {
       virtualStart.getTime();
 
     setCurrentTime(virtualStart);
-    isPracticeRunningRef.current = true; // 실행 상태 플래그 true 설정
+    isPracticeRunningRef.current = true;
 
     openWindow();
   };
 
-  // 버튼 클릭 핸들러 (Toggle)
   const togglePractice = () => {
     if (pipWindow) {
-      // 이미 실행 중이면 종료 로직
-      handleStopPractice(true); // true = 수동 종료(API 호출 포함)
+      handleStopPractice(true);
     } else {
-      // 실행 중 아니면 시작 로직
       handleStartPractice();
     }
   };
 
-  // [추가] PiP 창 상태에 따라 타이머를 자동으로 켜고 끄는 Effect
   useEffect(() => {
-    // PiP 창이 없으면 타이머를 돌리지 않음
     if (!pipWindow) return;
 
-    // 기존 타이머 정리 (중복 방지)
     if (timerRef.current)
       clearInterval(timerRef.current);
 
-    // 타이머 시작 (window.setInterval 명시)
     timerRef.current = window.setInterval(() => {
-      // 현재 실제 시간과 시작 시간의 차이(경과 시간)를 계산
       const now = Date.now();
       const elapsed = now - startTimeRef.current;
-
-      // 오차 없이 정확한 가상 현재 시간 계산
       const nextTime = new Date(
         virtualOffsetRef.current + elapsed,
       );
 
       setCurrentTime(nextTime);
 
-      // 종료 로직 (8:33 체크)
       if (
         nextTime.getHours() === 8 &&
         nextTime.getMinutes() >= 33
@@ -507,7 +469,6 @@ export default function Registration() {
       }
     }, 1000);
 
-    // Cleanup: 창이 닫히거나 컴포넌트가 사라질 때 타이머 정지
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -516,11 +477,9 @@ export default function Registration() {
         pipWindow.close();
       }
     };
-  }, [pipWindow, handleStopPractice]); // pipWindow가 변할 때마다 실행됨
+  }, [pipWindow, handleStopPractice]);
 
-  // [추가] 모달 오픈 시 바디 스크롤 제어
   useEffect(() => {
-    // 세 가지 모달 상태 중 하나라도 활성화되어 있는지 확인
     const isModalOpen =
       waitingInfo !== null ||
       showSuccessModal ||
@@ -528,14 +487,11 @@ export default function Registration() {
       showNotSupportedModal;
 
     if (isModalOpen) {
-      // 모달이 열리면 스크롤 숨김
       document.body.style.overflow = "hidden";
     } else {
-      // 모달이 없으면 스크롤 복구
       document.body.style.overflow = "unset";
     }
 
-    // 컴포넌트가 언마운트되거나 상태가 변할 때 정리(Cleanup)
     return () => {
       document.body.style.overflow = "unset";
     };
@@ -549,12 +505,10 @@ export default function Registration() {
   return (
     <div className="registrationPage">
       <div className="containerX">
-        {/* 상단 타이틀 */}
         <div className="regHeader">
           <h2 className="regTitle">수강신청</h2>
         </div>
 
-        {/* 탭 메뉴 */}
         <div className="regTabs">
           <button className="regTabItem active">
             장바구니 보류강좌
@@ -585,7 +539,6 @@ export default function Registration() {
           </button>
         </div>
 
-        {/* 학점 정보 라인 */}
         <div className="regInfoLine">
           신청가능학점{" "}
           <span className="infoNum">21</span>학점
@@ -595,11 +548,8 @@ export default function Registration() {
           <span className="infoNum">0</span>강좌
         </div>
 
-        {/* 메인 컨텐츠 (2단 레이아웃) */}
         <div className="regContent">
-          {/* 왼쪽: 강좌 목록 영역 */}
           <div className="regLeftColumn">
-            {/* 진한 회색 구분선 */}
             <hr className="regDarkSeparator" />
             {courseList?.length === 0 ? (
               <div className="stateMessage">
@@ -618,7 +568,6 @@ export default function Registration() {
                       key={c.course.id}
                       className="courseItem"
                     >
-                      {/* 1. 체크박스 영역 */}
                       <div
                         className="courseCheckArea"
                         onClick={(e) => {
@@ -659,7 +608,6 @@ export default function Registration() {
                         </button>
                       </div>
 
-                      {/* 2. 강좌 정보 영역 */}
                       <div className="courseInfoArea">
                         <div className="infoRow top">
                           <span className="c-type">
@@ -717,10 +665,8 @@ export default function Registration() {
                         </div>
                       </div>
 
-                      {/* 3. 우측 장바구니/이동 영역 */}
                       <div className="courseActionArea">
                         <div className="cartInfoBox">
-                          {/* [수정] 장바구니 아이콘 (3번 사진 스타일) - 단순 외곽선 */}
                           <svg
                             className="cartIconSvg"
                             viewBox="0 0 24 24"
@@ -774,10 +720,8 @@ export default function Registration() {
             )}
           </div>
 
-          {/* 오른쪽: 플로팅 메뉴 (수강신청 버튼 & 연습버튼) */}
           <div className="regRightColumn">
             <div className="regFloatingBox">
-              {/* 보안문자 + 입력창이 붙어있는 행 */}
               <div className="regCaptchaRow">
                 <div className="regCaptchaDisplay">
                   {captchaDigits.map(
@@ -818,7 +762,6 @@ export default function Registration() {
               </button>
             </div>
 
-            {/* 연습 모드 버튼 */}
             <div className="practiceArea">
               <button
                 className={`practiceToggleBtn ${pipWindow ? "active" : ""}`}
@@ -855,7 +798,6 @@ export default function Registration() {
         </div>
       </div>
 
-      {/* PiP 포탈 */}
       {pipWindow &&
         createPortal(
           <PracticeClock
@@ -864,7 +806,6 @@ export default function Registration() {
           pipWindow.document.body,
         )}
 
-      {/* [Render] 대기열 모달 */}
       {waitingInfo &&
         createPortal(
           <WaitingModal
@@ -877,7 +818,6 @@ export default function Registration() {
           document.body,
         )}
 
-      {/* [Render] 성공 모달 */}
       {showSuccessModal &&
         createPortal(
           <SuccessModal

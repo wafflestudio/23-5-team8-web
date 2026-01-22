@@ -20,7 +20,6 @@ type CategoryType = 'firstReaction' | 'secondReaction' | 'competitionRate';
 
 const INITIAL_LIMIT = 10;
 
-// Default avatar SVG - simple gray human silhouette
 const DEFAULT_AVATAR = `data:image/svg+xml,${encodeURIComponent(`
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <circle cx="50" cy="50" r="50" fill="#e0e0e0"/>
@@ -44,7 +43,6 @@ export default function LeaderBoard() {
   const [limit, setLimit] = useState(INITIAL_LIMIT);
   const [hasMore, setHasMore] = useState(true);
 
-  // Fetch leaderboard data
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -57,7 +55,6 @@ export default function LeaderBoard() {
         const leaderboardRes = await leaderboardPromise;
         setLeaderboardData(leaderboardRes.data);
 
-        // Check if there's more data to load (use first reaction time as reference)
         const entriesCount = leaderboardRes.data.topFirstReactionTime.length;
         setHasMore(entriesCount >= limit);
       } catch (error) {
@@ -70,7 +67,6 @@ export default function LeaderBoard() {
     fetchData();
   }, [filter, limit]);
 
-  // Fetch my rank data separately (requires auth)
   useEffect(() => {
     const fetchMyData = async () => {
       if (!user) {
@@ -97,7 +93,6 @@ export default function LeaderBoard() {
     fetchMyData();
   }, [filter, user]);
 
-  // Reset limit when filter changes
   useEffect(() => {
     setLimit(INITIAL_LIMIT);
     setHasMore(true);
@@ -168,7 +163,6 @@ export default function LeaderBoard() {
       <div className='leaderboard-page'>
         <h1 className='leaderboard-title'>리더보드</h1>
 
-        {/* Filter Tabs */}
         <div className='leaderboard-filter-tabs'>
           <button
             className={`leaderboard-filter-tab ${filter === 'all' ? 'active' : ''}`}
@@ -187,7 +181,6 @@ export default function LeaderBoard() {
           </button>
         </div>
 
-        {/* Category Tabs */}
         <div className='leaderboard-category-tabs'>
           <button
             className={`leaderboard-category-tab ${category === 'firstReaction' ? 'active' : ''}`}
@@ -215,9 +208,7 @@ export default function LeaderBoard() {
           </button>
         </div>
 
-        {/* Leaderboard Container */}
         <div className='leaderboard-container'>
-          {/* List Header */}
           <div className='leaderboard-list-header'>
             <span>순위</span>
             <span>유저</span>
@@ -226,7 +217,6 @@ export default function LeaderBoard() {
             </span>
           </div>
 
-          {/* List */}
           {loading ? (
             <div className='leaderboard-loading'>
               <div className='leaderboard-loading-spinner' />
@@ -298,7 +288,6 @@ export default function LeaderBoard() {
           )}
         </div>
 
-        {/* My Rank Section */}
         {user ? (
           myRank.rank !== null && myRank.value !== null ? (
             <div className='leaderboard-my-rank'>

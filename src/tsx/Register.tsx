@@ -72,7 +72,6 @@ export default function Register() {
     return "";
   };
 
-  // --- 핸들러 ---
   const handleEmailChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -82,7 +81,7 @@ export default function Register() {
       ...prev,
       email: validateEmail(value),
     }));
-    setGlobalError(null); // 입력 시작하면 글로벌 에러 초기화
+    setGlobalError(null);
   };
 
   const handlePasswordChange = (
@@ -122,7 +121,6 @@ export default function Register() {
     e.preventDefault();
     setGlobalError(null);
 
-    // 1. 프론트엔드 유효성 검사
     const emailError = validateEmail(email);
     const passwordError =
       validatePassword(password);
@@ -147,7 +145,6 @@ export default function Register() {
     }
 
     try {
-      // 2. API 호출 (name -> nickname 매핑)
       await signupApi({
         email,
         password,
@@ -163,9 +160,8 @@ export default function Register() {
         const status = error.response.status;
         const data = error.response.data;
 
-        // 3. 에러 처리
         switch (status) {
-          case 409: // 이메일 중복
+          case 409:
             setErrors((prev) => ({
               ...prev,
               email:
@@ -173,7 +169,7 @@ export default function Register() {
             }));
             break;
 
-          case 400: // 유효성 검사 실패 (백엔드에서 오는 구체적 에러)
+          case 400:
             if (data.validationErrors) {
               setErrors((prev) => ({
                 ...prev,

@@ -1,5 +1,3 @@
-// src/mocks/apiTypes.ts
-
 export interface UserDto {
   id: number;
   nickname: string;
@@ -47,7 +45,6 @@ export interface SignupResponse {
   accessToken: string;
 }
 
-// 강의 검색 관련 타입
 export interface CourseSearchRequest {
   query?: string;
   page?: number;
@@ -85,7 +82,6 @@ export interface PageInfo {
   totalPages: number;
 }
 
-// 장바구니 관련 타입
 export interface PreEnrollAddRequest {
   courseId: number;
   cartCount: number;
@@ -101,14 +97,12 @@ export interface PreEnrollCourseResponse {
   cartCount: number;
 }
 
-// 연습 수강신청 관련 타입
 export interface PracticeRegisterRequest {
   courseId: number;
   totalCompetitors: number;
   capacity: number;
 }
 
-// 리더보드 관련 타입
 export interface LeaderboardEntryResponse {
   userId: number;
   nickname: string;

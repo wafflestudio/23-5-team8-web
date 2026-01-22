@@ -139,7 +139,6 @@ function Header({handleLogout}: {handleLogout: () => void}) {
           </div>
 
           <div className='searchArea'>
-            {/* PC용 검색 박스 */}
             <div className='searchBox'>
               <select className='searchSelect' disabled>
                 <option>Search</option>
@@ -230,7 +229,6 @@ function Header({handleLogout}: {handleLogout: () => void}) {
               </div>
             )}
 
-            {/* 모바일용 돋보기 버튼 (기본 숨김) */}
             <button className='mobileSearchBtn' aria-label='검색 열기'>
               <svg
                 viewBox='0 0 24 24'
@@ -521,7 +519,6 @@ function Footer({onOpenModal}: {onOpenModal: () => void}) {
   return (
     <div className='footer'>
       <div className='containerX footerInner'>
-        {/* 왼쪽: 개인정보처리방침, 이메일무단수집거부, Copyright */}
         <div className='footerLeft'>
           <div className='footerLinks'>
             <a
@@ -545,7 +542,6 @@ function Footer({onOpenModal}: {onOpenModal: () => void}) {
           </div>
         </div>
 
-        {/* 오른쪽: 타이머 및 연장 버튼 (로그인 시에만 노출) */}
         {user ? (
           <div className='footerRight'>
             <div className='footerRightLeftColumn'>
@@ -636,11 +632,9 @@ function SessionWarningModal({
         </div>
 
         <div className='sessionModalFooter'>
-          {/* 로그아웃 버튼 연결 */}
           <button className='footerBtn logout' onClick={onLogout}>
             로그아웃
           </button>
-          {/* 로그인 연장 버튼 연결 */}
           <button
             className='footerBtn extend'
             onClick={() => {
