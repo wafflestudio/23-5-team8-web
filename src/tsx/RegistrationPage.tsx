@@ -96,8 +96,12 @@ export default function Registration() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const navigate = useNavigate();
-  const timerRef = useRef<number | undefined>(undefined);
-  const isPracticeRunningRef = useRef(false);
+  const practiceState = useRef({
+    timerId: undefined as number | undefined,
+    isRunning: false,
+    startTime: 0,
+    virtualOffset: 0,
+  });
 
   const handleSelectedCourse = (
     courseId: number,
@@ -124,12 +128,12 @@ export default function Registration() {
 
   const handleStopPractice = useCallback(
     async (isManual = false) => {
-      if (!isPracticeRunningRef.current) return;
-      isPracticeRunningRef.current = false;
+      if (!practiceState.current.isRunning) return;
+      practiceState.current.isRunning = false;
 
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = undefined;
+      if (practiceState.current.timerId) {
+        clearInterval(practiceState.current.timerId);
+        practiceState.current.timerId = undefined;
       }
 
       closeWindow();
@@ -140,7 +144,6 @@ export default function Registration() {
           alert('연습 시간이 종료되었습니다! (08:33)');
         }
       } catch (error) {
-        console.error('연습 종료 오류:', error);
         if (isAxiosError(error) && error.response) {
           alert(
             `연습 종료 실패: ${error.response.data.message || '알 수 없는 오류'}`
@@ -153,25 +156,25 @@ export default function Registration() {
     [closeWindow]
   );
 
+  const getTimeOption = (offset: number): string => {
+    const optionMap: Record<number, string> = {
+      60: 'TIME_08_29_00',
+      30: 'TIME_08_29_30',
+      15: 'TIME_08_29_45',
+    };
+    return optionMap[offset] || 'TIME_08_29_30';
+  };
+
   const handleStartPractice = async () => {
     try {
-      let optionString = 'TIME_08_29_30';
-
-      if (startOffset === 60) {
-        optionString = 'TIME_08_29_00';
-      } else if (startOffset === 15) {
-        optionString = 'TIME_08_29_45';
-      }
+      const optionString = getTimeOption(startOffset);
       const startResponse = await practiceStartApi(optionString);
-
-      console.log('연습 시작 응답:', startResponse.data);
 
       if (startResponse.data?.practiceLogId) {
         localStorage.setItem(
           'currentPracticeLogId',
           String(startResponse.data.practiceLogId)
         );
-        console.log('practiceLogId 저장됨:', startResponse.data.practiceLogId);
       } else {
         console.error(
           'practiceLogId를 찾을 수 없습니다. 응답:',
@@ -181,42 +184,29 @@ export default function Registration() {
 
       startTimerAndPip();
     } catch (error) {
-      console.error('[RegistrationPage] Practice start error:', error);
       if (isAxiosError(error) && error.response) {
         if (error.response.status === 409) {
           // Already practicing - auto-recover by ending current session
           try {
             await practiceEndApi();
-            let optionString = 'TIME_08_29_30';
+            const optionString = getTimeOption(startOffset);
 
-            if (startOffset === 60) {
-              optionString = 'TIME_08_29_00';
-            } else if (startOffset === 15) {
-              optionString = 'TIME_08_29_45';
-            }
             const retryStartResponse = await practiceStartApi(optionString);
-
-            console.log('연습 재시작 응답:', retryStartResponse.data);
 
             if (retryStartResponse.data?.practiceLogId) {
               localStorage.setItem(
                 'currentPracticeLogId',
                 String(retryStartResponse.data.practiceLogId)
               );
-              console.log(
-                'practiceLogId 저장됨 (재시도):',
-                retryStartResponse.data.practiceLogId
-              );
             } else {
               console.error(
-                'practiceLogId를 찾을 수 없습니다 (재시도). 응답:',
+                'practiceLogId를 찾을 수 없습니다. 응답:',
                 retryStartResponse.data
               );
             }
 
             startTimerAndPip();
-          } catch (retryError) {
-            console.error('연습 재시작 실패:', retryError);
+          } catch {
             alert('이미 연습 중인 상태를 종료하는 데 실패했습니다.');
           }
         } else {
@@ -239,7 +229,6 @@ export default function Registration() {
         totalCompetitors: selectedCourse!.totalCompetitors,
         capacity: selectedCourse!.capacity,
       };
-      console.log('최종 전송 데이터:', payload);
 
       const response = await practiceAttemptApi(payload);
       setCaptchaInput(''); // 입력 초기화
@@ -250,7 +239,6 @@ export default function Registration() {
         setShowSuccessModal(true);
       }
     } catch (error) {
-      console.error('[RegistrationPage] Registration failed:', error);
       if (isAxiosError(error) && error.response) {
         alert(error.response.data.message || '수강신청에 실패했습니다.');
       } else {
@@ -260,9 +248,6 @@ export default function Registration() {
   };
 
   const handleRegisterAttempt = async () => {
-    setCaptchaDigits(makeCaptchaDigits());
-    setSelectedCourse(null);
-
     if (selectedCourse === null) {
       setWarningType('notChosen');
       setCaptchaInput('');
@@ -270,6 +255,7 @@ export default function Registration() {
     }
 
     const correctCaptcha = captchaDigits.map((d) => d.value).join('');
+    setCaptchaDigits(makeCaptchaDigits());
     if (captchaInput !== correctCaptcha) {
       setWarningType('captchaError');
       setCaptchaInput('');
@@ -316,21 +302,17 @@ export default function Registration() {
     }
   };
 
-  const startTimeRef = useRef<number>(0);
-  const virtualOffsetRef = useRef<number>(0);
-
   const startTimerAndPip = async () => {
     const offsetSeconds = startOffset === 0 ? 30 : startOffset;
     const virtualStart = new Date();
     virtualStart.setHours(8, 30, 0, 0);
     virtualStart.setSeconds(virtualStart.getSeconds() - offsetSeconds);
 
-    startTimeRef.current = Date.now();
-    virtualOffsetRef.current = virtualStart.getTime();
+    practiceState.current.startTime = Date.now();
+    practiceState.current.virtualOffset = virtualStart.getTime();
 
     setCurrentTime(virtualStart);
-    isPracticeRunningRef.current = true;
-
+    practiceState.current.isRunning = true;
     openWindow();
   };
 
@@ -345,12 +327,14 @@ export default function Registration() {
   useEffect(() => {
     if (!pipWindow) return;
 
-    if (timerRef.current) clearInterval(timerRef.current);
+    const state = practiceState.current;
 
-    timerRef.current = window.setInterval(() => {
+    if (state.timerId) clearInterval(state.timerId);
+
+    state.timerId = window.setInterval(() => {
       const now = Date.now();
-      const elapsed = now - startTimeRef.current;
-      const nextTime = new Date(virtualOffsetRef.current + elapsed);
+      const elapsed = now - state.startTime;
+      const nextTime = new Date(state.virtualOffset + elapsed);
 
       setCurrentTime(nextTime);
 
@@ -360,8 +344,8 @@ export default function Registration() {
     }, 1000);
 
     return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
+      if (state.timerId) {
+        clearInterval(state.timerId);
       }
       if (!pipWindow.closed) {
         pipWindow.close();
