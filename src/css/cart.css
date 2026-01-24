@@ -49,6 +49,10 @@
   margin-top: 4px;
 }
 
+.cart-notice.bold {
+  font-weight: 500;
+}
+
 .cart-left-section {
   max-width: 50%;
 }
@@ -122,6 +126,47 @@
   font-weight: 400;
   line-height: 1.5;
   color: #666666;
+}
+
+.cartCountDisplay {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 24px;
+  color: #5189d6;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-right: -20px;
+  transition: background-color 0.15s;
+}
+
+.cartCountDisplay:hover {
+  background-color: #f0f0f0;
+}
+
+.cartCountInput {
+  width: 40px;
+  height: 24px;
+  text-align: center;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: -20px;
+  appearance: none;
+  -moz-appearance: textfield;
+}
+
+.cartCountInput::-webkit-outer-spin-button,
+.cartCountInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.cartCountInput:focus {
+  outline: none;
+  border-color: #5189d6;
 }
 
 .courseInfoArea {

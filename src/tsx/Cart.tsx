@@ -19,9 +19,8 @@ export default function Cart() {
   const [selectedCourses, setSelectedCourses] = useState<Set<number>>(
     new Set()
   );
-  const [editingValues, setEditingValues] = useState<Map<number, string>>(
-    new Map()
-  );
+  const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
+  const [editingValue, setEditingValue] = useState<string>('');
   const [showNoCourseSelected, setShowNoCourseSelected] = useState(false);
 
   const toggleCourseSelection = (courseId: number) => {
@@ -100,6 +99,9 @@ export default function Cart() {
             <p className="cart-notice">
               ※ 장바구니 담기 기간 이후의 변동내역은 장바구니에 적용되지
               않습니다.
+            </p>
+            <p className="cart-notice bold">
+              ※ 장바구니 숫자를 클릭하여 수정할 수 있습니다.
             </p>
           </div>
         </div>
@@ -241,53 +243,56 @@ export default function Cart() {
                             <circle cx="20" cy="21" r="1" />
                             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                           </svg>
-                          <input
-                            type="number"
-                            value={
-                              editingValues.has(item.course.id)
-                                ? editingValues.get(item.course.id)
-                                : item.cartCount
-                            }
-                            onChange={(e) => {
-                              e.stopPropagation();
-                              const newValue = e.target.value;
-                              setEditingValues((prev) => {
-                                const newMap = new Map(prev);
-                                newMap.set(item.course.id, newValue);
-                                return newMap;
-                              });
-                            }}
-                            onBlur={(e) => {
-                              e.stopPropagation();
-                              if (editingValues.has(item.course.id)) {
-                                const value = editingValues.get(
-                                  item.course.id
-                                )!;
-                                const finalValue = value === '' ? '0' : value;
+                          {editingCourseId === item.course.id ? (
+                            <input
+                              type="number"
+                              value={editingValue}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                setEditingValue(e.target.value);
+                              }}
+                              onBlur={(e) => {
+                                e.stopPropagation();
+                                const finalValue =
+                                  editingValue === '' ? '0' : editingValue;
                                 handleCartCountChange(
                                   item.course.id,
                                   finalValue
                                 );
-                                setEditingValues((prev) => {
-                                  const newMap = new Map(prev);
-                                  newMap.delete(item.course.id);
-                                  return newMap;
-                                });
-                              }
-                            }}
-                            onClick={(e) => e.stopPropagation()}
-                            className="cartCountInput"
-                            min="0"
-                            style={{
-                              width: '50px',
-                              height: '24px',
-                              textAlign: 'center',
-                              fontSize: '14px',
-                              border: '1px solid #ddd',
-                              borderRadius: '4px',
-                              marginLeft: '4px',
-                            }}
-                          />
+                                setEditingCourseId(null);
+                                setEditingValue('');
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  const finalValue =
+                                    editingValue === '' ? '0' : editingValue;
+                                  handleCartCountChange(
+                                    item.course.id,
+                                    finalValue
+                                  );
+                                  setEditingCourseId(null);
+                                  setEditingValue('');
+                                }
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                              className="cartCountInput"
+                              min="0"
+                              autoFocus
+                            />
+                          ) : (
+                            <span
+                              className="cartCountDisplay"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingCourseId(item.course.id);
+                                setEditingValue(String(item.cartCount));
+                              }}
+                            >
+                              {item.cartCount}
+                            </span>
+                          )}
                         </div>
                         <div className="arrowBox">
                           <svg
