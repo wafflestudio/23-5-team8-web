@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import '../css/registrationPage.css';
-import Notsupporting from '../utils/notSupporting';
+import Warning from '../utils/Warning';
 import {
   practiceStartApi,
   practiceEndApi,
@@ -13,7 +13,7 @@ import type { Course } from '../types/apiTypes';
 import { useCartQuery } from '../hooks/useCartQuery';
 import { useModalStore } from '../stores/modalStore';
 import {
-  type Warning,
+  type WarningType,
   WarningModal,
   WaitingModal,
   SuccessModal,
@@ -88,7 +88,7 @@ export default function Registration() {
     return now;
   });
   const [startOffset, setStartOffset] = useState<number>(0);
-  const [warningType, setWarningType] = useState<Warning>('none');
+  const [warningType, setWarningType] = useState<WarningType>('none');
   const [waitingInfo, setWaitingInfo] = useState<{
     count: number;
     seconds: number;
@@ -617,7 +617,14 @@ export default function Registration() {
           />,
           document.body
         )}
-      <Notsupporting isOpen={showNotSupported} onClose={closeNotSupported} />
+      <Warning
+        variant="single"
+        icon="warning"
+        isOpen={showNotSupported}
+        onClose={closeNotSupported}
+      >
+        <p className="warningText">지원하지 않는 기능입니다.</p>
+      </Warning>
     </div>
   );
 }

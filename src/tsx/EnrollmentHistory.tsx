@@ -5,7 +5,7 @@ import {getPracticeResultApi} from '../api/registration';
 import {searchCoursesApi} from '../api/courses';
 import type {PracticeAttemptDetail, Course} from '../types/apiTypes';
 import {useModalStore} from '../stores/modalStore';
-import DeleteSuccessModal from '../utils/deleteSuccessModal';
+import Warning from '../utils/Warning';
 
 interface EnrolledCourse extends PracticeAttemptDetail {
   course: Course;
@@ -233,7 +233,13 @@ export default function EnrollmentHistory() {
         </div>
       </div>
 
-      <DeleteSuccessModal isOpen={showDeleteSuccess} onClose={closeDeleteSuccess} />
+      <Warning
+        variant="single"
+        icon="warning"
+        isOpen={showDeleteSuccess}
+        onClose={closeDeleteSuccess}
+        title="삭제되었습니다."
+      />
     </main>
   );
 }

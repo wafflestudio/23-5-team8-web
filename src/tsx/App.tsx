@@ -12,8 +12,7 @@ import Cart from './Cart.tsx';
 import Registration from './RegistrationPage.tsx';
 import EnrollmentHistory from './EnrollmentHistory.tsx';
 import LeaderBoard from './LeaderBoard.tsx';
-import NeedLogin from '../utils/needLogin.tsx';
-import NotSupporting from '../utils/notSupporting.tsx';
+import Warning from '../utils/Warning';
 
 export default function App() {
   const location = useLocation();
@@ -445,12 +444,27 @@ function Header({handleLogout}: {handleLogout: () => void}) {
           </div>
         )}
       </div>
-      <NeedLogin
+      <Warning
+        variant="double"
+        icon="question"
         isOpen={showLoginWarning}
-        onConfirm={handleConfirmLogin}
         onClose={closeLoginWarning}
-      />
-      <NotSupporting isOpen={showNotSupported} onClose={closeNotSupported} />
+        onConfirm={handleConfirmLogin}
+      >
+        <p className="warningText">
+          로그인 후 사용할 수 있는 기능입니다.
+          <br />
+          로그인하시겠습니까?
+        </p>
+      </Warning>
+      <Warning
+        variant="single"
+        icon="warning"
+        isOpen={showNotSupported}
+        onClose={closeNotSupported}
+      >
+        <p className="warningText">지원하지 않는 기능입니다.</p>
+      </Warning>
     </header>
   );
 }
@@ -601,49 +615,40 @@ function SessionWarningModal({
   };
 
   return (
-    <div className='modalOverlay'>
-      <div className='sessionModalBox'>
-        <div className='sessionModalBody'>
-          <h2 className='sessionTitle'>로그인 연장</h2>
-          <p className='sessionMsg'>
-            로그인 연장을 원하지 않으실 경우,
-            <br />
-            자동로그아웃 됩니다.
-          </p>
-          <div className='sessionTimerBox'>
-            <svg
-              width='18'
-              height='18'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='#ff5722'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              style={{marginRight: '4px', verticalAlign: 'middle'}}
-            >
-              <circle cx='12' cy='12' r='10'></circle>
-              <polyline points='12 6 12 12 16 14'></polyline>
-            </svg>
-            <span className='sessionTimerText'>{formatTime(timeLeft)}</span>
-          </div>
-        </div>
-
-        <div className='sessionModalFooter'>
-          <button className='footerBtn logout' onClick={onLogout}>
-            로그아웃
-          </button>
-          <button
-            className='footerBtn extend'
-            onClick={() => {
-              onExtend();
-              setShowLoginWarningOpen(false);
-            }}
-          >
-            로그인 연장
-          </button>
-        </div>
+    <Warning
+      variant="double"
+      isOpen={true}
+      onClose={onLogout}
+      onConfirm={() => {
+        onExtend();
+        setShowLoginWarningOpen(false);
+      }}
+      title="로그인 연장"
+      cancelLabel="로그아웃"
+      confirmLabel="로그인 연장"
+    >
+      <p className='sessionMsg'>
+        로그인 연장을 원하지 않으실 경우,
+        <br />
+        자동로그아웃 됩니다.
+      </p>
+      <div className='sessionTimerBox'>
+        <svg
+          width='18'
+          height='18'
+          viewBox='0 0 24 24'
+          fill='none'
+          stroke='#ff5722'
+          strokeWidth='2'
+          strokeLinecap='round'
+          strokeLinejoin='round'
+          style={{marginRight: '4px', verticalAlign: 'middle'}}
+        >
+          <circle cx='12' cy='12' r='10'></circle>
+          <polyline points='12 6 12 12 16 14'></polyline>
+        </svg>
+        <span className='sessionTimerText'>{formatTime(timeLeft)}</span>
       </div>
-    </div>
+    </Warning>
   );
 }

@@ -6,7 +6,7 @@ import {
 } from '../hooks/useCartQuery';
 import {useModalStore} from '../stores/modalStore';
 import {isAxiosError} from 'axios';
-import DeleteSuccessModal from '../utils/deleteSuccessModal';
+import Warning from '../utils/Warning';
 
 export default function Cart() {
   const {data: cartCourses = [], isLoading} = useCartQuery();
@@ -16,6 +16,7 @@ export default function Cart() {
 
   const [selectedCourses, setSelectedCourses] = useState<Set<number>>(new Set());
   const [editingValues, setEditingValues] = useState<Map<number, string>>(new Map());
+  const [showNoCourseSelected, setShowNoCourseSelected] = useState(false);
 
   const toggleCourseSelection = (courseId: number) => {
     setSelectedCourses((prev) => {
@@ -31,7 +32,7 @@ export default function Cart() {
 
   const handleDeleteSelected = async () => {
     if (selectedCourses.size === 0) {
-      alert('삭제할 강의를 선택해주세요.');
+      setShowNoCourseSelected(true);
       return;
     }
 
@@ -271,7 +272,22 @@ export default function Cart() {
         </div>
       </div>
 
-      <DeleteSuccessModal isOpen={showDeleteSuccess} onClose={closeDeleteSuccess} />
+      <Warning
+        variant="single"
+        icon="warning"
+        isOpen={showDeleteSuccess}
+        onClose={closeDeleteSuccess}
+        title="삭제되었습니다."
+      />
+
+      <Warning
+        variant="single"
+        icon="warning"
+        isOpen={showNoCourseSelected}
+        onClose={() => setShowNoCourseSelected(false)}
+      >
+        <p className="warningText">삭제할 강좌를 선택해주십시오.</p>
+      </Warning>
     </main>
   );
 }
