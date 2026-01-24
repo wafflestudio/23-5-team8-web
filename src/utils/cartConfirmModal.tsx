@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import "../css/needLogin.css";
+import "../css/Warning.css";
 
 interface CartConfirmModalProps {
   isOpen: boolean;
@@ -24,12 +24,12 @@ export default function CartConfirmModal({
   if (!isOpen) return null;
 
   return (
-    <div className="login-modal-overlay">
+    <div className="background">
       <div
-        className="login-modal-box"
+        className="warningContainer"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="login-modal-content">
+        <div className="contentWrapper">
           <h2 className="modal-title">
             장바구니에 담겼습니다.
           </h2>
@@ -40,15 +40,15 @@ export default function CartConfirmModal({
           </p>
         </div>
 
-        <div className="login-modal-buttons">
+        <div className="success-btn-row">
           <button
-            className="btn-cancel"
+            className="success-btn gray"
             onClick={onClose}
           >
             아니요, 괜찮습니다.
           </button>
           <button
-            className="btn-confirm"
+            className="success-btn blue"
             onClick={onConfirm}
           >
             장바구니로 이동

@@ -510,7 +510,7 @@ function NoticePage() {
 
 function Footer({onOpenModal}: {onOpenModal: () => void}) {
   const {user, timeLeft} = useAuth();
-  const {showNotSupported, openNotSupported, closeNotSupported} = useModalStore();
+  const {openNotSupported} = useModalStore();
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -579,7 +579,6 @@ function Footer({onOpenModal}: {onOpenModal: () => void}) {
           <div className='footerRight'></div>
         )}
       </div>
-      <NotSupporting isOpen={showNotSupported} onClose={closeNotSupported} />
     </div>
   );
 }

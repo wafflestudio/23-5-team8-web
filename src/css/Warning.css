@@ -38,6 +38,70 @@
   margin-bottom: 15px; /* 아이콘과 텍스트 사이 간격 */
 }
 
+/* 물음표 아이콘 원형 배경 */
+.icon-wrapper {
+  width: 40px;
+  height: 40px;
+  background-color: #f2f5fc;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* 물음표 텍스트 */
+.question-mark {
+  color: #728094;
+  font-size: 25px;
+  font-weight: 400;
+}
+
+/* 경고 아이콘 원형 배경 (주황색) */
+.icon-wrapper-warning {
+  width: 60px;
+  height: 60px;
+  background-color: #fff3e0;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* 느낌표 텍스트 */
+.warning-mark {
+  color: #ff9800;
+  font-size: 36px;
+  font-weight: 600;
+}
+
+/* 모달 제목 */
+.modal-title {
+  font-size: 20px;
+  color: #000;
+  margin: 0 0 20px 0;
+  font-weight: 600;
+}
+
+/* 충돌 모달 제목 (더 작은 폰트) */
+.modal-title-conflict {
+  font-size: 18px;
+  color: #000;
+  margin: 0 0 20px 0;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* 모달 부제목 */
+.modal-subtitle {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 400;
+}
+
 .warningText {
   font-size: 18px;
   color: #222;

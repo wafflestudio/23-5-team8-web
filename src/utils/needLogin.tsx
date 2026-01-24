@@ -1,4 +1,4 @@
-import '../css/needLogin.css';
+import '../css/Warning.css';
 
 interface NeedLoginProps {
   isOpen: boolean;
@@ -14,23 +14,23 @@ export default function NeedLogin({
   if (!isOpen) return null;
 
   return (
-    <div className='login-modal-overlay'>
-      <div className='login-modal-box'>
-        <div className='login-modal-content'>
+    <div className='background'>
+      <div className='warningContainer'>
+        <div className='contentWrapper'>
           <div className='icon-wrapper'>
             <span className='question-mark'>?</span>
           </div>
-          <p className='modal-text'>
+          <p className='warningText'>
             로그인 후 사용할 수 있는 기능입니다.
             <br />
             로그인하시겠습니까?
           </p>
         </div>
-        <div className='login-modal-buttons'>
-          <button className='btn-cancel' onClick={onClose}>
+        <div className='success-btn-row'>
+          <button className='success-btn gray' onClick={onClose}>
             취소
           </button>
-          <button className='btn-confirm' onClick={onConfirm}>
+          <button className='success-btn blue' onClick={onConfirm}>
             확인
           </button>
         </div>

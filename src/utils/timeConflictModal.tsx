@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import "../css/needLogin.css";
+import "../css/Warning.css";
 
 interface TimeConflictModalProps {
   isOpen: boolean;
@@ -28,12 +28,12 @@ export default function TimeConflictModal({
   if (!isOpen) return null;
 
   return (
-    <div className="login-modal-overlay">
+    <div className="background">
       <div
-        className="login-modal-box"
+        className="warningContainer"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="login-modal-content">
+        <div className="contentWrapper">
           <h2 className="modal-title-conflict">
             {courseName} ({courseCode}) :<br />
             수업교시가 중복되었습니다.
@@ -45,15 +45,15 @@ export default function TimeConflictModal({
           </p>
         </div>
 
-        <div className="login-modal-buttons">
+        <div className="success-btn-row">
           <button
-            className="btn-cancel"
+            className="success-btn gray"
             onClick={onClose}
           >
             아니요, 괜찮습니다.
           </button>
           <button
-            className="btn-confirm"
+            className="success-btn blue"
             onClick={onConfirm}
           >
             장바구니로 이동

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import "../css/needLogin.css";
+import "../css/Warning.css";
 
 interface DeleteSuccessModalProps {
   isOpen: boolean;
@@ -22,12 +22,12 @@ export default function DeleteSuccessModal({
   if (!isOpen) return null;
 
   return (
-    <div className="login-modal-overlay">
+    <div className="background">
       <div
-        className="delete-modal-box"
+        className="warningContainer"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="login-modal-content">
+        <div className="contentWrapper">
           <div className="icon-wrapper-warning">
             <span className="warning-mark">
               !
@@ -39,14 +39,12 @@ export default function DeleteSuccessModal({
           </h2>
         </div>
 
-        <div className="delete-modal-button">
-          <button
-            className="btn-confirm-single"
-            onClick={onClose}
-          >
-            확인
-          </button>
-        </div>
+        <button
+          className="confirmButton"
+          onClick={onClose}
+        >
+          확인
+        </button>
       </div>
     </div>
   );
