@@ -474,8 +474,10 @@ export default function Registration() {
                           <span className="c-divider-light">|</span>
                           <span className="c-schedule">
                             {c.course.placeAndTime
-                              ? JSON.parse(c.course.placeAndTime).time ||
-                                '시간 미정'
+                              ? JSON.parse(c.course.placeAndTime).time?.replace(
+                                  /\//g,
+                                  ' '
+                                ) || '시간 미정'
                               : '시간 미정'}
                           </span>
                         </div>

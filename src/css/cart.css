@@ -7,10 +7,10 @@
 }
 
 .cart-notice-box {
-  background: #5089d6;
+  background: #5189d6;
   border-radius: 8px;
-  padding: 20px 24px;
-  margin-bottom: 24px;
+  padding: 30px 34px;
+  margin-bottom: 34px;
   display: flex;
   align-items: top;
   justify-content: space-between;
@@ -27,26 +27,26 @@
 
 .cart-notice-date {
   margin: 0;
-  font-size: 26px;
+  font-size: 24px;
   line-height: 1.2;
   color: #ffffff;
-  font-weight: 380;
+  font-weight: 400;
 }
 
 .cart-notice-date + .cart-notice-date {
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .cart-notice {
   margin: 0;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.2;
   color: #ffffff;
   font-weight: 300;
 }
 
 .cart-notice + .cart-notice {
-  margin-top: 3px;
+  margin-top: 4px;
 }
 
 .cart-left-section {
@@ -68,8 +68,7 @@
   border: 1px solid #d1d5db;
   cursor: pointer;
   font-size: 13px;
-  font-weight: 350;
-  color: #919191;
+  font-weight: 400;
   border-radius: 16px;
   transition: all 0.2s;
   flex-shrink: 0;
@@ -82,7 +81,6 @@
 
 .cart-tab-button.active {
   background: #f2f2f2;
-  color: #919191;
   border-color: #d1d5db;
 }
 
@@ -95,16 +93,15 @@
 
 .cart-credit-info {
   margin-left: auto;
-  font-size: 13px;
-  font-weight: 350;
-  color: #919191;
+  font-size: 15px;
+  font-weight: 400;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .cart-credit-number {
-  color: #5089d6;
-  font-weight: 350;
+  color: #5189d6;
+  font-weight: 400;
 }
 
 .cart-content-box {
@@ -114,38 +111,6 @@
   padding-bottom: 30px;
 }
 
-.cart-breadcrumb {
-  padding: 16px 24px;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-}
-
-.cart-breadcrumb-item {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 350;
-  color: #6b7280;
-  padding: 0;
-  transition: color 0.2s;
-}
-
-.cart-breadcrumb-item:hover {
-  color: #2563eb;
-  text-decoration: underline;
-}
-
-.cart-breadcrumb-arrow {
-  color: #9ca3af;
-  font-size: 14px;
-  user-select: none;
-}
-
 .cart-empty-state {
   text-align: center;
   padding: 30px 20px 30px;
@@ -153,16 +118,19 @@
 
 .cart-empty-title {
   margin: 0;
-  font-size: 13px;
-  font-weight: 350;
-  color: #919191;
+  font-size: 15px;
+  font-weight: 400;
   line-height: 1.5;
+  color: #666666;
 }
 
-.cart-empty-desc {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 350;
-  color: #919191;
-  line-height: 1.6;
+.courseInfoArea {
+  display: flex;
+  flex-direction: row;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  margin-top: 2px;
 }
