@@ -16,12 +16,18 @@
 html,
 body {
   height: 100%;
+  margin: 0;
+  padding: 0;
 }
 body {
   font-family: 'Noto Sans KR', sans-serif;
   color: var(--text);
   background: var(--bg);
-  margin-top: -10px;
+}
+#root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 a {
   color: inherit;
@@ -35,9 +41,12 @@ button {
 }
 
 .app {
-  min-height: 100vh;
+  flex: 1;
   display: flex;
   flex-direction: column;
+}
+#main {
+  flex: 1;
 }
 .containerX {
   width: min(var(--max), calc(100% - 32px));
