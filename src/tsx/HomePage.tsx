@@ -1,7 +1,7 @@
 import {Link} from 'react-router-dom';
 import {useAuth} from '../contexts/AuthContext.ts';
 import '../css/homePage.css';
-import NotSupporting from '../utils/notSupporting.tsx';
+import Warning from '../utils/Warning';
 import {useState} from 'react';
 
 export default function HomePage() {
@@ -128,10 +128,14 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <NotSupporting
+      <Warning
+        variant="single"
+        icon="warning"
         isOpen={showNotSupporting}
         onClose={() => setShowNotSupporting(false)}
-      />
+      >
+        <p className="warningText">지원하지 않는 기능입니다.</p>
+      </Warning>
     </main>
   );
 }
