@@ -57,6 +57,13 @@
   border-radius: 8px;
 }
 
+.mypage-logo-text {
+  color: #2491c9;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
 .mypage-main {
   flex: 1;
   display: flex;

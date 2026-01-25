@@ -181,11 +181,12 @@ export default function Login() {
           <Link to="/" className="login-logo">
             <img
               src="/assets/logo.png"
-              alt="Waffle Logo"
+              alt="All Clear Logo"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).style.display = 'none';
               }}
             />
+            <span className="login-logo-text">ALL CLEAR</span>
           </Link>
         </div>
       </header>
