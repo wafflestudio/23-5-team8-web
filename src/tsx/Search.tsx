@@ -3,7 +3,7 @@ import '../css/search.css';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useCourseSearchQuery } from '../hooks/useCourseQuery';
 import { useAddToCartMutation, useCartQuery } from '../hooks/useCartQuery';
-import type { Course } from '../types/apiTypes';
+import type { CourseDetailResponse } from '../types/apiTypes';
 import { isAxiosError } from 'axios';
 import Warning from '../utils/Warning';
 import {
@@ -109,7 +109,7 @@ export default function SearchPage() {
     }
 
     const courseId = Array.from(selectedCourses)[0];
-    const selectedCourse = courses.find((c: Course) => c.id === courseId);
+    const selectedCourse = courses.find((c: CourseDetailResponse) => c.id === courseId);
 
     if (selectedCourse && cartData) {
       const selectedTimeStr = extractTimeFromPlaceAndTime(
@@ -129,10 +129,7 @@ export default function SearchPage() {
 
     try {
       const promises = Array.from(selectedCourses).map((courseId) =>
-        addToCartMutation.mutateAsync({
-          courseId,
-          cartCount: 0,
-        })
+        addToCartMutation.mutateAsync({ courseId })
       );
       await Promise.all(promises);
       setSelectedCourses(new Set());
@@ -142,7 +139,7 @@ export default function SearchPage() {
       if (isAxiosError(err) && err.response) {
         if (err.response.status === 409) {
           const courseId = Array.from(selectedCourses)[0];
-          const course = courses.find((c: Course) => c.id === courseId);
+          const course = courses.find((c: CourseDetailResponse) => c.id === courseId);
 
           if (course) {
             setConflictCourse({
@@ -298,7 +295,7 @@ export default function SearchPage() {
                 <p className="stateMessage">검색 결과가 없습니다.</p>
               )}
               {!isLoading &&
-                courses.map((course: Course) => {
+                courses.map((course: CourseDetailResponse) => {
                   const isSelected = selectedCourses.has(course.id);
                   const cartCount = 0;
 

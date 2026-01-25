@@ -72,7 +72,7 @@ export function hasTimeConflict(
 /**
  * Extract time string from placeAndTime JSON string
  */
-export function extractTimeFromPlaceAndTime(placeAndTime: string | null): string | null {
+export function extractTimeFromPlaceAndTime(placeAndTime: string | null | undefined): string | null {
   if (!placeAndTime) return null;
 
   try {

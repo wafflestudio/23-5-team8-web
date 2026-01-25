@@ -12,12 +12,8 @@ export default function EnrollmentHistory() {
     setSelectedCourseId((prev) => (prev === courseId ? null : courseId));
   };
 
-  const handleDeleteSelected = () => {
-    setShowNotSupported(true);
-  };
-
   const totalCredit = enrolledCourses.reduce(
-    (sum, course) => sum + course.credit,
+    (sum, course) => sum + (course?.credit || 0),
     0
   );
 
@@ -35,11 +31,16 @@ export default function EnrollmentHistory() {
           <div className="enrollment-tabs-container">
             <button
               className="enrollment-tab-button active"
-              onClick={handleDeleteSelected}
+              onClick={() => setShowNotSupported(true)}
             >
               선택삭제
             </button>
-            <button className="enrollment-tab-button">엑셀저장</button>
+            <button
+              className="enrollment-tab-button"
+              onClick={() => setShowNotSupported(true)}
+            >
+              엑셀저장
+            </button>
             <span className="enrollment-credit-info">
               신청가능학점 <span className="enrollment-credit-number">21</span>
               학점 / 신청학점{' '}
@@ -94,44 +95,47 @@ export default function EnrollmentHistory() {
                       </div>
 
                       <div className="courseInfoArea">
-                      <div className="infoRow">
-                        <span className="c-type">
-                          [
-                          {course.academicCourse === '학사' ? '학사' : '대학원'}
-                          ] [{course.classification}]
-                        </span>
-                        <span className="c-title">{course.courseTitle}</span>
-                      </div>
-                      <div className="infoRow">
-                        <span className="c-prof">{course.instructor}</span>
-                        <span className="c-divider">|</span>
-                        <span className="c-dept">{course.department}</span>
-                        <span className="c-divider">|</span>
-                        <span className="c-coursenum">
-                          {course.courseNumber}
-                          {course.lectureNumber && `(${course.lectureNumber})`}
-                        </span>
-                      </div>
-                      <div className="infoRow">
-                        <span className="c-label">
-                          수강신청인원/정원(재학생)
-                        </span>
-                        <span className="c-val-blue">
-                          0/{course.quota} ({course.quota})
-                        </span>
-                        <span className="c-divider-light">|</span>
-                        <span className="c-label">학점</span>
-                        <span className="c-val-blue">{course.credit}</span>
-                        <span className="c-divider-light">|</span>
-                        <span className="c-schedule">
-                          {course.placeAndTime
-                            ? JSON.parse(course.placeAndTime).time?.replace(
-                                /\//g,
-                                ' '
-                              ) || '시간 미정'
-                            : '시간 미정'}
-                        </span>
-                      </div>
+                        <div className="infoRow">
+                          <span className="c-type">
+                            [
+                            {course.academicCourse === '학사'
+                              ? '학사'
+                              : '대학원'}
+                            ] [{course.classification}]
+                          </span>
+                          <span className="c-title">{course.courseTitle}</span>
+                        </div>
+                        <div className="infoRow">
+                          <span className="c-prof">{course.instructor}</span>
+                          <span className="c-divider">|</span>
+                          <span className="c-dept">{course.department}</span>
+                          <span className="c-divider">|</span>
+                          <span className="c-coursenum">
+                            {course.courseNumber}
+                            {course.lectureNumber &&
+                              `(${course.lectureNumber})`}
+                          </span>
+                        </div>
+                        <div className="infoRow">
+                          <span className="c-label">
+                            수강신청인원/정원(재학생)
+                          </span>
+                          <span className="c-val-blue">
+                            0/{course.quota} ({course.quota})
+                          </span>
+                          <span className="c-divider-light">|</span>
+                          <span className="c-label">학점</span>
+                          <span className="c-val-blue">{course.credit}</span>
+                          <span className="c-divider-light">|</span>
+                          <span className="c-schedule">
+                            {course.placeAndTime
+                              ? JSON.parse(course.placeAndTime).time?.replace(
+                                  /\//g,
+                                  ' '
+                                ) || '시간 미정'
+                              : '시간 미정'}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   );
