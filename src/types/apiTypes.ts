@@ -97,6 +97,7 @@ export interface PreEnrollCourseResponse {
   cartCount: number;
 }
 
+
 export interface PracticeRegisterRequest {
   courseId: number;
   totalCompetitors: number;

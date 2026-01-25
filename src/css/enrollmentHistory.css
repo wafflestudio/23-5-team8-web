@@ -12,10 +12,10 @@
 
 .enrollment-notice-text {
   margin: 0 0 2px 0;
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1.7;
   color: #111827;
-  font-weight: 300;
+  font-weight: 400;
 }
 
 .enrollment-tabs-container {
@@ -28,14 +28,14 @@
 }
 
 .enrollment-tab-button {
-  padding: 6px 10px;
+  padding: 16px 12px;
   background: #ffffff;
   border: 1px solid #d1d5db;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 350;
-  color: #919191;
+  font-size: 13px;
+  font-weight: 400;
   border-radius: 16px;
+  color: #666f97;
   transition: all 0.2s;
   flex-shrink: 0;
   display: flex;
@@ -47,22 +47,20 @@
 
 .enrollment-tab-button.active {
   background: #f2f2f2;
-  color: #919191;
   border-color: #d1d5db;
 }
 
 .enrollment-credit-info {
   margin-left: auto;
-  font-size: 14px;
-  font-weight: 350;
-  color: #919191;
   white-space: nowrap;
   flex-shrink: 0;
+  font-size: 15px;
+  color: #666f97;
 }
 
 .enrollment-credit-number {
-  color: #5089d6;
-  font-weight: 350;
+  color: #5189d6;
+  font-weight: 400;
 }
 
 .enrollment-content-box {
@@ -88,7 +86,6 @@
 
 /* 강의 목록 스타일 (search.css 스타일 사용) */
 .resultListArea {
-  min-height: 400px;
 }
 
 .courseListContainer {
@@ -210,7 +207,7 @@
 .c-val-blue {
   color: #376dc8;
   font-size: 14px;
-  font-family: "Noto Sans", sans-serif;
+  font-family: 'Noto Sans', sans-serif;
 }
 
 .c-divider-light {

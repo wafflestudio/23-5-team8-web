@@ -1,5 +1,5 @@
 import { api } from './axios';
-import type { PracticeRegisterRequest } from '../types/apiTypes.ts';
+import type { PracticeRegisterRequest, Course } from '../types/apiTypes.ts';
 
 export const practiceStartApi = async (virtualStartTimeOption: string) => {
   return await api.post('/api/practice/start', {
@@ -15,14 +15,6 @@ export const practiceAttemptApi = async (data: PracticeRegisterRequest) => {
   return await api.post('/api/practice/attempt', data);
 };
 
-export const getPracticeResultApi = async (practiceLogId: number) => {
-  return await api.get(`/api/practice/results/${practiceLogId}`);
-};
-
-export const getLatestPracticeLogApi = async () => {
-  return await api.get('/api/practice/logs/latest', {});
-};
-
-export const deletePracticeDetailApi = async (detailId: number) => {
-  return await api.delete(`/api/practice/details/${detailId}`);
+export const getEnrolledCoursesApi = async () => {
+  return await api.get<Course[]>('/api/practice/enrolled-courses');
 };
