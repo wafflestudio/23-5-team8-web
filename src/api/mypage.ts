@@ -53,7 +53,7 @@ export const uploadToPresignedUrlApi = async (
 
 // Step 3: 이미지 URL로 프로필 이미지 저장
 export const updateProfileImageApi = async (imageUrl: string) => {
-  return await api.put<UpdateProfileResponse>('/api/mypage/profile-image', {
+  return await api.patch<UpdateProfileResponse>('/api/mypage/profile-image', {
     imageUrl,
   });
 };
