@@ -2,6 +2,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   getMyPageApi,
   updateProfileApi,
+  getPresignedUrlApi,
+  uploadToPresignedUrlApi,
+  updateProfileImageApi,
+  deleteProfileImageApi,
   updatePasswordApi,
   deleteAccountApi,
   getPracticeSessionsApi,
@@ -36,13 +40,45 @@ export const useMyPageQuery = () => {
   });
 };
 
-// 프로필 수정 Mutation
+// 닉네임 수정 Mutation
 export const useUpdateProfileMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { nickname?: string; profileImage?: File }) =>
-      updateProfileApi(data),
+    mutationFn: (data: { nickname: string }) => updateProfileApi(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: myPageKeys.profile() });
+    },
+  });
+};
+
+// 프로필 이미지 업로드 Mutation (Presigned URL 방식)
+export const useUpdateProfileImageMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (file: File) => {
+      // Step 1: Presigned URL 받기 (파일 객체 전체 전달)
+      const { data: urlData } = await getPresignedUrlApi(file);
+
+      // Step 2: Presigned URL로 파일 업로드
+      await uploadToPresignedUrlApi(urlData.presignedUrl, file);
+
+      // Step 3: 이미지 URL을 /api/mypage/profile-image에 저장
+      return await updateProfileImageApi(urlData.imageUrl);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: myPageKeys.profile() });
+    },
+  });
+};
+
+// 프로필 이미지 삭제 Mutation
+export const useDeleteProfileImageMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => deleteProfileImageApi(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: myPageKeys.profile() });
     },

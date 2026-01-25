@@ -90,7 +90,7 @@ const PracticeSessionDetail: React.FC = () => {
             <>
               <div className="leaderboard-list-header">
                 <span>과목이름</span>
-                <span>반응속도</span>
+                <span style={{ textAlign: 'center' }}>반응속도</span>
                 <span style={{ textAlign: 'right' }}>상위%</span>
               </div>
               <div className="leaderboard-list">
@@ -110,7 +110,7 @@ const PracticeSessionDetail: React.FC = () => {
                         <span className="success-badge">✓ 성공</span>
                       )}
                     </div>
-                    <span className="leaderboard-value">
+                    <span className="leaderboard-value" style={{ textAlign: 'center' }}>
                       {detail.reactionTime}ms
                     </span>
                     <span className="leaderboard-value">

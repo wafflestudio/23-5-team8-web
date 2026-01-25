@@ -6,14 +6,43 @@
 }
 
 .mypage-header {
-  background: linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%);
+  background: #fff;
   padding: 20px 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  position: relative;
 }
 
 .mypage-header-content {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: #2491c9;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover {
+  background: #f0f8ff;
+}
+
+.mypage-header-gradient {
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, #2491c9 0%, #3db08d 100%);
+  position: absolute;
+  left: 0;
+  bottom: 0;
 }
 
 .mypage-logo {
@@ -23,7 +52,7 @@
 }
 
 .mypage-logo img {
-  height: 40px;
+  height: 50px;
   width: auto;
   border-radius: 8px;
 }
@@ -422,7 +451,7 @@
 /* Leaderboard styles for mypage */
 .leaderboard-list-header {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr 1fr;
   padding: 16px 20px;
   background: #f8f9fa;
   border-bottom: 2px solid #e0e0e0;
@@ -439,7 +468,7 @@
 
 .leaderboard-item {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr 1fr;
   padding: 16px 20px;
   border-bottom: 1px solid #e0e0e0;
   transition: background 0.2s;

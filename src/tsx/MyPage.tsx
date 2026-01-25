@@ -4,22 +4,30 @@ import { isAxiosError } from 'axios';
 import {
   useMyPageQuery,
   useUpdateProfileMutation,
+  useUpdateProfileImageMutation,
   useUpdatePasswordMutation,
   useDeleteAccountMutation,
   usePracticeSessionsQuery,
 } from '../hooks/useMyPageQuery';
 import type { PracticeSessionItem } from '../types/apiTypes';
 import '../css/mypage.css';
+import { useAuth } from '../contexts/AuthContext';
 
 // MyPage 헤더 컴포넌트
-const MyPageHeader: React.FC = () => {
+const MyPageHeader: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
   return (
     <header className="mypage-header">
       <div className="mypage-header-content">
         <Link to="/" className="mypage-logo">
           <img src="/assets/logo.png" alt="All Clear Logo" />
         </Link>
+        {onLogout && (
+          <button className="logout-btn" onClick={onLogout}>
+            로그아웃
+          </button>
+        )}
       </div>
+      <div className="mypage-header-gradient" />
     </header>
   );
 };
@@ -160,13 +168,18 @@ const MyPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [showAllSessions, setShowAllSessions] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { logout } = useAuth();
 
   // Queries
   const { data: myPageData, isLoading } = useMyPageQuery();
   const { data: sessionsData } = usePracticeSessionsQuery(currentPage);
 
+  // 마이페이지 데이터 콘솔 출력
+  console.log('마이페이지 데이터:', myPageData);
+
   // Mutations
   const updateProfileMutation = useUpdateProfileMutation();
+  const updateProfileImageMutation = useUpdateProfileImageMutation();
   const updatePasswordMutation = useUpdatePasswordMutation();
   const deleteAccountMutation = useDeleteAccountMutation();
 
@@ -177,8 +190,7 @@ const MyPage: React.FC = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       try {
-        // useMyPageQuery.ts에서 수정한대로 file 객체 전달
-        await updateProfileMutation.mutateAsync({ profileImage: file });
+        await updateProfileImageMutation.mutateAsync(file);
         alert('프로필 이미지가 변경되었습니다.');
       } catch (error) {
         if (isAxiosError(error)) {
@@ -264,7 +276,12 @@ const MyPage: React.FC = () => {
 
   return (
     <div className="mypage-page">
-      <MyPageHeader />
+      <MyPageHeader
+        onLogout={() => {
+          logout();
+          navigate('/login');
+        }}
+      />
 
       <div className="mypage-container">
         {/* 프로필 섹션 */}
@@ -330,7 +347,9 @@ const MyPage: React.FC = () => {
             <h2 className="results-title">연습 세션 목록 조회</h2>
             {sessionsData &&
               sessionsData.items &&
-              sessionsData.items.length > 3 && (
+              sessionsData.items.filter(
+                (session: PracticeSessionItem) => session.totalAttempts > 0
+              ).length > 3 && (
                 <button
                   className="view-more-btn"
                   onClick={() => setShowAllSessions(!showAllSessions)}
@@ -351,13 +370,11 @@ const MyPage: React.FC = () => {
                 <span style={{ textAlign: 'right' }}>성공률</span>
               </div>
               <div className="leaderboard-list">
-                {(showAllSessions
-                  ? sessionsData.items
-                  : sessionsData.items.slice(0, 3)
-                )
+                {sessionsData.items
                   .filter(
                     (session: PracticeSessionItem) => session.totalAttempts > 0
                   )
+                  .slice(0, showAllSessions ? undefined : 3)
                   .map((session: PracticeSessionItem) => (
                     <div
                       key={session.id}
