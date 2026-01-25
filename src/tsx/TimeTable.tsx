@@ -20,12 +20,12 @@ interface TimeTableProps {
 
 const DAYS = ['월', '화', '수', '목', '금', '토'] as const;
 const START_HOUR = 8;
-const END_HOUR = 19;
+const END_HOUR = 23;
 const HOURS = Array.from(
   { length: END_HOUR - START_HOUR },
   (_, i) => START_HOUR + i
 );
-const ROW_HEIGHT = 40;
+const ROW_HEIGHT = 60;
 
 const COURSE_COLORS = [
   '#00b147',
@@ -95,10 +95,12 @@ export default function TimeTable({ title, courses }: TimeTableProps) {
   };
 
   const calculateBlockStyle = (block: TimeBlock) => {
+    const snappedStartMinutes = Math.floor(block.startMinutes / 30) * 30;
+    const snappedEndMinutes = Math.ceil(block.endMinutes / 30) * 30;
     const startOffset =
-      ((block.startMinutes - START_HOUR * 60) / 60) * ROW_HEIGHT;
+      ((snappedStartMinutes - START_HOUR * 60) / 60) * ROW_HEIGHT;
     const duration =
-      ((block.endMinutes - block.startMinutes) / 60) * ROW_HEIGHT;
+      ((snappedEndMinutes - snappedStartMinutes) / 60) * ROW_HEIGHT;
     return {
       top: `${startOffset}px`,
       height: `${duration}px`,

@@ -1,3 +1,10 @@
+:root {
+  --gray-area-bg-dark: #ededed;
+  --gray-area-bg-light: #f8f8f8;
+  --gray-line-dark: #f5f5f5;
+  --gray-line-light: #f8f8f8;
+}
+
 .timetable-container {
   background: #ffffff;
   min-width: 300px;
@@ -39,11 +46,11 @@
 
 .timetable-grid {
   display: grid;
-  grid-template-columns: 40px repeat(6, 1fr);
+  grid-template-columns: 50px repeat(6, 1fr);
 }
 
 .timetable-corner {
-  background: #ededed;
+  background: var(--gray-area-bg-dark);
 
   padding: 10px 0;
 }
@@ -54,7 +61,7 @@
   font-size: 14px;
   font-weight: 500;
   color: #909090;
-  background: #ededed;
+  background: var(--gray-area-bg-dark);
 }
 
 .timetable-row {
@@ -62,7 +69,6 @@
 }
 
 .timetable-hour-cell {
-  background: #ffffff;
   text-align: center;
   font-size: 12px;
   color: #666666;
@@ -75,22 +81,30 @@
 
 .timetable-cell {
   position: relative;
-  border-right: 1px solid #f8f8f8;
-  border-bottom: 1px solid #f4f4f4;
-  height: 40px;
+  border-right: 1px solid var(--gray-line-dark);
+  border-bottom: 1px solid var(--gray-line-dark);
+  height: 60px;
   box-sizing: border-box;
-  background: #ffffff;
+}
+.timetable-cell::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%; /* 높이의 절반 지점 */
+  border-bottom: 1px solid var(--gray-line-light); /* 요청하신 색상 */
+  pointer-events: none; /* 마우스 이벤트 방해 금지 */
 }
 
 .timetable-cell.odd-day {
-  background: #f5f5f5;
+  background: var(--gray-area-bg-light);
 }
 
 /* Blocks overlay - positioned over the grid */
 .timetable-blocks-overlay {
   position: absolute;
   top: 37px; /* Header height + border */
-  left: 41px; /* Hour column width + border */
+  left: 51px; /* Hour column width + border */
   right: 0;
   bottom: 0;
   display: grid;
@@ -105,10 +119,11 @@
 
 .timetable-block {
   position: absolute;
-  left: 2px;
-  right: 2px;
+  align-items: center;
+  justify-content: center;
+  left: 0;
+  right: 0;
   padding: 4px 6px;
-  border-radius: 4px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
