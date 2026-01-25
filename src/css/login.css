@@ -42,9 +42,9 @@
 }
 
 .login-logo-text {
-  color: white;
+  color: #2491c9;
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.5px;
 }
 
@@ -66,7 +66,7 @@
     0 4px 6px rgba(0, 0, 0, 0.07),
     0 10px 20px rgba(0, 0, 0, 0.05);
   position: relative;
-  border: 3px solid #ff6b35;
+  border: 3px solid #2491c9;
 }
 
 .login-help-button {
@@ -77,10 +77,10 @@
 
 .help-btn {
   padding: 8px 16px;
-  border: 1px solid #ff6b35;
+  border: 1px solid #2491c9;
   background: white;
   border-radius: 8px;
-  color: #ff6b35;
+  color: #2491c9;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
@@ -88,8 +88,8 @@
 }
 
 .help-btn:hover {
-  background: #fff5f0;
-  border-color: #ff8c42;
+  background: #f0f8ff;
+  border-color: #3db08d;
 }
 
 .login-title {
@@ -121,8 +121,8 @@
 }
 
 .form-input:focus {
-  border-color: #ff6b35;
-  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+  border-color: #2491c9;
+  box-shadow: 0 0 0 3px rgba(36, 145, 201, 0.1);
 }
 
 .form-input::placeholder {
@@ -147,7 +147,7 @@
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: #ff6b35;
+  accent-color: #2491c9;
 }
 
 .form-checkbox span {
@@ -158,7 +158,7 @@
 .login-button {
   margin-top: 8px;
   padding: 14px;
-  background: linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%);
+  background: linear-gradient(135deg, #2491c9 0%, #3db08d 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -170,7 +170,7 @@
 
 .login-button:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 4px 12px rgba(36, 145, 201, 0.3);
 }
 
 .login-button:active {
@@ -329,7 +329,7 @@
 }
 
 .register-link {
-  color: #ff6b35;
+  color: #2491c9;
   font-size: 15px;
   font-weight: 500;
   text-decoration: none;
@@ -338,7 +338,7 @@
 }
 
 .register-link:hover {
-  color: #ff8c42;
+  color: #3db08d;
   text-decoration: underline;
 }
 

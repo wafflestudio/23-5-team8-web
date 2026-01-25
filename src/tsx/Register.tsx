@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { signupApi } from '../api/auth';
 import { isAxiosError } from 'axios';
+import '../css/login.css';
 
 interface RegisterFormData {
   name: string;
@@ -100,11 +101,12 @@ export default function Register() {
           <Link to="/" className="login-logo">
             <img
               src="/assets/logo.png"
-              alt="Waffle Logo"
+              alt="All Clear Logo"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).style.display = 'none';
               }}
             />
+            <span className="login-logo-text">ALL CLEAR</span>
           </Link>
         </div>
       </header>

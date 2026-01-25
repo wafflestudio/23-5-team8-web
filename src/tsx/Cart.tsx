@@ -23,6 +23,7 @@ export default function Cart() {
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
   const [editingValue, setEditingValue] = useState<string>('');
   const [showNoCourseSelected, setShowNoCourseSelected] = useState(false);
+  const [showNotSupported, setShowNotSupported] = useState(false);
 
   const toggleCourseSelection = (courseId: number) => {
     setSelectedCourses((prev) => {
@@ -100,23 +101,9 @@ export default function Cart() {
       <div className="containerX">
         <h1 className="cart-page-title">장바구니</h1>
 
-        <div className="cart-notice-box">
-          <div className="cart-notice-left">
-            <p className="cart-notice-date">2026년 01월 27일 09:00~23:59</p>
-            <p className="cart-notice-date">2026년 01월 28일 00:00~16:00</p>
-          </div>
-          <div className="cart-notice-right">
-            <p className="cart-notice">
-              ※ 마감시간 이후에는 변경이 불가하며, 인원충족 시 전산확정 됩니다.
-            </p>
-            <p className="cart-notice">
-              ※ 장바구니 담기 기간 이후의 변동내역은 장바구니에 적용되지
-              않습니다.
-            </p>
-            <p className="cart-notice bold">
-              ※ 장바구니 숫자를 클릭하여 수정할 수 있습니다.
-            </p>
-          </div>
+        <div className="cart-notice-box" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
+          <p className="cart-notice-date">※ 장바구니 숫자를 클릭하여 수정할 수 있습니다.</p>
+          <p className="cart-notice-date">※ 담은 수가 정원을 초과한 강의만 선착순 수강신청 가능합니다.</p>
         </div>
 
         <div className="cart-content-wrapper">
@@ -128,7 +115,7 @@ export default function Cart() {
             >
               선택삭제
             </button>
-            <button className="cart-tab-button">
+            <button className="cart-tab-button" onClick={() => setShowNotSupported(true)}>
               관심강좌
               <img
                 src="/assets/btn_arrow_view_gray.png"
@@ -136,7 +123,7 @@ export default function Cart() {
                 className="cart-btn-arrow"
               />
             </button>
-            <button className="cart-tab-button">
+            <button className="cart-tab-button" onClick={() => setShowNotSupported(true)}>
               전공이수내역조회
               <img
                 src="/assets/btn_arrow_view_gray.png"
@@ -334,7 +321,7 @@ export default function Cart() {
         </div>
 
         <div className="cart-right-section">
-          <TimeTable title="장바구니 시간표" courses={coursesForTimeTable} />
+          <TimeTable title="장바구니 시간표" courses={coursesForTimeTable} onPrintClick={() => setShowNotSupported(true)} />
         </div>
         </div>
       </div>
@@ -355,6 +342,14 @@ export default function Cart() {
       >
         <p className="warningText">삭제할 강좌를 선택해주십시오.</p>
       </Warning>
+
+      <Warning
+        variant="single"
+        icon="warning"
+        isOpen={showNotSupported}
+        onClose={() => setShowNotSupported(false)}
+        title="지원하지 않는 기능입니다."
+      />
     </main>
   );
 }
