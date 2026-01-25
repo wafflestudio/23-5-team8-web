@@ -4,6 +4,7 @@ import { isAxiosError } from 'axios';
 import {
   useMyPageQuery,
   useUpdateProfileMutation,
+  useUpdateProfileImageMutation,
   useUpdatePasswordMutation,
   useDeleteAccountMutation,
   usePracticeSessionsQuery,
@@ -167,6 +168,7 @@ const MyPage: React.FC = () => {
 
   // Mutations
   const updateProfileMutation = useUpdateProfileMutation();
+  const updateProfileImageMutation = useUpdateProfileImageMutation();
   const updatePasswordMutation = useUpdatePasswordMutation();
   const deleteAccountMutation = useDeleteAccountMutation();
 
@@ -177,8 +179,7 @@ const MyPage: React.FC = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       try {
-        // useMyPageQuery.ts에서 수정한대로 file 객체 전달
-        await updateProfileMutation.mutateAsync({ profileImage: file });
+        await updateProfileImageMutation.mutateAsync(file);
         alert('프로필 이미지가 변경되었습니다.');
       } catch (error) {
         if (isAxiosError(error)) {

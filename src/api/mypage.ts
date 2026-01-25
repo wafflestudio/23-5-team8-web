@@ -13,30 +13,50 @@ export const getMyPageApi = async () => {
   return await api.get<MyPageResponse>('/api/mypage');
 };
 
-// 프로필 수정 (닉네임, 프로필사진)
-// Note: apiTypes.ts의 UpdateProfileRequest는 JSON DTO(url string)이므로,
-// 파일 업로드를 위한 FormData 생성 시에는 File 타입을 받는 별도 구조를 사용합니다.
+// 프로필 수정 (닉네임, 프로필 이미지 URL)
 export const updateProfileApi = async (data: {
   nickname?: string;
-  profileImage?: File;
+  profileImageUrl?: string;
 }) => {
-  const formData = new FormData();
-  if (data.nickname) {
-    formData.append('nickname', data.nickname);
-  }
-  if (data.profileImage) {
-    formData.append('profileImage', data.profileImage);
-  }
-  return await api.put<UpdateProfileResponse>('/api/mypage/profile', formData, {
+  return await api.patch<UpdateProfileResponse>('/api/mypage/profile', data);
+};
+
+// 프로필 이미지 업로드 - Presigned URL 방식
+// Step 1: Presigned URL 요청 (파일명과 타입 전송)
+export const getPresignedUrlApi = async (
+  fileName: string,
+  fileType: string
+) => {
+  return await api.post<{ presignedUrl: string; imageUrl: string }>(
+    '/api/mypage/profile-image/presigned-url',
+    {
+      fileName,
+      contentType: fileType,
+    }
+  );
+};
+
+// Step 2: Presigned URL로 파일 직접 업로드 (S3 등)
+export const uploadToPresignedUrlApi = async (
+  presignedUrl: string,
+  file: File
+) => {
+  const response = await fetch(presignedUrl, {
+    method: 'PUT',
+    body: file,
     headers: {
-      'Content-Type': 'multipart/form-data',
+      'Content-Type': file.type,
     },
   });
+  if (!response.ok) {
+    throw new Error('Failed to upload image to presigned URL');
+  }
+  return response;
 };
 
 // 비밀번호 변경
 export const updatePasswordApi = async (data: ChangePasswordRequest) => {
-  return await api.put<void>('/api/mypage/password', data);
+  return await api.patch<void>('/api/mypage/password', data);
 };
 
 // 회원 탈퇴

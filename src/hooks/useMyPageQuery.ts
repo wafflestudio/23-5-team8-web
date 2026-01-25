@@ -2,6 +2,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   getMyPageApi,
   updateProfileApi,
+  getPresignedUrlApi,
+  uploadToPresignedUrlApi,
   updatePasswordApi,
   deleteAccountApi,
   getPracticeSessionsApi,
@@ -36,13 +38,33 @@ export const useMyPageQuery = () => {
   });
 };
 
-// 프로필 수정 Mutation
+// 닉네임 수정 Mutation
 export const useUpdateProfileMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { nickname?: string; profileImage?: File }) =>
-      updateProfileApi(data),
+    mutationFn: (data: { nickname: string }) => updateProfileApi(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: myPageKeys.profile() });
+    },
+  });
+};
+
+// 프로필 이미지 업로드 Mutation (Presigned URL 방식)
+export const useUpdateProfileImageMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (file: File) => {
+      // Step 1: Presigned URL 받기 (파일명과 타입 전달)
+      const { data: urlData } = await getPresignedUrlApi(file.name, file.type);
+
+      // Step 2: Presigned URL로 파일 업로드
+      await uploadToPresignedUrlApi(urlData.presignedUrl, file);
+
+      // Step 3: 이미지 URL로 프로필 업데이트 (같은 /api/mypage/profile 엔드포인트 사용)
+      return await updateProfileApi({ profileImageUrl: urlData.imageUrl });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: myPageKeys.profile() });
     },
