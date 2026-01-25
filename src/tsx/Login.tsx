@@ -180,13 +180,12 @@ export default function Login() {
         <div className="login-header-content">
           <Link to="/" className="login-logo">
             <img
-              src="/assets/waffle_logo_title.png"
+              src="/assets/logo.png"
               alt="Waffle Logo"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).style.display = 'none';
               }}
             />
-            <span className="login-logo-text">서울대학교 수강신청 연습</span>
           </Link>
         </div>
       </header>
