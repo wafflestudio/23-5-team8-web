@@ -7,7 +7,22 @@
 }
 
 .enrollment-left-section {
-  max-width: 50%;
+  width: 100%;
+}
+
+.enrollment-content-wrapper {
+  display: flex;
+  gap: 30px;
+}
+
+.enrollment-left-column {
+  flex: 1;
+  min-width: 0;
+}
+
+.enrollment-right-column {
+  flex: 1;
+  min-width: 0;
 }
 
 .enrollment-notice-text {

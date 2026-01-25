@@ -53,8 +53,19 @@
   font-weight: 500;
 }
 
+.cart-content-wrapper {
+  display: flex;
+  gap: 30px;
+}
+
 .cart-left-section {
-  max-width: 50%;
+  flex: 1;
+  min-width: 0;
+}
+
+.cart-right-section {
+  flex: 1;
+  min-width: 0;
 }
 
 .cart-tabs-container {

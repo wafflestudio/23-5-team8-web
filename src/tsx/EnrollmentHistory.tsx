@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import '../css/enrollmentHistory.css';
 import { useEnrolledCoursesQuery } from '../hooks/useEnrolledCoursesQuery';
 import Warning from '../utils/Warning';
+import TimeTable from './TimeTable';
 
 export default function EnrollmentHistory() {
   const { data: enrolledCourses = [], isLoading } = useEnrolledCoursesQuery();
@@ -17,6 +18,18 @@ export default function EnrollmentHistory() {
     0
   );
 
+  const coursesForTimeTable = useMemo(
+    () =>
+      enrolledCourses.map((course) => ({
+        id: course.id,
+        courseTitle: course.courseTitle,
+        courseNumber: course.courseNumber,
+        lectureNumber: course.lectureNumber,
+        placeAndTime: course.placeAndTime,
+      })),
+    [enrolledCourses]
+  );
+
   return (
     <main className="page">
       <div className="containerX">
@@ -28,6 +41,8 @@ export default function EnrollmentHistory() {
             수강신청가능
           </p>
 
+          <div className="enrollment-content-wrapper">
+          <div className="enrollment-left-column">
           <div className="enrollment-tabs-container">
             <button
               className="enrollment-tab-button active"
@@ -142,6 +157,12 @@ export default function EnrollmentHistory() {
                 })}
               </div>
             )}
+          </div>
+          </div>
+
+          <div className="enrollment-right-column">
+            <TimeTable title="수강신청 시간표" courses={coursesForTimeTable} />
+          </div>
           </div>
         </div>
       </div>

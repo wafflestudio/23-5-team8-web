@@ -187,6 +187,16 @@ export interface UpdateProfileRequest {
   profileImageUrl?: string;
 }
 
+export interface UpdateProfileResponse {
+  nickname: string;
+  profileImageUrl: string;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
 export interface MyPageResponse {
   nickname: string;
   profileImageUrl: string;
@@ -195,11 +205,6 @@ export interface MyPageResponse {
 export interface MyPageUpdateRequest {
   nickname?: string;
   profileImageUrl?: string;
-}
-
-export interface PasswordChangeRequest {
-  currentPassword: string;
-  newPassword: string;
 }
 
 export interface PracticeSessionItem {
