@@ -2,10 +2,14 @@ import { useState, useEffect } from 'react';
 import '../css/search.css';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useCourseSearchQuery } from '../hooks/useCourseQuery';
-import { useAddToCartMutation } from '../hooks/useCartQuery';
+import { useAddToCartMutation, useCartQuery } from '../hooks/useCartQuery';
 import type { Course } from '../types/apiTypes';
 import { isAxiosError } from 'axios';
 import Warning from '../utils/Warning';
+import {
+  hasTimeConflict,
+  extractTimeFromPlaceAndTime,
+} from '../utils/timeUtils';
 
 interface CaptchaDigit {
   value: string;
@@ -50,11 +54,13 @@ export default function SearchPage() {
   const [showConflictModal, setShowConflictModal] = useState(false);
   const [showNotSupporting, setShowNotSupporting] = useState(false);
   const [showNoCourseSelected, setShowNoCourseSelected] = useState(false);
+  const [showTimeOverlapModal, setShowTimeOverlapModal] = useState(false);
   const [conflictCourse, setConflictCourse] = useState<{
     name: string;
     code: string;
   } | null>(null);
 
+  const { data: cartData } = useCartQuery();
   const { data, isLoading, error } = useCourseSearchQuery({
     query: keyword,
     page: currentPage,
@@ -67,7 +73,11 @@ export default function SearchPage() {
   const totalCount = data?.pageInfo.totalElements ?? 0;
   const totalPages = data?.pageInfo.totalPages ?? 0;
 
-  const isModalOpen = showCartModal || showConflictModal || showNotSupporting;
+  const isModalOpen =
+    showCartModal ||
+    showConflictModal ||
+    showNotSupporting ||
+    showTimeOverlapModal;
 
   useEffect(() => {
     document.body.style.overflow = isModalOpen ? 'hidden' : 'auto';
@@ -96,6 +106,25 @@ export default function SearchPage() {
     if (selectedCourses.size === 0) {
       setShowNoCourseSelected(true);
       return;
+    }
+
+    const courseId = Array.from(selectedCourses)[0];
+    const selectedCourse = courses.find((c: Course) => c.id === courseId);
+
+    if (selectedCourse && cartData) {
+      const selectedTimeStr = extractTimeFromPlaceAndTime(
+        selectedCourse.placeAndTime
+      );
+
+      for (const cartItem of cartData) {
+        const cartTimeStr = extractTimeFromPlaceAndTime(
+          cartItem.course.placeAndTime
+        );
+        if (hasTimeConflict(selectedTimeStr, cartTimeStr)) {
+          setShowTimeOverlapModal(true);
+          return;
+        }
+      }
     }
 
     try {
@@ -194,6 +223,19 @@ export default function SearchPage() {
         onClose={() => setShowNoCourseSelected(false)}
       >
         <p className="warningText">장바구니 담기할 강좌를 선택해주십시오.</p>
+      </Warning>
+
+      <Warning
+        variant="single"
+        icon="warning"
+        isOpen={showTimeOverlapModal}
+        onClose={() => setShowTimeOverlapModal(false)}
+      >
+        <p className="warningText">
+          중복된 시간대의 강의를
+          <br />
+          장바구니에 담을 수 없습니다.
+        </p>
       </Warning>
 
       <div className="containerX">

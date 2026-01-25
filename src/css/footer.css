@@ -106,52 +106,18 @@
 }
 
 /* ================= SESSION WARNING MODAL (FINAL) ================= */
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-}
-
-.sessionModalBox {
-  background-color: #fff;
-  width: 360px; /* 사진과 비슷한 너비 */
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  overflow: hidden; /* 하단 버튼 둥근 모서리 처리를 위해 필수 */
-  font-family: 'Noto Sans KR', sans-serif;
-  text-align: center;
-  z-index: 9999;
-}
-
-.sessionModalBody {
-  padding: 18px 10px 34px; /* 상단 여백 확보 */
-}
-
-.sessionTitle {
-  font-size: 20px;
-  font-weight: 400;
-  color: #111;
-  margin-bottom: 12px;
-}
-
 .sessionMsg {
   font-size: 15px;
   color: #555;
   line-height: 1.5;
-  margin-bottom: 10px;
+  margin: 0px 0 0px;
 }
 
 .sessionTimerBox {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 10px 0 -10px;
 }
 
 .sessionTimerText {
