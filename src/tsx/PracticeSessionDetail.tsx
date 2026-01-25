@@ -13,6 +13,9 @@ const MyPageHeader: React.FC = () => {
           <img src="/assets/logo.png" alt="All Clear Logo" />
           <span className="mypage-logo-text">ALL CLEAR</span>
         </Link>
+        <Link to="/mypage" className="mypage-back-btn">
+          마이페이지
+        </Link>
       </div>
     </header>
   );
