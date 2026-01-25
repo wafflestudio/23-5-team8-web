@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   useCartQuery,
   useDeleteFromCartMutation,
@@ -8,6 +8,7 @@ import '../css/cart.css';
 import { useModalStore } from '../stores/modalStore';
 import { isAxiosError } from 'axios';
 import Warning from '../utils/Warning';
+import TimeTable from './TimeTable';
 
 export default function Cart() {
   const { data: cartCourses = [], isLoading } = useCartQuery();
@@ -82,6 +83,18 @@ export default function Cart() {
     0
   );
 
+  const coursesForTimeTable = useMemo(
+    () =>
+      cartCourses.map((item) => ({
+        id: item.course.id,
+        courseTitle: item.course.courseTitle,
+        courseNumber: item.course.courseNumber,
+        lectureNumber: item.course.lectureNumber,
+        placeAndTime: item.course.placeAndTime,
+      })),
+    [cartCourses]
+  );
+
   return (
     <main className="page">
       <div className="containerX">
@@ -106,6 +119,7 @@ export default function Cart() {
           </div>
         </div>
 
+        <div className="cart-content-wrapper">
         <div className="cart-left-section">
           <div className="cart-tabs-container">
             <button
@@ -317,6 +331,11 @@ export default function Cart() {
               </div>
             )}
           </div>
+        </div>
+
+        <div className="cart-right-section">
+          <TimeTable title="장바구니 시간표" courses={coursesForTimeTable} />
+        </div>
         </div>
       </div>
 

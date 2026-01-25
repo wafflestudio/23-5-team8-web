@@ -18,6 +18,7 @@ import Cart from './Cart.tsx';
 import Registration from './RegistrationPage.tsx';
 import EnrollmentHistory from './EnrollmentHistory.tsx';
 import LeaderBoard from './LeaderBoard.tsx';
+import MyPage from './MyPage.tsx';
 import Warning from '../utils/Warning';
 
 export default function App() {
@@ -26,7 +27,9 @@ export default function App() {
   const { user, timeLeft, extendLogin, logout } = useAuth();
   const [showLoginWarningOpen, setShowLoginWarningOpen] = useState(false);
   const isAuthPage =
-    location.pathname === '/login' || location.pathname === '/register';
+    location.pathname === '/login' ||
+    location.pathname === '/register' ||
+    location.pathname === '/mypage';
 
   const handleLogout = async () => {
     setShowLoginWarningOpen(false);
@@ -55,6 +58,7 @@ export default function App() {
           <Route path="/registration" element={<Registration />} />
           <Route path="/enrollment-history" element={<EnrollmentHistory />} />
           <Route path="/leaderboard" element={<LeaderBoard />} />
+          <Route path="/mypage" element={<MyPage />} />
         </Routes>
       </div>
       {!isAuthPage && (
