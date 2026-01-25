@@ -1,28 +1,25 @@
-import { api } from './axios';
-import type { PracticeRegisterRequest } from '../types/apiTypes.ts';
+import {api} from './axios';
+import type {
+  CourseDetailResponse,
+  PracticeStartRequest,
+  PracticeStartResponse,
+  PracticeEndResponse,
+  PracticeAttemptRequest,
+  PracticeAttemptResponse,
+} from '../types/apiTypes';
 
-export const practiceStartApi = async (virtualStartTimeOption: string) => {
-  return await api.post('/api/practice/start', {
-    virtualStartTimeOption,
-  });
+export const practiceStartApi = async (data?: PracticeStartRequest) => {
+  return await api.post<PracticeStartResponse>('/api/practice/start', data);
 };
 
 export const practiceEndApi = async () => {
-  return await api.post('/api/practice/end');
+  return await api.post<PracticeEndResponse>('/api/practice/end');
 };
 
-export const practiceAttemptApi = async (data: PracticeRegisterRequest) => {
-  return await api.post('/api/practice/attempt', data);
+export const practiceAttemptApi = async (data: PracticeAttemptRequest) => {
+  return await api.post<PracticeAttemptResponse>('/api/practice/attempt', data);
 };
 
-export const getPracticeResultApi = async (practiceLogId: number) => {
-  return await api.get(`/api/practice/results/${practiceLogId}`);
-};
-
-export const getLatestPracticeLogApi = async () => {
-  return await api.get('/api/practice/logs/latest', {});
-};
-
-export const deletePracticeDetailApi = async (detailId: number) => {
-  return await api.delete(`/api/practice/details/${detailId}`);
+export const getEnrolledCoursesApi = async () => {
+  return await api.get<CourseDetailResponse[]>('/api/practice/enrolled-courses');
 };

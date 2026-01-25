@@ -78,7 +78,7 @@ export default function Cart() {
   };
 
   const totalCredit = cartCourses.reduce(
-    (sum, item) => sum + item.course.credit,
+    (sum, item) => sum + (item.course.credit ?? 0),
     0
   );
 

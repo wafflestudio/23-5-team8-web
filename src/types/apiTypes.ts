@@ -1,9 +1,39 @@
+// ==================== Auth Types ====================
+// 인증 관련 타입 정의 (로그인, 회원가입, 소셜 로그인)
+
 export interface UserDto {
   id: number;
   nickname: string;
 }
 
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
 export interface LoginResponse {
+  user: UserDto;
+  accessToken: string;
+}
+
+export interface SignupRequest {
+  email: string;
+  password: string;
+  nickname?: string;
+  profileImageUrl?: string;
+}
+
+export interface SignupResponse {
+  user: UserDto;
+  accessToken: string;
+}
+
+export interface SocialLoginRequest {
+  code: string;
+  redirectUri?: string;
+}
+
+export interface SocialLoginResponse {
   user: UserDto;
   accessToken: string;
 }
@@ -14,65 +44,43 @@ export interface ErrorResponse {
   error: string;
   message: string;
   errorCode: string;
-  validationErrors?: Record<
-    string,
-    string
-  > | null;
+  validationErrors?: Record<string, string> | null;
 }
 
-export interface LoginRequest {
-  email?: string;
-  password?: string;
-}
+// ==================== Course Types ====================
+// 강좌 관련 타입 정의 (강좌 검색, 강좌 정보)
 
-export interface SignupRequest {
-  email: string;
-  password: string;
-  nickname: string;
-  profileImageUrl?: string;
-}
-
-export interface SocialLoginRequest {
-  code: string;
-  redirectUri?: string;
-}
-
-export interface SignupResponse {
-  user: {
-    id: number;
-    nickname: string;
-  };
-  accessToken: string;
-}
+export type Semester = 'SPRING' | 'SUMMER' | 'FALL' | 'WINTER';
 
 export interface CourseSearchRequest {
   query?: string;
-  page?: number;
-  size?: number;
-}
-
-export interface CourseSearchResponse {
-  items: Course[];
-  pageInfo: PageInfo;
-}
-
-export interface Course {
-  id: number;
-  courseNumber: string;
-  courseTitle: string;
-  instructor: string;
-  credit: number;
-  department: string;
-  year: number;
-  semester: string;
-  classification: string;
-  placeAndTime: string | null;
-  quota: number;
-  freshmanQuota: number | null;
+  courseNumber?: string;
+  academicCourse?: string;
+  academicYear?: number;
   college?: string;
+  department?: string;
+  classification?: string;
+  page: number;
+  size: number;
+}
+
+export interface CourseDetailResponse {
+  id: number;
+  year: number;
+  semester: Semester;
+  classification?: string;
+  college?: string;
+  department?: string;
   academicCourse?: string;
   academicYear?: string;
-  lectureNumber?: string;
+  courseNumber: string;
+  lectureNumber: string;
+  courseTitle: string;
+  credit?: number;
+  instructor?: string;
+  placeAndTime?: string;
+  quota: number;
+  freshmanQuota?: number;
 }
 
 export interface PageInfo {
@@ -80,11 +88,23 @@ export interface PageInfo {
   size: number;
   totalElements: number;
   totalPages: number;
+  hasNext: boolean;
 }
+
+export interface CourseSearchResponse {
+  items: CourseDetailResponse[];
+  pageInfo: PageInfo;
+}
+
+// ==================== Pre-Enroll (Cart) Types ====================
+// 장바구니 관련 타입 정의 (사전 수강신청)
 
 export interface PreEnrollAddRequest {
   courseId: number;
-  cartCount: number;
+}
+
+export interface PreEnrollDeleteRequest {
+  courseId: number;
 }
 
 export interface PreEnrollUpdateCartCountRequest {
@@ -93,15 +113,49 @@ export interface PreEnrollUpdateCartCountRequest {
 
 export interface PreEnrollCourseResponse {
   preEnrollId: number;
-  course: Course;
+  course: CourseDetailResponse;
   cartCount: number;
 }
 
-export interface PracticeRegisterRequest {
+// ==================== Practice Session Types ====================
+// 연습 세션 관련 타입 정의 (수강신청 시뮬레이션)
+
+export type VirtualStartTimeOption =
+  | 'TIME_08_29_00'
+  | 'TIME_08_29_30'
+  | 'TIME_08_29_45';
+
+export interface PracticeStartRequest {
+  virtualStartTimeOption?: VirtualStartTimeOption;
+}
+
+export interface PracticeStartResponse {
+  practiceLogId?: number;
+  virtualStartTime?: string;
+  targetTime?: string;
+  timeLimitSeconds?: number;
+  message?: string;
+}
+
+export interface PracticeEndResponse {
+  message?: string;
+  totalAttempts?: number;
+}
+
+export interface PracticeAttemptRequest {
   courseId: number;
   totalCompetitors: number;
   capacity: number;
 }
+
+export interface PracticeAttemptResponse {
+  message: string;
+  userLatencyMs: number;
+  success: boolean;
+}
+
+// ==================== Leaderboard Types ====================
+// 리더보드 관련 타입 정의 (전체/주간 랭킹)
 
 export interface LeaderboardEntryResponse {
   userId: number;
@@ -125,26 +179,56 @@ export interface MyLeaderboardResponse {
   bestCompetitionRateRank: number | null;
 }
 
-export interface PracticeAttemptResponse {
-  isSuccess: boolean;
-  message: string;
+// ==================== MyPage Types ====================
+// 마이페이지 관련 타입 정의 (프로필, 비밀번호 변경, 연습 기록)
+
+export interface UpdateProfileRequest {
+  nickname?: string;
+  profileImageUrl?: string;
 }
 
-export interface PracticeAttemptDetail {
+export interface MyPageResponse {
+  nickname: string;
+  profileImageUrl: string;
+}
+
+export interface MyPageUpdateRequest {
+  nickname?: string;
+  profileImageUrl?: string;
+}
+
+export interface PasswordChangeRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface PracticeSessionItem {
+  id: number;
+  practiceAt: string;
+  totalAttempts: number;
+  successCount: number;
+}
+
+export interface PracticeSessionsListResponse {
+  items: PracticeSessionItem[];
+  pageInfo: PageInfo;
+}
+
+export interface PracticeAttemptResult {
   courseId: number;
   courseTitle: string;
   lectureNumber: string;
-  isSuccess: boolean;
   rank: number;
   percentile: number;
   reactionTime: number;
+  success: boolean;
 }
 
 export interface PracticeResultResponse {
-  practiceLogId: number;
+  practiceLogId?: number;
   practiceAt: string;
   earlyClickDiff: number | null;
   totalAttempts: number;
   successCount: number;
-  attempts: PracticeAttemptDetail[];
+  attempts: PracticeAttemptResult[];
 }

@@ -9,7 +9,7 @@ import {
   practiceAttemptApi,
 } from '../api/registration';
 import { isAxiosError } from 'axios';
-import type { Course } from '../types/apiTypes';
+import type { CourseDetailResponse, VirtualStartTimeOption } from '../types/apiTypes';
 import { useCartQuery } from '../hooks/useCartQuery';
 import { useModalStore } from '../stores/modalStore';
 import {
@@ -33,7 +33,7 @@ interface CaptchaDigit {
 
 interface CourseData {
   preEnrollId: number;
-  course: Course;
+  course: CourseDetailResponse;
   cartCount: number;
 }
 
@@ -156,8 +156,8 @@ export default function Registration() {
     [closeWindow]
   );
 
-  const getTimeOption = (offset: number): string => {
-    const optionMap: Record<number, string> = {
+  const getTimeOption = (offset: number): VirtualStartTimeOption => {
+    const optionMap: Record<number, VirtualStartTimeOption> = {
       60: 'TIME_08_29_00',
       30: 'TIME_08_29_30',
       15: 'TIME_08_29_45',
@@ -167,8 +167,8 @@ export default function Registration() {
 
   const handleStartPractice = async () => {
     try {
-      const optionString = getTimeOption(startOffset);
-      const startResponse = await practiceStartApi(optionString);
+      const virtualStartTimeOption = getTimeOption(startOffset);
+      const startResponse = await practiceStartApi({ virtualStartTimeOption });
 
       if (startResponse.data?.practiceLogId) {
         localStorage.setItem(
@@ -189,9 +189,9 @@ export default function Registration() {
           // Already practicing - auto-recover by ending current session
           try {
             await practiceEndApi();
-            const optionString = getTimeOption(startOffset);
+            const virtualStartTimeOption = getTimeOption(startOffset);
 
-            const retryStartResponse = await practiceStartApi(optionString);
+            const retryStartResponse = await practiceStartApi({ virtualStartTimeOption });
 
             if (retryStartResponse.data?.practiceLogId) {
               localStorage.setItem(
@@ -233,7 +233,7 @@ export default function Registration() {
       const response = await practiceAttemptApi(payload);
       setCaptchaInput(''); // 입력 초기화
 
-      if (!response.data.isSuccess) {
+      if (!response.data.success) {
         setWarningType('quotaOver');
       } else {
         setShowSuccessModal(true);

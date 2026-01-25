@@ -12,7 +12,7 @@ export const loginApi = async (data: LoginRequest) => {
 };
 
 export const logoutApi = async () => {
-  return await api.post('/api/auth/logout');
+  return await api.post<void>('/api/auth/logout');
 };
 
 export const signupApi = (data: SignupRequest) => {
