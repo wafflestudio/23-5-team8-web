@@ -1,15 +1,12 @@
-import {useState} from 'react';
+import {useEffect, useRef} from 'react';
 import {useNavigate, useSearchParams} from 'react-router-dom';
 import {useAuth} from '../contexts/AuthContext';
-import {useLeaderboardQuery, useMyLeaderboardQuery} from '../hooks/useLeaderboardQuery';
-import type {LeaderboardEntryResponse, LeaderboardResponse} from '../types/apiTypes';
+import {useLeaderboardInfiniteQuery, useMyLeaderboardQuery} from '../hooks/useLeaderboardQuery';
+import type {LeaderboardEntryResponse} from '../types/apiTypes';
 import '../css/leaderBoard.css';
 
 type FilterType = 'all' | 'weekly';
 type CategoryType = 'firstReaction' | 'secondReaction' | 'competitionRate';
-
-const INITIAL_LIMIT = 10;
-const LOAD_MORE_COUNT = 10;
 
 const DEFAULT_AVATAR = `data:image/svg+xml,${encodeURIComponent(`
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
@@ -23,20 +20,51 @@ export default function LeaderBoard() {
   const navigate = useNavigate();
   const {user} = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const filter = (searchParams.get('filter') as FilterType) || 'all';
   const category = (searchParams.get('category') as CategoryType) || 'firstReaction';
 
-  const [limit, setLimit] = useState(INITIAL_LIMIT);
-
-  const {data: leaderboardData, isLoading} = useLeaderboardQuery(filter, limit);
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useLeaderboardInfiniteQuery(filter, category);
   const {data: myData} = useMyLeaderboardQuery(filter, !!user);
+
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    const triggerElement = loadMoreRef.current;
+
+    if (!scrollContainer || !triggerElement) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      {
+        root: scrollContainer,
+        threshold: 0.1,
+      }
+    );
+
+    observer.observe(triggerElement);
+
+    return () => {
+      observer.unobserve(triggerElement);
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const setFilter = (newFilter: FilterType) => {
     const newParams = new URLSearchParams(searchParams);
     newParams.set('filter', newFilter);
     setSearchParams(newParams);
-    setLimit(INITIAL_LIMIT);
   };
 
   const setCategory = (newCategory: CategoryType) => {
@@ -45,18 +73,9 @@ export default function LeaderBoard() {
     setSearchParams(newParams);
   };
 
-  const getCurrentEntries = (data: LeaderboardResponse | null): LeaderboardEntryResponse[] => {
-    if (!data) return [];
-    switch (category) {
-      case 'firstReaction':
-        return data.topFirstReactionTime;
-      case 'secondReaction':
-        return data.topSecondReactionTime;
-      case 'competitionRate':
-        return data.topCompetitionRate;
-      default:
-        return [];
-    }
+  const getAllEntries = (): LeaderboardEntryResponse[] => {
+    if (!data?.pages) return [];
+    return data.pages.flatMap((page) => page.categoryData.items);
   };
 
   const getMyValue = (): {value: number | null; rank: number | null} => {
@@ -89,12 +108,7 @@ export default function LeaderBoard() {
     return `${value}ms`;
   };
 
-  const handleLoadMore = () => {
-    setLimit((prev) => prev + LOAD_MORE_COUNT);
-  };
-
-  const entries = getCurrentEntries(leaderboardData ?? null);
-  const hasMore = entries.length >= limit;
+  const entries = getAllEntries();
   const myRank = getMyValue();
 
   return (
@@ -166,54 +180,52 @@ export default function LeaderBoard() {
               <p>아직 기록이 없습니다.</p>
             </div>
           ) : (
-            <>
-              <div className='leaderboard-list'>
-                {entries.map((entry, index) => {
-                  const rank = index + 1;
-                  const isTop3 = rank <= 3;
-                  return (
-                    <div
-                      key={`${entry.userId}-${index}`}
-                      className={`leaderboard-item ${isTop3 ? 'top-3' : ''}`}
+            <div ref={scrollContainerRef} className='leaderboard-list'>
+              {entries.map((entry, index) => {
+                const rank = index + 1;
+                const isTop3 = rank <= 3;
+                return (
+                  <div
+                    key={`${entry.userId}-${index}`}
+                    className={`leaderboard-item ${isTop3 ? 'top-3' : ''}`}
+                  >
+                    <span
+                      className={`leaderboard-rank ${
+                        rank === 1
+                          ? 'leaderboard-rank-1'
+                          : rank === 2
+                            ? 'leaderboard-rank-2'
+                            : rank === 3
+                              ? 'leaderboard-rank-3'
+                              : ''
+                      }`}
                     >
-                      <span
-                        className={`leaderboard-rank ${
-                          rank === 1
-                            ? 'leaderboard-rank-1'
-                            : rank === 2
-                              ? 'leaderboard-rank-2'
-                              : rank === 3
-                                ? 'leaderboard-rank-3'
-                                : ''
-                        }`}
-                      >
-                        {rank}
-                      </span>
-                      <div className='leaderboard-user'>
-                        <img
-                          className='leaderboard-avatar'
-                          src={entry.profileImageUrl || DEFAULT_AVATAR}
-                          alt={entry.nickname}
-                          onError={(e) => {
-                            (e.currentTarget as HTMLImageElement).src = DEFAULT_AVATAR;
-                          }}
-                        />
-                        <span className='leaderboard-nickname'>{entry.nickname}</span>
-                      </div>
-                      <span className='leaderboard-value'>{formatValue(entry.value, category)}</span>
+                      {rank}
+                    </span>
+                    <div className='leaderboard-user'>
+                      <img
+                        className='leaderboard-avatar'
+                        src={entry.profileImageUrl || DEFAULT_AVATAR}
+                        alt={entry.nickname}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src = DEFAULT_AVATAR;
+                        }}
+                      />
+                      <span className='leaderboard-nickname'>{entry.nickname}</span>
                     </div>
-                  );
-                })}
-              </div>
+                    <span className='leaderboard-value'>{formatValue(entry.value, category)}</span>
+                  </div>
+                );
+              })}
 
-              {hasMore && (
-                <div className='leaderboard-load-more'>
-                  <button className='leaderboard-load-more-btn' onClick={handleLoadMore}>
-                    더 보기
-                  </button>
-                </div>
-              )}
-            </>
+              <div ref={loadMoreRef} className='leaderboard-scroll-trigger'>
+                {isFetchingNextPage && (
+                  <div className='leaderboard-loading-more'>
+                    <div className='leaderboard-loading-spinner-small' />
+                  </div>
+                )}
+              </div>
+            </div>
           )}
         </div>
 

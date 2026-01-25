@@ -1,15 +1,15 @@
 import {api} from './axios';
-import type {LeaderboardResponse, MyLeaderboardResponse} from '../types/apiTypes';
+import type {LeaderboardResponse, MyLeaderboardResponse, LeaderboardRequest} from '../types/apiTypes';
 
-export const getLeaderboardApi = async (limit: number = 10) => {
+export const getLeaderboardApi = async ({page, size}: LeaderboardRequest) => {
   return await api.get<LeaderboardResponse>('/api/leaderboard', {
-    params: {limit},
+    params: {page, size},
   });
 };
 
-export const getWeeklyLeaderboardApi = async (limit: number = 10) => {
+export const getWeeklyLeaderboardApi = async ({page, size}: LeaderboardRequest) => {
   return await api.get<LeaderboardResponse>('/api/leaderboard/weekly', {
-    params: {limit},
+    params: {page, size},
   });
 };
 
