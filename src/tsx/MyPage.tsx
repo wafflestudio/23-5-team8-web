@@ -7,11 +7,9 @@ import {
   useUpdatePasswordMutation,
   useDeleteAccountMutation,
   usePracticeSessionsQuery,
-  usePracticeSessionDetailQuery,
 } from '../hooks/useMyPageQuery';
 import type {
   PracticeSessionItem,
-  PracticeAttemptDetail,
 } from '../types/apiTypes';
 import '../css/mypage.css';
 
@@ -163,33 +161,11 @@ const MyPage: React.FC = () => {
   const [showNameModal, setShowNameModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [showAllSessions, setShowAllSessions] = useState(false);
-  const [showAllAttempts, setShowAllAttempts] = useState(false);
-  const [selectedSessionId, setSelectedSessionId] = useState<number | null>(
-    null
-  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Queries
   const { data: myPageData, isLoading } = useMyPageQuery();
   const { data: sessionsData } = usePracticeSessionsQuery(currentPage);
-
-  // 초기 세션 ID를 계산 (첫 유효한 세션)
-  const getInitialSessionId = () => {
-    if (sessionsData?.items && sessionsData.items.length > 0) {
-      const validSessions = sessionsData.items.filter(
-        (s) => s.totalAttempts > 0
-      );
-      return validSessions.length > 0 ? validSessions[0].id : null;
-    }
-    return null;
-  };
-
-  // selectedSessionId가 null이고 유효한 세션이 있으면 초기값 설정
-  const currentSessionId = selectedSessionId ?? getInitialSessionId();
-
-  const { data: sessionDetail } = usePracticeSessionDetailQuery(
-    currentSessionId || 0
-  );
 
   // Mutations
   const updateProfileMutation = useUpdateProfileMutation();
@@ -386,18 +362,18 @@ const MyPage: React.FC = () => {
                     <div
                       key={session.id}
                       className="leaderboard-item"
-                      onClick={() => setSelectedSessionId(session.id)}
+                      onClick={() => navigate(`/practice-session/${session.id}`)}
                       style={{ cursor: 'pointer' }}
                     >
                       <span className="leaderboard-nickname">
-                        {new Date(session.practiceAt).toLocaleDateString(
-                          'ko-KR',
-                          {
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                          }
-                        )}
+                        {new Date(session.practiceAt).toLocaleString('ko-KR', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit',
+                        })}
                       </span>
                       <span className="leaderboard-user">
                         {session.successCount}회 / {session.totalAttempts}회
@@ -427,86 +403,6 @@ const MyPage: React.FC = () => {
                     )
                   )}
                 </div>
-              )}
-            </>
-          )}
-        </section>
-
-        {/* 연습 세션 상세 조회 섹션 */}
-        <section className="results-section">
-          <div className="results-header">
-            <h2 className="results-title">연습 세션 상세 조회</h2>
-            {sessionDetail &&
-              sessionDetail.attempts &&
-              sessionDetail.attempts.length > 3 && (
-                <button
-                  className="view-more-btn"
-                  onClick={() => setShowAllAttempts(!showAllAttempts)}
-                >
-                  {showAllAttempts ? '간단히 보기' : '더보기 +'}
-                </button>
-              )}
-          </div>
-          {!currentSessionId ? (
-            <div className="results-empty">
-              세션을 선택하면 상세 정보가 표시됩니다.
-            </div>
-          ) : !sessionDetail ? (
-            <div className="loading-spinner">
-              <div className="spinner"></div>
-            </div>
-          ) : (
-            <>
-              <div className="session-detail-info">
-                <span>
-                  {new Date(sessionDetail.practiceAt).toLocaleDateString(
-                    'ko-KR'
-                  )}{' '}
-                  연습
-                </span>
-                <span>총 시도: {sessionDetail.totalAttempts}회</span>
-                <span>성공: {sessionDetail.successCount}회</span>
-                <span>
-                  실패:{' '}
-                  {sessionDetail.totalAttempts - sessionDetail.successCount}회
-                </span>
-              </div>
-              {sessionDetail.attempts && sessionDetail.attempts.length > 0 && (
-                <>
-                  <div className="leaderboard-list-header">
-                    <span>과목이름</span>
-                    <span>반응속도</span>
-                    <span style={{ textAlign: 'right' }}>상위%</span>
-                  </div>
-                  <div className="leaderboard-list">
-                    {(showAllAttempts
-                      ? sessionDetail.attempts
-                      : sessionDetail.attempts.slice(0, 3)
-                    ).map((detail: PracticeAttemptDetail, index: number) => (
-                      <div
-                        key={index}
-                        className={`leaderboard-item ${detail.success ? '' : 'failed'}`}
-                      >
-                        <div className="leaderboard-user">
-                          <span className="leaderboard-nickname">
-                            {detail.courseTitle}
-                          </span>
-                          {detail.success && (
-                            <span className="success-badge">✓ 성공</span>
-                          )}
-                        </div>
-                        <span className="leaderboard-value">
-                          {detail.reactionTime}ms
-                        </span>
-                        <span className="leaderboard-value">
-                          {detail.percentile
-                            ? `상위 ${(detail.percentile * 100).toFixed(1)}%`
-                            : '-'}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </>
               )}
             </>
           )}

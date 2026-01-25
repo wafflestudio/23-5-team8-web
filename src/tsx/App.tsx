@@ -19,6 +19,7 @@ import Registration from './RegistrationPage.tsx';
 import EnrollmentHistory from './EnrollmentHistory.tsx';
 import LeaderBoard from './LeaderBoard.tsx';
 import MyPage from './MyPage';
+import PracticeSessionDetail from './PracticeSessionDetail.tsx';
 import Warning from '../utils/Warning';
 
 export default function App() {
@@ -29,7 +30,8 @@ export default function App() {
   const isAuthPage =
     location.pathname === '/login' ||
     location.pathname === '/register' ||
-    location.pathname === '/mypage';
+    location.pathname === '/mypage' ||
+    location.pathname.startsWith('/practice-session/');
 
   const handleLogout = async () => {
     setShowLoginWarningOpen(false);
@@ -59,6 +61,7 @@ export default function App() {
           <Route path="/enrollment-history" element={<EnrollmentHistory />} />
           <Route path="/leaderboard" element={<LeaderBoard />} />
           <Route path="/mypage" element={<MyPage />} />
+          <Route path="/practice-session/:sessionId" element={<PracticeSessionDetail />} />
         </Routes>
       </div>
       {!isAuthPage && (

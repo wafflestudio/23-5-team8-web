@@ -24,10 +24,9 @@
 }
 
 .login-logo img {
+  height: 48px;
   width: auto;
-  height: auto;
   border-radius: 8px;
-
   padding: 4px;
 }
 

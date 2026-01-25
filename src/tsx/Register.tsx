@@ -89,16 +89,15 @@ export default function Register() {
     <div className='login-page'>
       <header className='login-header'>
         <div className='login-header-content'>
-          <div className='login-logo'>
+          <Link to="/" className='login-logo'>
             <img
-              src='/assets/waffle_logo_title.png'
-              alt='Waffle Logo'
+              src='/assets/logo.png'
+              alt='Logo'
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).style.display = 'none';
               }}
             />
-            <span className='login-logo-text'>서울대학교 수강신청 연습</span>
-          </div>
+          </Link>
         </div>
       </header>
 
