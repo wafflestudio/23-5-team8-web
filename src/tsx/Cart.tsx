@@ -101,23 +101,9 @@ export default function Cart() {
       <div className="containerX">
         <h1 className="cart-page-title">장바구니</h1>
 
-        <div className="cart-notice-box">
-          <div className="cart-notice-left">
-            <p className="cart-notice-date">2026년 01월 27일 09:00~23:59</p>
-            <p className="cart-notice-date">2026년 01월 28일 00:00~16:00</p>
-          </div>
-          <div className="cart-notice-right">
-            <p className="cart-notice">
-              ※ 마감시간 이후에는 변경이 불가하며, 인원충족 시 전산확정 됩니다.
-            </p>
-            <p className="cart-notice">
-              ※ 장바구니 담기 기간 이후의 변동내역은 장바구니에 적용되지
-              않습니다.
-            </p>
-            <p className="cart-notice bold">
-              ※ 장바구니 숫자를 클릭하여 수정할 수 있습니다.
-            </p>
-          </div>
+        <div className="cart-notice-box" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
+          <p className="cart-notice-date">※ 장바구니 숫자를 클릭하여 수정할 수 있습니다.</p>
+          <p className="cart-notice-date">※ 담은 수가 정원을 초과한 강의만 선착순 수강신청 가능합니다.</p>
         </div>
 
         <div className="cart-content-wrapper">
