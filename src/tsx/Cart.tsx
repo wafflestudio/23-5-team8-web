@@ -23,6 +23,7 @@ export default function Cart() {
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
   const [editingValue, setEditingValue] = useState<string>('');
   const [showNoCourseSelected, setShowNoCourseSelected] = useState(false);
+  const [showNotSupported, setShowNotSupported] = useState(false);
 
   const toggleCourseSelection = (courseId: number) => {
     setSelectedCourses((prev) => {
@@ -128,7 +129,7 @@ export default function Cart() {
             >
               선택삭제
             </button>
-            <button className="cart-tab-button">
+            <button className="cart-tab-button" onClick={() => setShowNotSupported(true)}>
               관심강좌
               <img
                 src="/assets/btn_arrow_view_gray.png"
@@ -136,7 +137,7 @@ export default function Cart() {
                 className="cart-btn-arrow"
               />
             </button>
-            <button className="cart-tab-button">
+            <button className="cart-tab-button" onClick={() => setShowNotSupported(true)}>
               전공이수내역조회
               <img
                 src="/assets/btn_arrow_view_gray.png"
@@ -334,7 +335,7 @@ export default function Cart() {
         </div>
 
         <div className="cart-right-section">
-          <TimeTable title="장바구니 시간표" courses={coursesForTimeTable} />
+          <TimeTable title="장바구니 시간표" courses={coursesForTimeTable} onPrintClick={() => setShowNotSupported(true)} />
         </div>
         </div>
       </div>
@@ -355,6 +356,14 @@ export default function Cart() {
       >
         <p className="warningText">삭제할 강좌를 선택해주십시오.</p>
       </Warning>
+
+      <Warning
+        variant="single"
+        icon="warning"
+        isOpen={showNotSupported}
+        onClose={() => setShowNotSupported(false)}
+        title="지원하지 않는 기능입니다."
+      />
     </main>
   );
 }

@@ -16,6 +16,7 @@ interface CourseForTimeTable {
 interface TimeTableProps {
   title: string;
   courses: CourseForTimeTable[];
+  onPrintClick?: () => void;
 }
 
 const DAYS = ['월', '화', '수', '목', '금', '토'] as const;
@@ -50,7 +51,7 @@ interface TimeBlock {
   color: string;
 }
 
-export default function TimeTable({ title, courses }: TimeTableProps) {
+export default function TimeTable({ title, courses, onPrintClick }: TimeTableProps) {
   const timeBlocks = useMemo(() => {
     const blocks: TimeBlock[] = [];
     const colorMap = new Map<number, string>();
@@ -112,7 +113,7 @@ export default function TimeTable({ title, courses }: TimeTableProps) {
     <div className="timetable-container">
       <div className="timetable-header">
         <h2 className="timetable-title">{title}</h2>
-        <button className="timetable-print-btn">
+        <button className="timetable-print-btn" onClick={onPrintClick}>
           시간표 인쇄{' '}
           <img
             src="/assets/btn_arrow_view_gray.png"

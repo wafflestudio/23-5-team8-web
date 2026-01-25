@@ -161,7 +161,7 @@ export default function EnrollmentHistory() {
           </div>
 
           <div className="enrollment-right-column">
-            <TimeTable title="수강신청 시간표" courses={coursesForTimeTable} />
+            <TimeTable title="수강신청 시간표" courses={coursesForTimeTable} onPrintClick={() => setShowNotSupported(true)} />
           </div>
           </div>
         </div>
