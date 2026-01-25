@@ -164,10 +164,20 @@ export interface LeaderboardEntryResponse {
   value: number;
 }
 
+export interface LeaderboardRequest {
+  page: number;
+  size: number;
+}
+
+export interface LeaderboardCategoryResponse {
+  items: LeaderboardEntryResponse[];
+  pageInfo: PageInfo;
+}
+
 export interface LeaderboardResponse {
-  topFirstReactionTime: LeaderboardEntryResponse[];
-  topSecondReactionTime: LeaderboardEntryResponse[];
-  topCompetitionRate: LeaderboardEntryResponse[];
+  topFirstReactionTime: LeaderboardCategoryResponse;
+  topSecondReactionTime: LeaderboardCategoryResponse;
+  topCompetitionRate: LeaderboardCategoryResponse;
 }
 
 export interface MyLeaderboardResponse {

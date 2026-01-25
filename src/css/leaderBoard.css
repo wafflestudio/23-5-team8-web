@@ -173,7 +173,7 @@
 
 /* User Info */
 .leaderboard-user {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 12px;
 }
@@ -255,33 +255,27 @@
   }
 }
 
-/* Load More */
-.leaderboard-load-more {
-  padding: 16px;
-  text-align: center;
-  border-top: 1px solid #e5e7eb;
+/* Infinite Scroll Trigger */
+.leaderboard-scroll-trigger {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.leaderboard-load-more-btn {
-  padding: 10px 24px;
-  background: #ffffff;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 400;
-  color: #374151;
-  transition: all 0.2s;
+.leaderboard-loading-more {
+  padding: 12px;
+  display: flex;
+  justify-content: center;
 }
 
-.leaderboard-load-more-btn:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
-}
-
-.leaderboard-load-more-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.leaderboard-loading-spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e5e7eb;
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
 /* Login Required */
