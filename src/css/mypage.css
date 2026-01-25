@@ -451,7 +451,7 @@
 /* Leaderboard styles for mypage */
 .leaderboard-list-header {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr 1fr;
   padding: 16px 20px;
   background: #f8f9fa;
   border-bottom: 2px solid #e0e0e0;
@@ -468,7 +468,7 @@
 
 .leaderboard-item {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr 1fr;
   padding: 16px 20px;
   border-bottom: 1px solid #e0e0e0;
   transition: background 0.2s;
