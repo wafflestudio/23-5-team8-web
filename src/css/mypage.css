@@ -116,7 +116,7 @@
   width: 36px;
   height: 36px;
   background: white;
-  border: 2px solid #ff6b35;
+  border: 2px solid #2491c9;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -127,7 +127,7 @@
 }
 
 .profile-edit-btn:hover {
-  background: #ff6b35;
+  background: #2491c9;
   transform: scale(1.05);
 }
 
@@ -179,7 +179,7 @@
   width: 28px;
   height: 28px;
   background: white;
-  border: 1.5px solid #ff6b35;
+  border: 1.5px solid #2491c9;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -189,7 +189,7 @@
 }
 
 .name-edit-btn:hover {
-  background: #ff6b35;
+  background: #2491c9;
   transform: scale(1.05);
 }
 
@@ -220,8 +220,8 @@
 }
 
 .profile-action-btn:hover {
-  border-color: #ff6b35;
-  color: #ff6b35;
+  border-color: #2491c9;
+  color: #2491c9;
 }
 
 .profile-action-btn.delete {
@@ -280,9 +280,9 @@
 .view-more-btn {
   padding: 8px 20px;
   border-radius: 8px;
-  border: 1px solid #ff6b35;
+  border: 1px solid #2491c9;
   background: white;
-  color: #ff6b35;
+  color: #2491c9;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -290,7 +290,7 @@
 }
 
 .view-more-btn:hover {
-  background: #ff6b35;
+  background: #2491c9;
   color: white;
 }
 
@@ -410,7 +410,7 @@
 
 .session-item:hover {
   background: #f0f0f0;
-  border-color: #ff6b35;
+  border-color: #2491c9;
 }
 
 .session-stats {
@@ -547,8 +547,8 @@
 }
 
 .result-item:hover {
-  border-color: #ff6b35;
-  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.1);
+  border-color: #2491c9;
+  box-shadow: 0 2px 8px rgba(36, 145, 201, 0.1);
 }
 
 .result-course-title {
@@ -668,23 +668,23 @@
 }
 
 .session-item:hover {
-  border-color: #ff6b35;
-  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.1);
+  border-color: #2491c9;
+  box-shadow: 0 2px 8px rgba(36, 145, 201, 0.1);
 }
 
 .session-item button {
   padding: 8px 16px;
   border-radius: 6px;
-  border: 1px solid #ff6b35;
+  border: 1px solid #2491c9;
   background: white;
-  color: #ff6b35;
+  color: #2491c9;
   font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .session-item button:hover {
-  background: #ff6b35;
+  background: #2491c9;
   color: white;
 }
 
@@ -721,8 +721,8 @@
 }
 
 .pagination button:hover:not(:disabled):not(.active) {
-  border-color: #ff6b35;
-  color: #ff6b35;
+  border-color: #2491c9;
+  color: #2491c9;
 }
 
 .pagination button:disabled {
@@ -731,9 +731,9 @@
 }
 
 .pagination button.active {
-  background: #ff6b35;
+  background: #2491c9;
   color: white;
-  border-color: #ff6b35;
+  border-color: #2491c9;
 }
 
 .pagination-btn {
@@ -746,8 +746,8 @@
 }
 
 .pagination-btn:hover:not(:disabled) {
-  border-color: #ff6b35;
-  color: #ff6b35;
+  border-color: #2491c9;
+  color: #2491c9;
 }
 
 .pagination-btn:disabled {
@@ -756,9 +756,9 @@
 }
 
 .pagination-btn.active {
-  background: #ff6b35;
+  background: #2491c9;
   color: white;
-  border-color: #ff6b35;
+  border-color: #2491c9;
 }
 
 /* Modal Styles */
@@ -803,8 +803,8 @@
 
 .modal-content input:focus {
   outline: none;
-  border-color: #ff6b35;
-  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+  border-color: #2491c9;
+  box-shadow: 0 0 0 3px rgba(36, 145, 201, 0.1);
 }
 
 .modal-buttons {
@@ -824,12 +824,12 @@
 }
 
 .modal-buttons button:first-child {
-  background: #ff6b35;
+  background: #2491c9;
   color: white;
 }
 
 .modal-buttons button:first-child:hover {
-  background: #ff5522;
+  background: #1d7aa8;
 }
 
 .modal-buttons button:last-child {
@@ -864,9 +864,9 @@
 .sessions-button-container button {
   padding: 12px 32px;
   border-radius: 8px;
-  border: 1px solid #ff6b35;
+  border: 1px solid #2491c9;
   background: white;
-  color: #ff6b35;
+  color: #2491c9;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -874,7 +874,7 @@
 }
 
 .sessions-button-container button:hover {
-  background: #ff6b35;
+  background: #2491c9;
   color: white;
 }
 
@@ -913,8 +913,8 @@
 
 .form-input:focus {
   outline: none;
-  border-color: #ff6b35;
-  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+  border-color: #2491c9;
+  box-shadow: 0 0 0 3px rgba(36, 145, 201, 0.1);
 }
 
 .form-error {
@@ -950,12 +950,12 @@
 }
 
 .modal-btn-confirm {
-  background: #ff6b35;
+  background: #2491c9;
   color: white;
 }
 
 .modal-btn-confirm:hover {
-  background: #ff5522;
+  background: #1d7aa8;
 }
 
 .modal-btn-danger {
@@ -984,7 +984,7 @@
 
 .spinner {
   border: 4px solid #f0f0f0;
-  border-top: 4px solid #ff6b35;
+  border-top: 4px solid #2491c9;
   border-radius: 50%;
   width: 40px;
   height: 40px;
