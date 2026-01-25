@@ -768,6 +768,28 @@
   border-color: #2491c9;
 }
 
+.pagination-arrow {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-arrow:hover {
+  border-color: #2491c9;
+  background: #f0f8ff;
+}
+
+.pagination-arrow img {
+  width: 12px;
+  height: 12px;
+}
+
 /* Modal Styles */
 .modal-overlay {
   position: fixed;
