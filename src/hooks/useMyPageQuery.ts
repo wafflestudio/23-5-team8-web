@@ -4,6 +4,8 @@ import {
   updateProfileApi,
   getPresignedUrlApi,
   uploadToPresignedUrlApi,
+  updateProfileImageApi,
+  deleteProfileImageApi,
   updatePasswordApi,
   deleteAccountApi,
   getPracticeSessionsApi,
@@ -56,15 +58,27 @@ export const useUpdateProfileImageMutation = () => {
 
   return useMutation({
     mutationFn: async (file: File) => {
-      // Step 1: Presigned URL 받기 (파일명과 타입 전달)
-      const { data: urlData } = await getPresignedUrlApi(file.name, file.type);
+      // Step 1: Presigned URL 받기 (파일 객체 전체 전달)
+      const { data: urlData } = await getPresignedUrlApi(file);
 
       // Step 2: Presigned URL로 파일 업로드
       await uploadToPresignedUrlApi(urlData.presignedUrl, file);
 
-      // Step 3: 이미지 URL로 프로필 업데이트 (같은 /api/mypage/profile 엔드포인트 사용)
-      return await updateProfileApi({ profileImageUrl: urlData.imageUrl });
+      // Step 3: 이미지 URL을 /api/mypage/profile-image에 저장
+      return await updateProfileImageApi(urlData.imageUrl);
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: myPageKeys.profile() });
+    },
+  });
+};
+
+// 프로필 이미지 삭제 Mutation
+export const useDeleteProfileImageMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => deleteProfileImageApi(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: myPageKeys.profile() });
     },

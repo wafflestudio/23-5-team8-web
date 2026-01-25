@@ -13,25 +13,21 @@ export const getMyPageApi = async () => {
   return await api.get<MyPageResponse>('/api/mypage');
 };
 
-// 프로필 수정 (닉네임, 프로필 이미지 URL)
-export const updateProfileApi = async (data: {
-  nickname?: string;
-  profileImageUrl?: string;
-}) => {
+// 닉네임 수정
+export const updateProfileApi = async (data: { nickname: string }) => {
   return await api.patch<UpdateProfileResponse>('/api/mypage/profile', data);
 };
 
 // 프로필 이미지 업로드 - Presigned URL 방식
-// Step 1: Presigned URL 요청 (파일명과 타입 전송)
-export const getPresignedUrlApi = async (
-  fileName: string,
-  fileType: string
-) => {
+// Step 1: Presigned URL 요청 (확장자, 타입, 크기 전달)
+export const getPresignedUrlApi = async (file: File) => {
+  const extension = file.name.split('.').pop() || '';
   return await api.post<{ presignedUrl: string; imageUrl: string }>(
     '/api/mypage/profile-image/presigned-url',
     {
-      fileName,
-      contentType: fileType,
+      extension,
+      contentType: file.type,
+      fileSize: file.size,
     }
   );
 };
@@ -44,6 +40,7 @@ export const uploadToPresignedUrlApi = async (
   const response = await fetch(presignedUrl, {
     method: 'PUT',
     body: file,
+    mode: 'cors',
     headers: {
       'Content-Type': file.type,
     },
@@ -52,6 +49,18 @@ export const uploadToPresignedUrlApi = async (
     throw new Error('Failed to upload image to presigned URL');
   }
   return response;
+};
+
+// Step 3: 이미지 URL로 프로필 이미지 저장
+export const updateProfileImageApi = async (imageUrl: string) => {
+  return await api.put<UpdateProfileResponse>('/api/mypage/profile-image', {
+    imageUrl,
+  });
+};
+
+// 프로필 이미지 삭제
+export const deleteProfileImageApi = async () => {
+  return await api.delete<void>('/api/mypage/profile-image');
 };
 
 // 비밀번호 변경

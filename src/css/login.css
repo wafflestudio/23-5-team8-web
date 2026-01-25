@@ -7,9 +7,20 @@
 }
 
 .login-header {
-  background: linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%);
+  background: #fff;
   padding: 20px 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+.login-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #2491c9 0%, #3db08d 100%);
 }
 
 .login-header-content {
