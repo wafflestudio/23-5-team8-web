@@ -1,3 +1,6 @@
+// src/mocks/apiTypes.ts
+// Updated type definitions for practice sessions API
+
 export interface UserDto {
   id: number;
   nickname: string;
@@ -42,6 +45,7 @@ export interface SignupResponse {
   accessToken: string;
 }
 
+// 강의 검색 관련 타입
 export interface CourseSearchRequest {
   query?: string;
   page?: number;
@@ -79,6 +83,7 @@ export interface PageInfo {
   totalPages: number;
 }
 
+// 장바구니 관련 타입
 export interface PreEnrollAddRequest {
   courseId: number;
   cartCount: number;
@@ -94,12 +99,14 @@ export interface PreEnrollCourseResponse {
   cartCount: number;
 }
 
+// 연습 수강신청 관련 타입
 export interface PracticeRegisterRequest {
   courseId: number;
   totalCompetitors: number;
   capacity: number;
 }
 
+// 리더보드 관련 타입
 export interface LeaderboardEntryResponse {
   userId: number;
   nickname: string;
@@ -131,7 +138,7 @@ export interface PracticeAttemptDetail {
   courseId: number;
   courseTitle: string;
   lectureNumber: string;
-  isSuccess: boolean;
+  success: boolean;
   rank: number;
   percentile: number;
   reactionTime: number;
@@ -163,14 +170,9 @@ export interface PracticeSessionSummary {
 }
 
 export interface SuccessfulCourse {
-  courseId: number;
-  courseTitle: string;
-  lectureNumber: string;
-  instructor: string;
-  credit: number;
-  rank: number;
-  competitionRate: number;
-  reactionTime: number;
+  courseName: string;
+  professor: string;
+  credits: number;
 }
 
 export interface UpdateProfileRequest {
@@ -184,24 +186,22 @@ export interface UpdatePasswordRequest {
 }
 
 export interface PracticeSessionsResponse {
-  content: PracticeSessionItem[];
-  totalPages: number;
-  totalElements: number;
-  number: number;
-  size: number;
+  items: PracticeSessionItem[];
+  pageInfo: PageInfo & { hasNext: boolean };
 }
 
 export interface PracticeSessionItem {
-  practiceLogId: number;
-  practiceDate: string;
+  id: number;
+  practiceAt: string;
   totalAttempts: number;
   successCount: number;
 }
 
 export interface PracticeSessionDetailResponse {
   practiceLogId: number;
-  practiceDate: string;
+  practiceAt: string;
+  earlyClickDiff: number | null;
   totalAttempts: number;
   successCount: number;
-  details: PracticeAttemptDetail[];
+  attempts: PracticeAttemptDetail[];
 }
