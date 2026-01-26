@@ -40,6 +40,9 @@ export default function EnrollmentHistory() {
             ※ 신입생은 신입생세미나 등 일부 교과목 신청가능학점 초과
             수강신청가능
           </p>
+          <p className="enrollment-notice-text">
+            ※ 가장 최근의 수강신청 결과만 표시함
+          </p>
 
           <div className="enrollment-content-wrapper">
           <div className="enrollment-left-column">
