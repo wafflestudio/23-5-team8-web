@@ -1,15 +1,15 @@
-import {useEffect, useState, useRef} from 'react';
+import { useEffect, useState, useRef } from 'react';
 import '../css/Warning.css';
-import {calculateQueueInfo} from '../utils/RegistrationUtils.ts';
+import { calculateQueueInfo } from '../utils/RegistrationUtils.ts';
 import Warning from '../utils/Warning';
 
 export type WarningType =
-  | "beforeTime"
-  | "quotaOver"
-  | "notChosen"
-  | "captchaError"
-  | "practiceNotStarted"
-  | "none";
+  | 'beforeTime'
+  | 'quotaOver'
+  | 'notChosen'
+  | 'captchaError'
+  | 'practiceNotStarted'
+  | 'none';
 
 interface WarningModalProps {
   warningType: WarningType;
@@ -48,7 +48,7 @@ const getWarningMessage = (
     case 'practiceNotStarted':
       return '연습 모드가 시작되지 않았습니다.\nStart 버튼을 눌러주세요.';
     default:
-      return "알 수 없는 오류가 발생했습니다.";
+      return '알 수 없는 오류가 발생했습니다.';
   }
 };
 
@@ -63,11 +63,16 @@ export function WarningModal({
     <Warning
       variant="single"
       icon="warning"
-      isOpen={warningType !== "none"}
+      isOpen={warningType !== 'none'}
       onClose={onClose}
     >
       <p className="warningText">
-        {getWarningMessage(warningType, courseTitle, courseNumber, lectureNumber)}
+        {getWarningMessage(
+          warningType,
+          courseTitle,
+          courseNumber,
+          lectureNumber
+        )}
       </p>
     </Warning>
   );
@@ -93,15 +98,11 @@ export const WaitingModal = ({
       }
 
       setQueueInfo((prev) => {
-        const nextInfo = calculateQueueInfo(
-          0,
-          prev.count,
-        );
+        const nextInfo = calculateQueueInfo(0, prev.count);
 
         if (
           nextInfo &&
-          (nextInfo.queueCount <= 0 ||
-            nextInfo.waitSeconds <= 0)
+          (nextInfo.queueCount <= 0 || nextInfo.waitSeconds <= 0)
         ) {
           clearInterval(timer);
           isCompletedRef.current = true;
@@ -128,12 +129,9 @@ export const WaitingModal = ({
       isOpen={true}
       containerClassName="waiting-modal-box"
     >
-      <h3 className="waiting-title">
-        서비스 접속대기 중입니다.
-      </h3>
+      <h3 className="waiting-title">서비스 접속대기 중입니다.</h3>
       <p className="waiting-time-highlight">
-        예상대기시간:{" "}
-        <u>{queueInfo.seconds}초</u>
+        예상대기시간: <u>{queueInfo.seconds}초</u>
       </p>
 
       <div className="waiting-progress-container">
@@ -141,14 +139,10 @@ export const WaitingModal = ({
       </div>
 
       <div className="waiting-info-text">
-        고객님 앞에{" "}
-        <strong>
-          {Math.floor(queueInfo.count)}명
-        </strong>
+        고객님 앞에 <strong>{Math.floor(queueInfo.count)}명</strong>
         의 대기자가 있습니다.
         <br />
-        현재 접속 사용자가 많아 대기 중이며,
-        잠시 후<br />
+        현재 접속 사용자가 많아 대기 중이며, 잠시 후<br />
         기다리시면 서비스로 자동접속 됩니다.
       </div>
 
@@ -159,10 +153,7 @@ export const WaitingModal = ({
   );
 };
 
-export const SuccessModal = ({
-  onKeep,
-  onGoToHistory,
-}: SuccessModalProps) => {
+export const SuccessModal = ({ onKeep, onGoToHistory }: SuccessModalProps) => {
   return (
     <Warning
       variant="double"
