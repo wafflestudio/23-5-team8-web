@@ -58,27 +58,49 @@ function WarningIcon() {
 }
 
 export default function Warning(props: WarningProps) {
-  const {
-    isOpen,
-    icon = 'none',
-    title,
-    subtitle,
-    children,
-    variant,
-  } = props;
+  const { isOpen, icon = 'none', title, subtitle, children, variant } = props;
 
   const onClose = variant !== 'none' ? props.onClose : undefined;
   const confirmLabel = variant !== 'none' ? (props.confirmLabel ?? '확인') : '';
   const cancelLabel = variant === 'double' ? (props.cancelLabel ?? '취소') : '';
   const onConfirm = variant === 'double' ? props.onConfirm : undefined;
-  const containerClassName = variant === 'none' ? props.containerClassName : undefined;
+  const containerClassName =
+    variant === 'none' ? props.containerClassName : undefined;
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+    if (!isOpen) {
+      document.body.style.overflow = 'auto';
+      return;
+    }
+
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
+      if (event.key === 'Enter') {
+        event.preventDefault();
+
+        if (variant === 'single') {
+          props.onClose();
+        } else if (variant === 'double') {
+          props.onConfirm();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
     return () => {
       document.body.style.overflow = 'auto';
+      window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen]);
+  }, [isOpen, variant, props]);
 
   if (!isOpen) return null;
 
@@ -120,7 +142,10 @@ export default function Warning(props: WarningProps) {
 
   return (
     <div className="background">
-      <div className={containerClassName ?? "warningContainer"} onClick={(e) => e.stopPropagation()}>
+      <div
+        className={containerClassName ?? 'warningContainer'}
+        onClick={(e) => e.stopPropagation()}
+      >
         {variant === 'none' ? (
           children
         ) : (

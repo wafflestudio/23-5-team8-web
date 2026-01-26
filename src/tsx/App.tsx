@@ -88,6 +88,7 @@ function Header({ handleLogout }: { handleLogout: () => void }) {
   const {
     showLoginWarning,
     showNotSupported,
+    openLoginWarning,
     closeLoginWarning,
     openNotSupported,
     closeNotSupported,
@@ -109,6 +110,13 @@ function Header({ handleLogout }: { handleLogout: () => void }) {
   const handleConfirmLogin = () => {
     navigate('/login');
     closeLoginWarning();
+  };
+
+  const handleProtectedClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!user) {
+      e.preventDefault();
+      openLoginWarning();
+    }
   };
 
   useEffect(() => {
@@ -270,24 +278,28 @@ function Header({ handleLogout }: { handleLogout: () => void }) {
             <Link
               className={`gnbItem ${loc.pathname === '/cart' ? 'active' : ''}`}
               to="/cart"
+              onClick={handleProtectedClick}
             >
               장바구니
             </Link>
             <Link
               className={`gnbItem ${loc.pathname === '/registration' ? 'active' : ''}`}
               to="/registration"
+              onClick={handleProtectedClick}
             >
               수강신청
             </Link>
             <Link
               className={`gnbItem ${loc.pathname === '/enrollment-history' ? 'active' : ''}`}
               to="/enrollment-history"
+              onClick={handleProtectedClick}
             >
               수강신청내역
             </Link>
             <Link
               className={`gnbItem ${loc.pathname === '/mypage' ? 'active' : ''}`}
               to="/mypage"
+              onClick={handleProtectedClick}
             >
               연습 결과 상세
             </Link>
