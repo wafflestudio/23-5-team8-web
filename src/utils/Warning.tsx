@@ -80,7 +80,7 @@ export default function Warning(props: WarningProps) {
     };
   }, [isOpen]);
 
-  // Enter로 버튼 작동 처리
+  // Enter, space bar로 버튼 작동 처리
   useEffect(() => {
     if (!isOpen) return;
 
@@ -92,7 +92,7 @@ export default function Warning(props: WarningProps) {
         return;
       }
 
-      if (event.key === 'Enter') {
+      if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
 
         if (variant === 'single' && onClose) {
