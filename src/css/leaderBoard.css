@@ -2,41 +2,58 @@
   padding: 40px 0 60px;
 }
 
+.leaderboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
 .leaderboard-title {
   font-size: 28px;
   font-weight: 400;
-  margin: 0 0 24px 0;
+  margin: 0;
   color: #111827;
   letter-spacing: -0.02em;
 }
 
-/* Filter Tabs (전체/주간) */
+/* Filter Tabs - Segmented Control (전체/주간) */
 .leaderboard-filter-tabs {
   display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
 }
 
 .leaderboard-filter-tab {
-  padding: 8px 16px;
+  padding: 8px 20px;
   background: #ffffff;
   border: 1px solid #d1d5db;
   cursor: pointer;
   font-size: 14px;
   font-weight: 400;
   color: #6b7280;
-  border-radius: 20px;
   transition: all 0.2s;
 }
 
-.leaderboard-filter-tab:hover {
-  border-color: #9ca3af;
+.leaderboard-filter-tab:first-child {
+  border-radius: 6px 0 0 6px;
+  border-right: none;
+}
+
+.leaderboard-filter-tab:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.leaderboard-filter-tab:hover:not(.active) {
+  background: #f9fafb;
 }
 
 .leaderboard-filter-tab.active {
   background: var(--blue);
   color: #ffffff;
   border-color: var(--blue);
+}
+
+.leaderboard-filter-tab:first-child.active {
+  border-right: 1px solid var(--blue);
 }
 
 /* Category Tabs (1픽/2픽/경쟁률) */
@@ -218,7 +235,7 @@
 
 .leaderboard-my-rank-item {
   display: grid;
-  grid-template-columns: 60px 1fr 120px;
+  grid-template-columns: 530px 1fr 120px;
   align-items: center;
 }
 
