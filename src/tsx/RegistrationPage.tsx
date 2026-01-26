@@ -41,7 +41,6 @@ interface CourseData {
 }
 
 interface SelectedCourseInfo {
-  id: number;
   totalCompetitors: number;
   capacity: number;
   title: string;
@@ -82,7 +81,8 @@ export default function Registration() {
   const [captchaDigits, setCaptchaDigits] = useState<CaptchaDigit[]>(() =>
     makeCaptchaDigits()
   );
-  const [selectedCourse, setSelectedCourse] =
+  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
+  const [selectedCourseInfo, setSelectedCourseInfo] =
     useState<SelectedCourseInfo | null>(null);
   const [captchaInput, setCaptchaInput] = useState('');
   const [currentTime, setCurrentTime] = useState<Date>(() => {
@@ -120,11 +120,12 @@ export default function Registration() {
     courseNumber: string,
     lectureNumber: string
   ) => {
-    if (selectedCourse?.id === courseId) {
-      setSelectedCourse(null);
+    if (selectedCourseId === courseId) {
+      setSelectedCourseId(null);
+      setSelectedCourseInfo(null);
     } else {
-      setSelectedCourse({
-        id: courseId,
+      setSelectedCourseId(courseId);
+      setSelectedCourseInfo({
         totalCompetitors: cartCount,
         capacity: maxStd_current - currentStd,
         title: courseTitle,
@@ -233,49 +234,16 @@ export default function Registration() {
     }
   };
 
-  const proceedToApiCall = async () => {
-    setWaitingInfo(null);
-
-    try {
-      const payload = {
-        courseId: selectedCourse!.id,
-        totalCompetitors: selectedCourse!.totalCompetitors,
-        capacity: selectedCourse!.capacity,
-      };
-
-      const response = await practiceAttemptApi(payload);
-      setCaptchaInput('');
-
-      if (!response.data.isSuccess) {
-        setWarningType('quotaOver');
-        if (selectedCourse) {
-          setFullCourseIds((prev) => new Set(prev).add(selectedCourse.id));
-        }
-      } else {
-        setShowSuccessModal(true);
-        if (selectedCourse) {
-          setSucceededCourseIds((prev) => new Set(prev).add(selectedCourse.id));
-        }
-      }
-      setSelectedCourse(null);
-    } catch (error) {
-      if (isAxiosError(error) && error.response) {
-        alert(error.response.data.message || '수강신청에 실패했습니다.');
-      } else {
-        alert('수강신청 요청 중 오류가 발생했습니다.');
-      }
-    }
-  };
-
   const handleRegisterAttempt = async () => {
     if (!pipWindow) {
       setWarningType('practiceNotStarted');
       setCaptchaInput('');
-      setSelectedCourse(null);
+      setSelectedCourseId(null);
+      setSelectedCourseInfo(null);
       return;
     }
 
-    if (selectedCourse === null) {
+    if (selectedCourseId === null) {
       setWarningType('notChosen');
       setCaptchaInput('');
       return;
@@ -286,7 +254,8 @@ export default function Registration() {
     if (captchaInput !== correctCaptcha) {
       setWarningType('captchaError');
       setCaptchaInput('');
-      setSelectedCourse(null);
+      setSelectedCourseId(null);
+      setSelectedCourseInfo(null);
       return;
     }
 
@@ -298,27 +267,30 @@ export default function Registration() {
     if (diffMs < 0) {
       setWarningType('beforeTime');
       setCaptchaInput('');
-      setSelectedCourse(null);
+      setSelectedCourseId(null);
+      setSelectedCourseInfo(null);
       return;
     }
 
-    if (succeededCourseIds.has(selectedCourse.id)) {
+    if (succeededCourseIds.has(selectedCourseId)) {
       setWarningType('alreadyAttempted');
       setCaptchaInput('');
-      setSelectedCourse(null);
+      setSelectedCourseId(null);
+      setSelectedCourseInfo(null);
       return;
     }
 
-    if (fullCourseIds.has(selectedCourse.id)) {
+    if (fullCourseIds.has(selectedCourseId)) {
       setWarningType('quotaOver');
       setCaptchaInput('');
-      setSelectedCourse(null);
+      setSelectedCourseId(null);
+      setSelectedCourseInfo(null);
       return;
     }
 
     const queueData = calculateQueueInfo(diffMs);
 
-    if (queueData) {
+    if (queueData.queueCount > 0) {
       setWaitingInfo({
         count: queueData.queueCount,
         seconds: queueData.waitSeconds,
@@ -328,13 +300,48 @@ export default function Registration() {
     }
   };
 
+  const proceedToApiCall = async () => {
+    setWaitingInfo(null);
+
+    try {
+      const payload = {
+        courseId: selectedCourseId!,
+        totalCompetitors: selectedCourseInfo!.totalCompetitors,
+        capacity: selectedCourseInfo!.capacity,
+      };
+
+      const response = await practiceAttemptApi(payload);
+      setCaptchaInput('');
+      setSelectedCourseId(null);
+
+      if (!response.data.isSuccess) {
+        setWarningType('quotaOver');
+        if (selectedCourseId) {
+          setFullCourseIds((prev) => new Set(prev).add(selectedCourseId));
+        }
+      } else {
+        setShowSuccessModal(true);
+        if (selectedCourseId) {
+          setSucceededCourseIds((prev) => new Set(prev).add(selectedCourseId));
+        }
+      }
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        alert(error.response.data.message || '수강신청에 실패했습니다.');
+      } else {
+        alert('수강신청 요청 중 오류가 발생했습니다.');
+      }
+    }
+  };
+
   const handleSuccessClose = (move: boolean) => {
     setShowSuccessModal(false);
     if (move) {
       navigate('/enrollment-history');
       setCaptchaInput('');
     } else {
-      setSelectedCourse(null);
+      setSelectedCourseId(null);
+      setSelectedCourseInfo(null);
       setCaptchaInput('');
     }
   };
@@ -455,7 +462,7 @@ export default function Registration() {
             ) : (
               <div className="courseListContainer">
                 {courseList?.map((c) => {
-                  const isSelected = selectedCourse?.id === c.course.id;
+                  const isSelected = selectedCourseId === c.course.id;
 
                   return (
                     <div key={c.course.id} className="courseItem">
@@ -676,9 +683,9 @@ export default function Registration() {
           <WarningModal
             warningType={warningType}
             onClose={() => setWarningType('none')}
-            courseTitle={selectedCourse?.title ?? null}
-            courseNumber={selectedCourse?.courseNumber ?? null}
-            lectureNumber={selectedCourse?.lectureNumber ?? null}
+            courseTitle={selectedCourseInfo?.title ?? null}
+            courseNumber={selectedCourseInfo?.courseNumber ?? null}
+            lectureNumber={selectedCourseInfo?.lectureNumber ?? null}
           />,
           document.body
         )}
