@@ -1,28 +1,108 @@
-import {Link} from 'react-router-dom';
-import {useAuth} from '../contexts/AuthContext.ts';
-import '../css/homePage.css';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+
+import { getLeaderboardApi, getWeeklyLeaderboardApi, getMyLeaderboardApi, getMyWeeklyLeaderboardApi } from '../api/leaderboard';
+import { useAuth } from '../contexts/AuthContext.ts';
+import type { LeaderboardEntryResponse, LeaderboardResponse, MyLeaderboardResponse } from '../types/apiTypes';
 import Warning from '../utils/Warning';
-import {useState} from 'react';
+import '../css/homePage.css';
+
+type FilterType = 'all' | 'weekly';
+type CategoryType = 'firstReaction' | 'secondReaction' | 'competitionRate';
+
+const DEFAULT_AVATAR = `data:image/svg+xml,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="50" fill="#e0e0e0"/>
+  <circle cx="50" cy="35" r="18" fill="#bdbdbd"/>
+  <ellipse cx="50" cy="80" rx="30" ry="22" fill="#bdbdbd"/>
+</svg>
+`)}`;
+
+const getCategoryData = (data: LeaderboardResponse, category: CategoryType) => {
+  switch (category) {
+    case 'firstReaction':
+      return data.topFirstReactionTime;
+    case 'secondReaction':
+      return data.topSecondReactionTime;
+    case 'competitionRate':
+      return data.topCompetitionRate;
+  }
+};
+
+const formatValue = (value: number, category: CategoryType): string => {
+  if (category === 'competitionRate') {
+    return `${value.toFixed(2)}:1`;
+  }
+  return `${value}ms`;
+};
 
 export default function HomePage() {
-  const {user} = useAuth();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [showNotSupporting, setShowNotSupporting] = useState(false);
+  const [filter, setFilter] = useState<FilterType>('all');
+  const [category, setCategory] = useState<CategoryType>('firstReaction');
+
+  const { data: leaderboardData, isLoading } = useQuery({
+    queryKey: ['leaderboard', 'home', filter],
+    queryFn: async () => {
+      const response = filter === 'all'
+        ? await getLeaderboardApi({ page: 0, size: 5 })
+        : await getWeeklyLeaderboardApi({ page: 0, size: 5 });
+      return response.data;
+    },
+  });
+
+  const { data: myData } = useQuery({
+    queryKey: ['leaderboard', 'my', filter],
+    queryFn: async () => {
+      const response = filter === 'all'
+        ? await getMyLeaderboardApi()
+        : await getMyWeeklyLeaderboardApi();
+      return response.data;
+    },
+    enabled: !!user,
+    retry: false,
+  });
+
+  const getEntries = (): LeaderboardEntryResponse[] => {
+    if (!leaderboardData) return [];
+    return getCategoryData(leaderboardData, category).items.slice(0, 5);
+  };
+
+  const getMyValue = (myData: MyLeaderboardResponse | undefined): { value: number | null; rank: number | null } => {
+    if (!myData) return { value: null, rank: null };
+    switch (category) {
+      case 'firstReaction':
+        return { value: myData.bestFirstReactionTime, rank: myData.bestFirstReactionTimeRank };
+      case 'secondReaction':
+        return { value: myData.bestSecondReactionTime, rank: myData.bestSecondReactionTimeRank };
+      case 'competitionRate':
+        return { value: myData.bestCompetitionRate, rank: myData.bestCompetitionRateRank };
+      default:
+        return { value: null, rank: null };
+    }
+  };
+
+  const entries = getEntries();
+  const myRank = getMyValue(myData);
 
   return (
-    <main className='page'>
-      <div className='containerX'>
-        <div className='homeGrid'>
-          <div className='homeLeft'>
-            <section className='panel periodPanel'>
-              <div className='panelHead'>
-                <div className='periodTitle'>
-                  <span className='periodYear blue'>2026학년도 1학기</span>
-                  <span className='periodText'>수강신청 기간안내</span>
+    <main className="page">
+      <div className="containerX">
+        <div className="homeGrid">
+          <div className="homeLeft">
+            <section className="panel periodPanel">
+              <div className="panelHead">
+                <div className="periodTitle">
+                  <span className="periodYear blue">2026학년도 1학기</span>
+                  <span className="periodText">수강신청 기간안내</span>
                 </div>
-                <div className='periodNote'>※장바구니는 선착순이 아닙니다.</div>
+                <div className="periodNote">※장바구니는 선착순이 아닙니다.</div>
               </div>
-              <div className='periodBody'>
-                <table className='periodTable'>
+              <div className="periodBody">
+                <table className="periodTable">
                   <thead>
                     <tr>
                       <th>수강신청 구분</th>
@@ -34,10 +114,10 @@ export default function HomePage() {
                   <tbody>
                     {SCHEDULE_DATA.map((row, index) => (
                       <tr key={index}>
-                        <td data-label='수강신청 구분'>{row.category}</td>
-                        <td data-label='일자'>{row.date}</td>
-                        <td data-label='시간'>{row.time}</td>
-                        <td data-label='대상' className='periodTarget'>
+                        <td data-label="수강신청 구분">{row.category}</td>
+                        <td data-label="일자">{row.date}</td>
+                        <td data-label="시간">{row.time}</td>
+                        <td data-label="대상" className="periodTarget">
                           {row.target}
                         </td>
                       </tr>
@@ -46,37 +126,25 @@ export default function HomePage() {
                 </table>
               </div>
             </section>
-
-            <section className='panel infoPanel'>
-              <div className='panelHead'>
-                <div className='panelTitle'>사이트안내</div>
-              </div>
-              <div className='panelBody'>
-                <div className='infoLineBold'>
-                  수강신청 관련 주요 안내사항이 표시됩니다.
-                </div>
-                <div className='infoLine'>로그인이 필요합니다.</div>
-              </div>
-            </section>
           </div>
 
-          <div className='homeRight'>
+          <div className="homeRight">
             {!user && (
-              <section className='panel loginPanel'>
-                <div className='loginTop'>
-                  <div className='loginTitle blue'>로그인 하세요.</div>
-                  <Link className='loginBtnLink' to='/login'>
+              <section className="panel loginPanel">
+                <div className="loginTop">
+                  <div className="loginTitle blue">로그인 하세요.</div>
+                  <Link className="loginBtnLink" to="/login">
                     로그인
                   </Link>
-                  <div className='loginDesc'>
+                  <div className="loginDesc">
                     본인 아이디 또는 비밀번호 찾기가 가능합니다.
                   </div>
-                  <div className='loginFind'>
-                    <button className='findBtn' type='button'>
+                  <div className="loginFind">
+                    <button className="findBtn" type="button">
                       아이디 찾기
                     </button>
-                    <span className='findSep'>/</span>
-                    <button className='findBtn' type='button'>
+                    <span className="findSep">/</span>
+                    <button className="findBtn" type="button">
                       비밀번호 찾기
                     </button>
                   </div>
@@ -84,45 +152,129 @@ export default function HomePage() {
               </section>
             )}
 
-            <div className='rightButtons'>
+            <div className="rightButtons">
               <a
                 className={user ? 'rightFilledBtn' : 'rightOutlineBtn'}
-                href='#'
+                href="#"
                 onClick={() => setShowNotSupporting(true)}
               >
                 ALLCLEAR 서비스 이용 방법 안내
               </a>
               <a
                 className={user ? 'rightFilledBtn' : 'rightOutlineBtn'}
-                href='https://docs.google.com/forms/d/e/1FAIpQLSediDA6u8VTTy9sAJ5VHDsUuLRQLaSJyBypCXz3EuO6kJ6IJQ/viewform'
-                target='_blank'
-                rel='noopener noreferrer'
+                href="https://docs.google.com/forms/d/e/1FAIpQLSediDA6u8VTTy9sAJ5VHDsUuLRQLaSJyBypCXz3EuO6kJ6IJQ/viewform"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 개발자에게 피드백
               </a>
             </div>
 
-            <section className='panel noticePanel'>
-              <div className='noticeHead'>
-                <div className='panelTitle'>공지사항</div>
-                <Link className='noticeMore' to='/notice'>
-                  더보기
-                </Link>
+            <section className="panel leaderBoardPanel">
+              <div className="panelHead">
+                <div className="panelTitle">리더보드</div>
               </div>
-              <div className='panelBody noticeBody'>
-                {DUMMY_NOTICES.slice(0, 4).map((n) => (
-                  <Link key={n.id} to='/notice' className='noticeRow'>
-                    {n.title}
-                  </Link>
-                ))}
-              </div>
-            </section>
-            <section className='panel LeaderBoardPanel'>
-              <div className='panelHead'>
-                <div className='panelTitle'>리더보드</div>
-              </div>
-              <div className='panelBody leaderBoardBody'>
-                리더보드 기능은 곧 업데이트될 예정입니다!
+              <div className="panelBody leaderBoardBody">
+                <div className="home-leaderboard-filter-tabs">
+                  <button
+                    className={`home-leaderboard-filter-tab ${filter === 'all' ? 'active' : ''}`}
+                    onClick={() => setFilter('all')}
+                  >
+                    전체
+                  </button>
+                  <button
+                    className={`home-leaderboard-filter-tab ${filter === 'weekly' ? 'active' : ''}`}
+                    onClick={() => setFilter('weekly')}
+                  >
+                    주간
+                  </button>
+                </div>
+
+                <div className="home-leaderboard-category-tabs">
+                  <button
+                    className={`home-leaderboard-category-tab ${category === 'firstReaction' ? 'active' : ''}`}
+                    onClick={() => setCategory('firstReaction')}
+                  >
+                    1픽 반응속도
+                  </button>
+                  <button
+                    className={`home-leaderboard-category-tab ${category === 'secondReaction' ? 'active' : ''}`}
+                    onClick={() => setCategory('secondReaction')}
+                  >
+                    2픽 반응속도
+                  </button>
+                  <button
+                    className={`home-leaderboard-category-tab ${category === 'competitionRate' ? 'active' : ''}`}
+                    onClick={() => setCategory('competitionRate')}
+                  >
+                    경쟁률
+                  </button>
+                </div>
+
+                {isLoading ? (
+                  <div className="home-leaderboard-loading">로딩 중...</div>
+                ) : entries.length === 0 ? (
+                  <div className="home-leaderboard-empty">아직 기록이 없습니다.</div>
+                ) : (
+                  <div className="home-leaderboard-list">
+                    {entries.map((entry, index) => {
+                      const rank = index + 1;
+                      return (
+                        <div
+                          key={`${entry.userId}-${index}`}
+                          className={`home-leaderboard-item ${rank <= 3 ? 'top-3' : ''}`}
+                        >
+                          <span className={`home-leaderboard-rank rank-${rank}`}>{rank}</span>
+                          <div className="home-leaderboard-user">
+                            <img
+                              className="home-leaderboard-avatar"
+                              src={entry.profileImageUrl || DEFAULT_AVATAR}
+                              alt={entry.nickname}
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).src = DEFAULT_AVATAR;
+                              }}
+                            />
+                            <span className="home-leaderboard-nickname">{entry.nickname}</span>
+                          </div>
+                          <span className="home-leaderboard-value">
+                            {formatValue(entry.value, category)}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {user ? (
+                  myRank.rank !== null && myRank.value !== null ? (
+                    <div className="home-leaderboard-my-rank">
+                      <div className="home-leaderboard-my-rank-title">내 순위</div>
+                      <div className="home-leaderboard-item my-rank">
+                        <span className="home-leaderboard-rank">{myRank.rank}</span>
+                        <div className="home-leaderboard-user">
+                          <span className="home-leaderboard-nickname">{user.nickname}</span>
+                        </div>
+                        <span className="home-leaderboard-value">
+                          {formatValue(myRank.value, category)}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="home-leaderboard-my-rank">
+                      <div className="home-leaderboard-my-rank-title">내 순위</div>
+                      <div className="home-leaderboard-empty">
+                        아직 기록이 없습니다.
+                      </div>
+                    </div>
+                  )
+                ) : null}
+
+                <button
+                  className="home-leaderboard-detail-btn"
+                  onClick={() => navigate('/leaderboard')}
+                >
+                  상세보기
+                </button>
               </div>
             </section>
           </div>
@@ -139,15 +291,6 @@ export default function HomePage() {
     </main>
   );
 }
-
-type NoticeItem = {id: number; title: string};
-
-const DUMMY_NOTICES: NoticeItem[] = [
-  {id: 1, title: '더미 공지사항 1 (예: 수강편람 게시)'},
-  {id: 2, title: '더미 공지사항 2 (예: 브라우저 캐시 삭제 안내)'},
-  {id: 3, title: '더미 공지사항 3 (예: 시스템 점검 일정)'},
-  {id: 4, title: '더미 공지사항 4 (예: 유의사항 안내)'},
-];
 
 const SCHEDULE_DATA = [
   {

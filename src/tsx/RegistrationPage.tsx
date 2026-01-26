@@ -9,7 +9,10 @@ import {
   practiceAttemptApi,
 } from '../api/registration';
 import { isAxiosError } from 'axios';
-import type { CourseDetailResponse, VirtualStartTimeOption } from '../types/apiTypes';
+import type {
+  CourseDetailResponse,
+  VirtualStartTimeOption,
+} from '../types/apiTypes';
 import { useCartQuery } from '../hooks/useCartQuery';
 import { useModalStore } from '../stores/modalStore';
 import {
@@ -191,7 +194,9 @@ export default function Registration() {
             await practiceEndApi();
             const virtualStartTimeOption = getTimeOption(startOffset);
 
-            const retryStartResponse = await practiceStartApi({ virtualStartTimeOption });
+            const retryStartResponse = await practiceStartApi({
+              virtualStartTimeOption,
+            });
 
             if (retryStartResponse.data?.practiceLogId) {
               localStorage.setItem(

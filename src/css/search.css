@@ -415,7 +415,7 @@
   padding: 20px 0;
 }
 
-.pageBtn {
+.pagination .pageBtn {
   background: none;
   border: none;
   cursor: pointer;
@@ -423,21 +423,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  outline: none;
+  min-width: auto;
+  border-radius: 0;
 }
 
-.pageBtn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+.pagination .pageBtn img {
+  width: 25px;
+  height: 25px;
 }
 
-.pageBtn img {
-  width: 20px;
-  height: 20px;
-}
-
-.pageNumber {
+.pagination .pageNumber {
   background: none;
   border: none;
+  outline: none;
   color: #666;
   font-size: 16px;
   font-weight: 400;
@@ -446,12 +445,14 @@
   min-width: 28px;
   text-align: center;
   position: relative;
+  border-radius: 0;
 }
 
-.pageNumber:hover,
-.pageNumber.active {
+.pagination .pageNumber:hover:not(:disabled),
+.pagination .pageNumber.active {
   color: #376dc8;
-  font-weight: 700;
+  background: none;
   text-decoration: underline;
-  text-underline-offset: 4px;
+  text-decoration-color: #376dc8;
+  text-underline-offset: 2px;
 }

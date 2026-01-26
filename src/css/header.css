@@ -213,7 +213,7 @@ button {
   display: none;
 } /* Hide Icon */
 
-/* Head Bottom (GNB, LinkList) */
+/* Head Bottom */
 .headBottom {
   display: none; /* Mobile Default: Hide Bottom Nav */
 }
@@ -234,7 +234,7 @@ button {
 }
 .gnbItem {
   position: relative;
-  padding: 0 12px;
+  padding: 0 20px;
   font-size: 17px;
   color: #222;
   font-weight: 400;
@@ -245,8 +245,6 @@ button {
 .gnbItem.active::after {
   content: '';
   position: absolute;
-  left: 12px; /* padding 값 고려 */
-  right: 12px;
   bottom: -4px;
   height: 1px;
   background: #376dc8;
@@ -263,74 +261,6 @@ button {
   height: 18px;
   background: #e5e7eb;
   transform: translateY(-50%);
-}
-
-.linkList {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  /* 핵심: 줄바꿈 방지 */
-  flex-wrap: nowrap;
-  white-space: nowrap;
-}
-.linkItem {
-  position: relative;
-  padding: 0 9px;
-  font-size: 12px;
-  color: #747474;
-  font-weight: 500;
-}
-.linkItem:hover,
-.linkItem.on {
-  color: var(--blue);
-}
-.linkItem:not(:first-child)::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 1px;
-  height: 14px;
-  background: #e5e7eb;
-  transform: translateY(-50%);
-}
-
-/* SubNav & Footer (Keep as is mostly) */
-.subNavBar {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background: #eef6ff;
-  border-top: 1px solid #dbeafe;
-  z-index: 999;
-}
-.subNavInner {
-  padding: 14px 30px;
-}
-
-.subNavList {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  color: #334155;
-  font-weight: 400;
-  font-size: 16px;
-}
-
-.subNavItem {
-  color: #334155;
-}
-
-.subNavItem:hover {
-  color: var(--blue);
-}
-
-.subNavSep {
-  width: 1px;
-  height: 22px;
-  background: #cbd5e1;
-  opacity: 0.7;
 }
 
 /* [추가] 유저 정보 영역 (기본: 모바일 숨김) */

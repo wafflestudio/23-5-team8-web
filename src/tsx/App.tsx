@@ -52,7 +52,6 @@ export default function App() {
       <div id="main">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/notice" element={<NoticePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/search" element={<SearchPage />} />
@@ -89,17 +88,12 @@ function Header({ handleLogout }: { handleLogout: () => void }) {
   const {
     showLoginWarning,
     showNotSupported,
-    openLoginWarning,
     closeLoginWarning,
     openNotSupported,
     closeNotSupported,
   } = useModalStore();
-  const [hoverMenu, setHoverMenu] = useState<null | 'search' | 'apply' | 'mba'>(
-    null
-  );
   const [showUserMenu, setShowUserMenu] = useState(false);
   const searchInputRef = React.useRef<HTMLInputElement>(null);
-  const prevent = (e: React.MouseEvent) => e.preventDefault();
 
   const handleSearch = () => {
     const query = searchInputRef.current?.value || '';
@@ -109,13 +103,6 @@ function Header({ handleLogout }: { handleLogout: () => void }) {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSearch();
-    }
-  };
-
-  const handleProtectedClick = (e: React.MouseEvent) => {
-    if (!user) {
-      e.preventDefault();
-      openLoginWarning();
     }
   };
 
@@ -148,30 +135,25 @@ function Header({ handleLogout }: { handleLogout: () => void }) {
     <header className="header">
       <div className="headTop">
         <div className="containerX headTopGrid">
-          <div className="logoArea">
+          <Link to="/" className="logoArea">
             <div className="logoMark">
-              <Link to="/">
-                <img
-                  src="/assets/logo.png"
-                  alt="ALLCLEAR"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).style.display =
-                      'none';
-                  }}
-                />
-              </Link>
+              <img
+                src="/assets/logo.png"
+                alt="ALLCLEAR"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.display = 'none';
+                }}
+              />
             </div>
 
             <div className="logoTextArea">
               <div className="logoTitle">
-                <Link to="/" className="logoBold">
-                  ALLCLEAR
-                </Link>
+                <span className="logoBold">ALLCLEAR</span>
                 <span className="logoTerm">2026-1학기</span>
               </div>
               <div className="logoSub">서울대학교 수강신청 연습 시스템</div>
             </div>
-          </div>
+          </Link>
 
           <div className="searchArea">
             <div className="searchBox">
@@ -282,181 +264,41 @@ function Header({ handleLogout }: { handleLogout: () => void }) {
         </div>
       </div>
 
-      <div className="headBottom" onMouseLeave={() => setHoverMenu(null)}>
+      <div className="headBottom">
         <div className="containerX headBottomFlex">
           <nav className="gnb" aria-label="메인 메뉴">
-            <a
-              className={`gnbItem ${
-                loc.pathname === '/search' ? 'active' : ''
-              }`}
-              href="#"
-              onClick={prevent}
-              onMouseEnter={() => setHoverMenu('search')}
+            <Link
+              className={`gnbItem ${loc.pathname === '/cart' ? 'active' : ''}`}
+              to="/cart"
             >
-              강좌검색
-            </a>
-            <a
-              className={`gnbItem ${
-                loc.pathname.startsWith('/cart') ||
-                loc.pathname === '/enrollment-history' ||
-                loc.pathname === '/registration'
-                  ? 'active'
-                  : ''
-              }`}
-              href="#"
-              onClick={prevent}
-              onMouseEnter={() => setHoverMenu('apply')}
+              장바구니
+            </Link>
+            <Link
+              className={`gnbItem ${loc.pathname === '/registration' ? 'active' : ''}`}
+              to="/registration"
             >
               수강신청
-            </a>
-            <a
-              className="gnbItem"
-              href="#"
-              onClick={prevent}
-              onMouseEnter={() => setHoverMenu('mba')}
-            >
-              MBA/EMBA 수강신청
-            </a>
-            <a
-              className="gnbItem"
-              href="#"
-              onClick={() => openNotSupported()}
-              onMouseEnter={() => setHoverMenu(null)}
-            >
-              수강교과목추천(스누지니)
-            </a>
+            </Link>
             <Link
+              className={`gnbItem ${loc.pathname === '/enrollment-history' ? 'active' : ''}`}
+              to="/enrollment-history"
+            >
+              수강신청내역
+            </Link>
+            <Link
+              className={`gnbItem ${loc.pathname === '/mypage' ? 'active' : ''}`}
+              to="/mypage"
+            >
+              연습 결과 상세
+            </Link>
+            <Link
+              className={`gnbItem ${loc.pathname === '/leaderboard' ? 'active' : ''}`}
               to="/leaderboard"
-              className="gnbItem"
-              onClick={handleProtectedClick}
             >
               리더보드
             </Link>
           </nav>
-
-          <div className="linkList" aria-label="우측 링크">
-            <a className="linkItem" href="#" onClick={() => openNotSupported()}>
-              학업이수현황
-            </a>
-            <Link
-              className={`linkItem ${loc.pathname === '/notice' ? 'on' : ''}`}
-              to="/notice"
-            >
-              공지사항
-            </Link>
-            <a className="linkItem" href="#" onClick={() => openNotSupported()}>
-              FAQ
-            </a>
-            <a className="linkItem" href="#" onClick={() => openNotSupported()}>
-              수업교시기준
-            </a>
-            <a className="linkItem" href="#" onClick={() => openNotSupported()}>
-              ENGLISH
-            </a>
-          </div>
         </div>
-
-        {hoverMenu && (
-          <div
-            className="subNavBar"
-            onMouseEnter={() => setHoverMenu(hoverMenu)}
-          >
-            <div className="containerX subNavInner">
-              {hoverMenu === 'search' && (
-                <div className="subNavList">
-                  <a
-                    className="subNavItem"
-                    href="#"
-                    onClick={() => openNotSupported()}
-                  >
-                    관심강좌
-                  </a>
-                  <a
-                    className="subNavItem"
-                    href="#"
-                    onClick={() => openNotSupported()}
-                  >
-                    수강지도상담
-                  </a>
-                </div>
-              )}
-              {hoverMenu === 'apply' && (
-                <div className="subNavList">
-                  <a
-                    className="subNavItem"
-                    href="#"
-                    onClick={() => openNotSupported()}
-                  >
-                    예비장바구니
-                  </a>
-                  <a
-                    className="subNavItem"
-                    href="#"
-                    onClick={() => openNotSupported()}
-                  >
-                    예비수강신청
-                  </a>
-                  <a
-                    className="subNavItem"
-                    href="#"
-                    onClick={() => openNotSupported()}
-                  >
-                    예비수강신청내역
-                  </a>
-                  <span className="subNavSep" aria-hidden="true" />
-
-                  <Link
-                    className="subNavItem"
-                    to="/cart"
-                    onClick={handleProtectedClick}
-                  >
-                    장바구니
-                  </Link>
-                  <Link
-                    className="subNavItem"
-                    to="/registration"
-                    onClick={handleProtectedClick}
-                  >
-                    수강신청
-                  </Link>
-                  <Link
-                    className="subNavItem"
-                    to="/enrollment-history"
-                    onClick={handleProtectedClick}
-                  >
-                    수강신청내역
-                  </Link>
-                  <span className="subNavSep" aria-hidden="true" />
-                  <a
-                    className="subNavItem"
-                    href="#"
-                    onClick={() => openNotSupported()}
-                  >
-                    정원 외 신청
-                  </a>
-                </div>
-              )}
-              {hoverMenu === 'mba' && (
-                <div className="subNavList">
-                  <a
-                    className="subNavItem"
-                    href="#"
-                    onClick={() => openNotSupported()}
-                  >
-                    MBA 수강신청
-                  </a>
-                  <a
-                    className="subNavItem"
-                    href="#"
-                    onClick={() => openNotSupported()}
-                  >
-                    EMBA 수강신청
-                  </a>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
       <Warning
         variant="double"
@@ -480,59 +322,6 @@ function Header({ handleLogout }: { handleLogout: () => void }) {
         <p className="warningText">지원하지 않는 기능입니다.</p>
       </Warning>
     </header>
-  );
-}
-
-type NoticeItem = { id: number; title: string };
-const DUMMY_NOTICES: NoticeItem[] = [
-  {
-    id: 1,
-    title: '더미 공지사항 1 (예: 수강편람 게시)',
-  },
-  {
-    id: 2,
-    title: '더미 공지사항 2 (예: 브라우저 캐시 삭제 안내)',
-  },
-  {
-    id: 3,
-    title: '더미 공지사항 3 (예: 시스템 점검 일정)',
-  },
-  {
-    id: 4,
-    title: '더미 공지사항 4 (예: 유의사항 안내)',
-  },
-];
-
-function NoticePage() {
-  return (
-    <main className="page">
-      <div className="containerX">
-        <section className="card">
-          <div className="cardInner">
-            <div className="sectionHeadRow">
-              <h2 className="titleLine">
-                <strong className="blue">공지사항</strong>
-              </h2>
-              <Link className="moreLink" to="/">
-                홈으로 ←
-              </Link>
-            </div>
-            <div className="noticeList">
-              {DUMMY_NOTICES.map((n) => (
-                <a
-                  key={n.id}
-                  className="noticeItem"
-                  href="#"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  {n.title}
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
   );
 }
 
