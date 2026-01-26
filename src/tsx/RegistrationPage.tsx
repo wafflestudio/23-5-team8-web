@@ -240,12 +240,14 @@ export default function Registration() {
       setCaptchaInput('');
       setSelectedCourseId(null);
       setSelectedCourseInfo(null);
+      setCaptchaDigits(makeCaptchaDigits());
       return;
     }
 
     if (selectedCourseId === null) {
       setWarningType('notChosen');
       setCaptchaInput('');
+      setCaptchaDigits(makeCaptchaDigits());
       return;
     }
 
