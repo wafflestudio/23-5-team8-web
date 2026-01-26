@@ -98,6 +98,10 @@ export default function Registration() {
   } | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isCooldown, setIsCooldown] = useState(false);
+  const [succeededCourseIds, setSucceededCourseIds] = useState<Set<number>>(
+    new Set()
+  );
+  const [fullCourseIds, setFullCourseIds] = useState<Set<number>>(new Set());
 
   const navigate = useNavigate();
   const practiceState = useRef({
@@ -174,6 +178,9 @@ export default function Registration() {
       const virtualStartTimeOption = getTimeOption(startOffset);
       const startResponse = await practiceStartApi({ virtualStartTimeOption });
 
+      setSucceededCourseIds(new Set());
+      setFullCourseIds(new Set());
+
       if (startResponse.data?.practiceLogId) {
         localStorage.setItem(
           'currentPracticeLogId',
@@ -238,13 +245,19 @@ export default function Registration() {
 
       const response = await practiceAttemptApi(payload);
       setCaptchaInput('');
-      setSelectedCourse(null);
 
       if (!response.data.isSuccess) {
         setWarningType('quotaOver');
+        if (selectedCourse) {
+          setFullCourseIds((prev) => new Set(prev).add(selectedCourse.id));
+        }
       } else {
         setShowSuccessModal(true);
+        if (selectedCourse) {
+          setSucceededCourseIds((prev) => new Set(prev).add(selectedCourse.id));
+        }
       }
+      setSelectedCourse(null);
     } catch (error) {
       if (isAxiosError(error) && error.response) {
         alert(error.response.data.message || '수강신청에 실패했습니다.');
@@ -284,6 +297,20 @@ export default function Registration() {
 
     if (diffMs < 0) {
       setWarningType('beforeTime');
+      setCaptchaInput('');
+      setSelectedCourse(null);
+      return;
+    }
+
+    if (succeededCourseIds.has(selectedCourse.id)) {
+      setWarningType('alreadyAttempted');
+      setCaptchaInput('');
+      setSelectedCourse(null);
+      return;
+    }
+
+    if (fullCourseIds.has(selectedCourse.id)) {
+      setWarningType('quotaOver');
       setCaptchaInput('');
       setSelectedCourse(null);
       return;
@@ -342,6 +369,7 @@ export default function Registration() {
     openWindow();
   };
 
+  // PIP 창이 열리면 타이머 시작
   useEffect(() => {
     if (!pipWindow) return;
 
@@ -371,23 +399,22 @@ export default function Registration() {
     };
   }, [pipWindow, handleStopPractice]);
 
+  // 페이지 이동 시 연습 종료
   useEffect(() => {
-    const isModalOpen =
-      waitingInfo !== null ||
-      showSuccessModal ||
-      warningType !== 'none' ||
-      showNotSupported;
-
-    if (isModalOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
     return () => {
-      document.body.style.overflow = 'unset';
+      if (practiceState.current.isRunning) {
+        if (practiceState.current.timerId) {
+          clearInterval(practiceState.current.timerId);
+        }
+
+        practiceState.current.isRunning = false;
+
+        practiceEndApi().catch((error) => {
+          console.error('세션 자동 종료 실패:', error);
+        });
+      }
     };
-  }, [waitingInfo, showSuccessModal, warningType, showNotSupported]);
+  }, []);
 
   return (
     <div className="registrationPage">

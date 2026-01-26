@@ -9,6 +9,7 @@ export type WarningType =
   | 'notChosen'
   | 'captchaError'
   | 'practiceNotStarted'
+  | 'alreadyAttempted'
   | 'none';
 
 interface WarningModalProps {
@@ -47,6 +48,8 @@ const getWarningMessage = (
       return '수강신청할 강좌를 선택하십시오.';
     case 'practiceNotStarted':
       return '연습 모드가 시작되지 않았습니다.\nStart 버튼을 눌러주세요.';
+    case 'alreadyAttempted':
+      return '이미 수강신청한 강의입니다.';
     default:
       return '알 수 없는 오류가 발생했습니다.';
   }
@@ -131,7 +134,10 @@ export const WaitingModal = ({
     >
       <h3 className="waiting-title">서비스 접속대기 중입니다.</h3>
       <p className="waiting-time-highlight">
-        예상대기시간: <u>{queueInfo.seconds}초</u>
+        예상대기시간:{' '}
+        <u style={{ fontVariantNumeric: 'tabular-nums' }}>
+          {queueInfo.seconds}초
+        </u>
       </p>
 
       <div className="waiting-progress-container">
@@ -139,7 +145,10 @@ export const WaitingModal = ({
       </div>
 
       <div className="waiting-info-text">
-        고객님 앞에 <strong>{Math.floor(queueInfo.count)}명</strong>
+        고객님 앞에{' '}
+        <strong style={{ fontVariantNumeric: 'tabular-nums' }}>
+          {Math.floor(queueInfo.count)}명
+        </strong>
         의 대기자가 있습니다.
         <br />
         현재 접속 사용자가 많아 대기 중이며, 잠시 후<br />
