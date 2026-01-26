@@ -398,13 +398,13 @@ export default function Registration() {
     };
   }, [pipWindow, handleStopPractice]);
 
-  useEffect(() => {
-    const isModalOpen =
-      waitingInfo !== null ||
-      showSuccessModal ||
-      warningType !== 'none' ||
-      showNotSupported;
+  const isModalOpen =
+    waitingInfo !== null ||
+    showSuccessModal ||
+    warningType !== 'none' ||
+    showNotSupported;
 
+  useEffect(() => {
     if (isModalOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -414,7 +414,7 @@ export default function Registration() {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [waitingInfo, showSuccessModal, warningType, showNotSupported]);
+  }, [isModalOpen]);
 
   return (
     <div className="registrationPage">

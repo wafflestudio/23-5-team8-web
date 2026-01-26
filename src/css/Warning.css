@@ -142,7 +142,7 @@
 .waiting-modal-box {
   background-color: white;
   border-radius: 8px; /* 둥근 모서리 */
-  overflow: hidden;
+  overflow: hidden !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   animation: fadeIn 0.2s ease-out;
   font-family: 'Malgun Gothic', dotum, sans-serif;
