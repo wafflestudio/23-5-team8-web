@@ -416,12 +416,6 @@ export default function Registration() {
     };
   }, []);
 
-  const isModalOpen =
-    waitingInfo !== null ||
-    showSuccessModal ||
-    warningType !== 'none' ||
-    showNotSupported;
-
   return (
     <div className="registrationPage">
       <div className="containerX">
@@ -696,19 +690,6 @@ export default function Registration() {
       >
         <p className="warningText">지원하지 않는 기능입니다.</p>
       </Warning>
-      {isModalOpen && <ScrollLock />}
     </div>
   );
 }
-
-const ScrollLock = () => {
-  useEffect(() => {
-    document.body.style.setProperty('overflow', 'hidden', 'important');
-
-    return () => {
-      document.body.style.removeProperty('overflow');
-    };
-  }, []);
-
-  return null;
-};

@@ -67,13 +67,22 @@ export default function Warning(props: WarningProps) {
   const containerClassName =
     variant === 'none' ? props.containerClassName : undefined;
 
+  // 스크롤 잠금 처리
   useEffect(() => {
-    if (!isOpen) {
-      document.body.style.overflow = 'auto';
-      return;
+    if (isOpen) {
+      document.body.style.setProperty('overflow', 'hidden', 'important');
+    } else {
+      document.body.style.removeProperty('overflow');
     }
 
-    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.removeProperty('overflow');
+    };
+  }, [isOpen]);
+
+  // Enter로 버튼 작동 처리
+  useEffect(() => {
+    if (!isOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
@@ -86,21 +95,19 @@ export default function Warning(props: WarningProps) {
       if (event.key === 'Enter') {
         event.preventDefault();
 
-        if (variant === 'single') {
-          props.onClose();
-        } else if (variant === 'double') {
-          props.onConfirm();
+        if (variant === 'single' && onClose) {
+          onClose();
+        } else if (variant === 'double' && onConfirm) {
+          onConfirm();
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
-
     return () => {
-      document.body.style.overflow = 'auto';
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, variant, props]);
+  }, [isOpen, variant, onClose, onConfirm]);
 
   if (!isOpen) return null;
 
