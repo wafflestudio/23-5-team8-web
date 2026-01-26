@@ -9,6 +9,7 @@ export type WarningType =
   | 'notChosen'
   | 'captchaError'
   | 'practiceNotStarted'
+  | 'alreadyAttempted'
   | 'none';
 
 interface WarningModalProps {
@@ -47,6 +48,8 @@ const getWarningMessage = (
       return '수강신청할 강좌를 선택하십시오.';
     case 'practiceNotStarted':
       return '연습 모드가 시작되지 않았습니다.\nStart 버튼을 눌러주세요.';
+    case 'alreadyAttempted':
+      return '이미 수강신청한 강의입니다.';
     default:
       return '알 수 없는 오류가 발생했습니다.';
   }

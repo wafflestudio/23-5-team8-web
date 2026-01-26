@@ -98,6 +98,10 @@ export default function Registration() {
   } | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isCooldown, setIsCooldown] = useState(false);
+  const [succeededCourseIds, setSucceededCourseIds] = useState<Set<number>>(
+    new Set()
+  );
+  const [fullCourseIds, setFullCourseIds] = useState<Set<number>>(new Set());
 
   const navigate = useNavigate();
   const practiceState = useRef({
@@ -174,6 +178,9 @@ export default function Registration() {
       const virtualStartTimeOption = getTimeOption(startOffset);
       const startResponse = await practiceStartApi({ virtualStartTimeOption });
 
+      setSucceededCourseIds(new Set());
+      setFullCourseIds(new Set());
+
       if (startResponse.data?.practiceLogId) {
         localStorage.setItem(
           'currentPracticeLogId',
@@ -238,13 +245,19 @@ export default function Registration() {
 
       const response = await practiceAttemptApi(payload);
       setCaptchaInput('');
-      setSelectedCourse(null);
 
       if (!response.data.isSuccess) {
         setWarningType('quotaOver');
+        if (selectedCourse) {
+          setFullCourseIds((prev) => new Set(prev).add(selectedCourse.id));
+        }
       } else {
         setShowSuccessModal(true);
+        if (selectedCourse) {
+          setSucceededCourseIds((prev) => new Set(prev).add(selectedCourse.id));
+        }
       }
+      setSelectedCourse(null);
     } catch (error) {
       if (isAxiosError(error) && error.response) {
         alert(error.response.data.message || '수강신청에 실패했습니다.');
@@ -284,6 +297,20 @@ export default function Registration() {
 
     if (diffMs < 0) {
       setWarningType('beforeTime');
+      setCaptchaInput('');
+      setSelectedCourse(null);
+      return;
+    }
+
+    if (succeededCourseIds.has(selectedCourse.id)) {
+      setWarningType('alreadyAttempted');
+      setCaptchaInput('');
+      setSelectedCourse(null);
+      return;
+    }
+
+    if (fullCourseIds.has(selectedCourse.id)) {
+      setWarningType('quotaOver');
       setCaptchaInput('');
       setSelectedCourse(null);
       return;
