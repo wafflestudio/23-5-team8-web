@@ -97,6 +97,7 @@ export default function Registration() {
     seconds: number;
   } | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isCooldown, setIsCooldown] = useState(false);
 
   const navigate = useNavigate();
   const practiceState = useRef({
@@ -236,9 +237,10 @@ export default function Registration() {
       };
 
       const response = await practiceAttemptApi(payload);
-      setCaptchaInput(''); // 입력 초기화
+      setCaptchaInput('');
+      setSelectedCourse(null);
 
-      if (!response.data.success) {
+      if (!response.data.isSuccess) {
         setWarningType('quotaOver');
       } else {
         setShowSuccessModal(true);
@@ -253,6 +255,13 @@ export default function Registration() {
   };
 
   const handleRegisterAttempt = async () => {
+    if (!pipWindow) {
+      setWarningType('practiceNotStarted');
+      setCaptchaInput('');
+      setSelectedCourse(null);
+      return;
+    }
+
     if (selectedCourse === null) {
       setWarningType('notChosen');
       setCaptchaInput('');
@@ -264,12 +273,7 @@ export default function Registration() {
     if (captchaInput !== correctCaptcha) {
       setWarningType('captchaError');
       setCaptchaInput('');
-      return;
-    }
-
-    if (!pipWindow) {
-      setWarningType('practiceNotStarted');
-      setCaptchaInput('');
+      setSelectedCourse(null);
       return;
     }
 
@@ -281,6 +285,7 @@ export default function Registration() {
     if (diffMs < 0) {
       setWarningType('beforeTime');
       setCaptchaInput('');
+      setSelectedCourse(null);
       return;
     }
 
@@ -307,6 +312,22 @@ export default function Registration() {
     }
   };
 
+  const handleToggleWithCooldown = () => {
+    if (isCooldown) return;
+
+    if (pipWindow) {
+      handleStopPractice(true);
+    } else {
+      handleStartPractice();
+    }
+
+    setIsCooldown(true);
+
+    setTimeout(() => {
+      setIsCooldown(false);
+    }, 1500);
+  };
+
   const startTimerAndPip = async () => {
     const offsetSeconds = startOffset === 0 ? 30 : startOffset;
     const virtualStart = new Date();
@@ -319,14 +340,6 @@ export default function Registration() {
     setCurrentTime(virtualStart);
     practiceState.current.isRunning = true;
     openWindow();
-  };
-
-  const togglePractice = () => {
-    if (pipWindow) {
-      handleStopPractice(true);
-    } else {
-      handleStartPractice();
-    }
   };
 
   useEffect(() => {
@@ -394,6 +407,9 @@ export default function Registration() {
           <button className="regTabItem" onClick={() => openNotSupported()}>
             교과목번호 검색
           </button>
+          <p className="regTabInfoText">
+            ※ 장바구니 탭에서 담은 수를 수정할 수 있습니다.
+          </p>
         </div>
 
         <div className="regInfoLine">
@@ -567,9 +583,19 @@ export default function Registration() {
             <div className="practiceArea">
               <button
                 className={`practiceToggleBtn ${pipWindow ? 'active' : ''}`}
-                onClick={togglePractice}
+                onClick={handleToggleWithCooldown}
+                disabled={isCooldown}
+                style={{
+                  cursor: isCooldown ? 'not-allowed' : 'pointer',
+                  opacity: isCooldown ? 0.6 : 1,
+                  transition: 'all 0.2s ease',
+                }}
               >
-                {pipWindow ? '연습 종료 (Stop)' : '연습 모드 (Start)'}
+                {isCooldown
+                  ? '잠시 대기... (1.5s)'
+                  : pipWindow
+                    ? '연습 종료 (Stop)'
+                    : '연습 모드 (Start)'}
               </button>
               <select
                 className="timeSettingDropdown"
@@ -583,6 +609,11 @@ export default function Registration() {
                 <option value={30}>30초 전</option>
                 <option value={15}>15초 전</option>
               </select>
+              <p className="timeSettingInfo">
+                ※ 타이머 기본값: 30초전
+                <br />
+                (8시 29분 30초)
+              </p>
             </div>
           </div>
         </div>

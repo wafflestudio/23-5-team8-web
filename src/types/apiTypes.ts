@@ -149,9 +149,8 @@ export interface PracticeAttemptRequest {
 }
 
 export interface PracticeAttemptResponse {
+  isSuccess: boolean;
   message: string;
-  userLatencyMs: number;
-  success: boolean;
 }
 
 // ==================== Leaderboard Types ====================
