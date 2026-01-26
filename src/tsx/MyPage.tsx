@@ -12,6 +12,7 @@ import {
 import type { PracticeSessionItem } from '../types/apiTypes';
 import '../css/mypage.css';
 import { useAuth } from '../contexts/AuthContext';
+import Warning from '../utils/Warning';
 
 // MyPage 헤더 컴포넌트
 const MyPageHeader: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
@@ -168,6 +169,10 @@ const MyPage: React.FC = () => {
   const [showNameModal, setShowNameModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [showAllSessions, setShowAllSessions] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { logout } = useAuth();
 
@@ -192,7 +197,8 @@ const MyPage: React.FC = () => {
       const file = e.target.files[0];
       try {
         await updateProfileImageMutation.mutateAsync(file);
-        alert('프로필 이미지가 변경되었습니다.');
+        setSuccessMessage('프로필 이미지가 변경되었습니다.');
+        setShowSuccessModal(true);
       } catch (error) {
         if (isAxiosError(error)) {
           alert(
@@ -208,11 +214,14 @@ const MyPage: React.FC = () => {
   const handleNameChange = async (newName: string) => {
     try {
       await updateProfileMutation.mutateAsync({ nickname: newName });
-      alert('닉네임이 변경되었습니다.');
       setShowNameModal(false);
+      setSuccessMessage('닉네임이 변경되었습니다.');
+      setShowSuccessModal(true);
     } catch (error) {
       if (isAxiosError(error)) {
-        alert(error.response?.data?.message || '닉네임 변경에 실패했습니다.');
+        setShowNameModal(false);
+        setErrorMessage('닉네임은 2자 이상 6자 이하여야 합니다.');
+        setShowErrorModal(true);
       }
     }
   };
@@ -461,6 +470,24 @@ const MyPage: React.FC = () => {
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={handleDeleteAccount}
+      />
+
+      {/* 성공 안내 모달 */}
+      <Warning
+        isOpen={showSuccessModal}
+        variant="single"
+        icon="none"
+        title={successMessage}
+        onClose={() => setShowSuccessModal(false)}
+      />
+
+      {/* 에러 안내 모달 */}
+      <Warning
+        isOpen={showErrorModal}
+        variant="single"
+        icon="none"
+        title={errorMessage}
+        onClose={() => setShowErrorModal(false)}
       />
     </div>
   );
