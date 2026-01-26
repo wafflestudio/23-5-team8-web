@@ -432,13 +432,13 @@ export default function Registration() {
 
         <div className="regTabs">
           <button className="regTabItem active">장바구니 보류강좌</button>
-          <button className="regTabItem" onClick={() => openNotSupported()}>
+          <button className="regTabItem" onClick={openNotSupported}>
             관심강좌
           </button>
-          <button className="regTabItem" onClick={() => openNotSupported()}>
+          <button className="regTabItem" onClick={openNotSupported}>
             교과목검색
           </button>
-          <button className="regTabItem" onClick={() => openNotSupported()}>
+          <button className="regTabItem" onClick={openNotSupported}>
             교과목번호 검색
           </button>
           <p className="regTabInfoText">
@@ -689,14 +689,18 @@ export default function Registration() {
           />,
           document.body
         )}
-      <Warning
-        variant="single"
-        icon="warning"
-        isOpen={showNotSupported}
-        onClose={closeNotSupported}
-      >
-        <p className="warningText">지원하지 않는 기능입니다.</p>
-      </Warning>
+      {showNotSupported &&
+        createPortal(
+          <Warning
+            variant="single"
+            icon="warning"
+            isOpen={showNotSupported}
+            onClose={closeNotSupported}
+          >
+            <p className="warningText">지원하지 않는 기능입니다.</p>
+          </Warning>,
+          document.body
+        )}
     </div>
   );
 }
