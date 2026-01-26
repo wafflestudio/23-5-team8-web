@@ -113,24 +113,26 @@ export default function LeaderBoard() {
   return (
     <div className="containerX">
       <div className="leaderboard-page">
-        <h1 className="leaderboard-title">리더보드</h1>
-
-        <div className="leaderboard-filter-tabs">
-          <button
-            className={`leaderboard-filter-tab ${filter === 'all' ? 'active' : ''}`}
-            onClick={() => setFilter('all')}
-            role="tab"
-            aria-selected={filter === 'all'}
-          >
-            전체
-          </button>
-          <button
-            className={`leaderboard-filter-tab ${filter === 'weekly' ? 'active' : ''}`}
-            onClick={() => setFilter('weekly')}
-            role="tab"
-          >
-            주간
-          </button>
+        <div className="leaderboard-header">
+          <h1 className="leaderboard-title">리더보드</h1>
+          <div className="leaderboard-filter-tabs" role="tablist">
+            <button
+              className={`leaderboard-filter-tab ${filter === 'all' ? 'active' : ''}`}
+              onClick={() => setFilter('all')}
+              role="tab"
+              aria-selected={filter === 'all'}
+            >
+              전체
+            </button>
+            <button
+              className={`leaderboard-filter-tab ${filter === 'weekly' ? 'active' : ''}`}
+              onClick={() => setFilter('weekly')}
+              role="tab"
+              aria-selected={filter === 'weekly'}
+            >
+              주간
+            </button>
+          </div>
         </div>
 
         <div className="leaderboard-category-tabs">

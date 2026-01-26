@@ -2,9 +2,18 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
-import { getLeaderboardApi, getWeeklyLeaderboardApi, getMyLeaderboardApi, getMyWeeklyLeaderboardApi } from '../api/leaderboard';
+import {
+  getLeaderboardApi,
+  getWeeklyLeaderboardApi,
+  getMyLeaderboardApi,
+  getMyWeeklyLeaderboardApi,
+} from '../api/leaderboard';
 import { useAuth } from '../contexts/AuthContext.ts';
-import type { LeaderboardEntryResponse, LeaderboardResponse, MyLeaderboardResponse } from '../types/apiTypes';
+import type {
+  LeaderboardEntryResponse,
+  LeaderboardResponse,
+  MyLeaderboardResponse,
+} from '../types/apiTypes';
 import Warning from '../utils/Warning';
 import '../css/homePage.css';
 
@@ -47,9 +56,10 @@ export default function HomePage() {
   const { data: leaderboardData, isLoading } = useQuery({
     queryKey: ['leaderboard', 'home', filter],
     queryFn: async () => {
-      const response = filter === 'all'
-        ? await getLeaderboardApi({ page: 0, size: 5 })
-        : await getWeeklyLeaderboardApi({ page: 0, size: 5 });
+      const response =
+        filter === 'all'
+          ? await getLeaderboardApi({ page: 0, size: 5 })
+          : await getWeeklyLeaderboardApi({ page: 0, size: 5 });
       return response.data;
     },
   });
@@ -57,9 +67,10 @@ export default function HomePage() {
   const { data: myData } = useQuery({
     queryKey: ['leaderboard', 'my', filter],
     queryFn: async () => {
-      const response = filter === 'all'
-        ? await getMyLeaderboardApi()
-        : await getMyWeeklyLeaderboardApi();
+      const response =
+        filter === 'all'
+          ? await getMyLeaderboardApi()
+          : await getMyWeeklyLeaderboardApi();
       return response.data;
     },
     enabled: !!user,
@@ -71,15 +82,26 @@ export default function HomePage() {
     return getCategoryData(leaderboardData, category).items.slice(0, 5);
   };
 
-  const getMyValue = (myData: MyLeaderboardResponse | undefined): { value: number | null; rank: number | null } => {
+  const getMyValue = (
+    myData: MyLeaderboardResponse | undefined
+  ): { value: number | null; rank: number | null } => {
     if (!myData) return { value: null, rank: null };
     switch (category) {
       case 'firstReaction':
-        return { value: myData.bestFirstReactionTime, rank: myData.bestFirstReactionTimeRank };
+        return {
+          value: myData.bestFirstReactionTime,
+          rank: myData.bestFirstReactionTimeRank,
+        };
       case 'secondReaction':
-        return { value: myData.bestSecondReactionTime, rank: myData.bestSecondReactionTimeRank };
+        return {
+          value: myData.bestSecondReactionTime,
+          rank: myData.bestSecondReactionTimeRank,
+        };
       case 'competitionRate':
-        return { value: myData.bestCompetitionRate, rank: myData.bestCompetitionRateRank };
+        return {
+          value: myData.bestCompetitionRate,
+          rank: myData.bestCompetitionRateRank,
+        };
       default:
         return { value: null, rank: null };
     }
@@ -173,6 +195,21 @@ export default function HomePage() {
             <section className="panel leaderBoardPanel">
               <div className="panelHead">
                 <div className="panelTitle">리더보드</div>
+                <button
+                  className="home-leaderboard-detail-btn"
+                  onClick={() => navigate('/leaderboard')}
+                >
+                  상세보기
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M6 4L10 8L6 12"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
               </div>
               <div className="panelBody leaderBoardBody">
                 <div className="home-leaderboard-filter-tabs">
@@ -214,7 +251,9 @@ export default function HomePage() {
                 {isLoading ? (
                   <div className="home-leaderboard-loading">로딩 중...</div>
                 ) : entries.length === 0 ? (
-                  <div className="home-leaderboard-empty">아직 기록이 없습니다.</div>
+                  <div className="home-leaderboard-empty">
+                    아직 기록이 없습니다.
+                  </div>
                 ) : (
                   <div className="home-leaderboard-list">
                     {entries.map((entry, index) => {
@@ -224,17 +263,24 @@ export default function HomePage() {
                           key={`${entry.userId}-${index}`}
                           className={`home-leaderboard-item ${rank <= 3 ? 'top-3' : ''}`}
                         >
-                          <span className={`home-leaderboard-rank rank-${rank}`}>{rank}</span>
+                          <span
+                            className={`home-leaderboard-rank rank-${rank}`}
+                          >
+                            {rank}
+                          </span>
                           <div className="home-leaderboard-user">
                             <img
                               className="home-leaderboard-avatar"
                               src={entry.profileImageUrl || DEFAULT_AVATAR}
                               alt={entry.nickname}
                               onError={(e) => {
-                                (e.currentTarget as HTMLImageElement).src = DEFAULT_AVATAR;
+                                (e.currentTarget as HTMLImageElement).src =
+                                  DEFAULT_AVATAR;
                               }}
                             />
-                            <span className="home-leaderboard-nickname">{entry.nickname}</span>
+                            <span className="home-leaderboard-nickname">
+                              {entry.nickname}
+                            </span>
                           </div>
                           <span className="home-leaderboard-value">
                             {formatValue(entry.value, category)}
@@ -248,11 +294,17 @@ export default function HomePage() {
                 {user ? (
                   myRank.rank !== null && myRank.value !== null ? (
                     <div className="home-leaderboard-my-rank">
-                      <div className="home-leaderboard-my-rank-title">내 순위</div>
+                      <div className="home-leaderboard-my-rank-title">
+                        내 순위
+                      </div>
                       <div className="home-leaderboard-item my-rank">
-                        <span className="home-leaderboard-rank">{myRank.rank}</span>
+                        <span className="home-leaderboard-rank">
+                          {myRank.rank}
+                        </span>
                         <div className="home-leaderboard-user">
-                          <span className="home-leaderboard-nickname">{user.nickname}</span>
+                          <span className="home-leaderboard-nickname">
+                            {user.nickname}
+                          </span>
                         </div>
                         <span className="home-leaderboard-value">
                           {formatValue(myRank.value, category)}
@@ -261,20 +313,15 @@ export default function HomePage() {
                     </div>
                   ) : (
                     <div className="home-leaderboard-my-rank">
-                      <div className="home-leaderboard-my-rank-title">내 순위</div>
+                      <div className="home-leaderboard-my-rank-title">
+                        내 순위
+                      </div>
                       <div className="home-leaderboard-empty">
                         아직 기록이 없습니다.
                       </div>
                     </div>
                   )
                 ) : null}
-
-                <button
-                  className="home-leaderboard-detail-btn"
-                  onClick={() => navigate('/leaderboard')}
-                >
-                  상세보기
-                </button>
               </div>
             </section>
           </div>
