@@ -177,8 +177,9 @@ export default function HomePage() {
             <div className="rightButtons">
               <a
                 className={user ? 'rightFilledBtn' : 'rightOutlineBtn'}
-                href="#"
-                onClick={() => setShowNotSupporting(true)}
+                href="https://boulder-argon-568.notion.site/2f30bdb7bbc18009802eccb739810da2?source=copy_link"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 ALLCLEAR 서비스 이용 방법 안내
               </a>
