@@ -24,7 +24,7 @@
 
 /* 아이콘과 텍스트를 감싸는 영역 */
 .contentWrapper {
-  padding: 25px 14px 45px; /* 위아래 여백을 넉넉히 줌 */
+  padding: 40px 14px; /* 위아래 여백 동일하게 */
   display: flex;
   flex-direction: column;
   align-items: center;
