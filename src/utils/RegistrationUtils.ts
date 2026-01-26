@@ -21,8 +21,8 @@ const calculateDisplayTime = (count: number): number => {
 
 export const calculateQueueInfo = (
   delayTimeMs: number,
-  currentQueueCount?: number,
-) => {
+  currentQueueCount?: number
+): { queueCount: number; waitSeconds: number } => {
   const MAX_POSSIBLE_USERS = 12500;
   const PEAK_REACTION_MS = 250;
   // SKEW_SHAPE=4 creates S-curve; higher values (e.g., 500) are too steep
