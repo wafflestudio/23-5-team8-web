@@ -369,6 +369,7 @@ export default function Registration() {
     openWindow();
   };
 
+  // PIP 창이 열리면 타이머 시작
   useEffect(() => {
     if (!pipWindow) return;
 
@@ -398,23 +399,28 @@ export default function Registration() {
     };
   }, [pipWindow, handleStopPractice]);
 
+  // 페이지 이동 시 연습 종료
+  useEffect(() => {
+    return () => {
+      if (practiceState.current.isRunning) {
+        if (practiceState.current.timerId) {
+          clearInterval(practiceState.current.timerId);
+        }
+
+        practiceState.current.isRunning = false;
+
+        practiceEndApi().catch((error) => {
+          console.error('세션 자동 종료 실패:', error);
+        });
+      }
+    };
+  }, []);
+
   const isModalOpen =
     waitingInfo !== null ||
     showSuccessModal ||
     warningType !== 'none' ||
     showNotSupported;
-
-  useEffect(() => {
-    if (isModalOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isModalOpen]);
 
   return (
     <div className="registrationPage">
@@ -690,6 +696,19 @@ export default function Registration() {
       >
         <p className="warningText">지원하지 않는 기능입니다.</p>
       </Warning>
+      {isModalOpen && <ScrollLock />}
     </div>
   );
 }
+
+const ScrollLock = () => {
+  useEffect(() => {
+    document.body.style.setProperty('overflow', 'hidden', 'important');
+
+    return () => {
+      document.body.style.removeProperty('overflow');
+    };
+  }, []);
+
+  return null;
+};
