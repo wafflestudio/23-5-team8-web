@@ -1,8 +1,11 @@
-import {useEffect, useRef} from 'react';
-import {useNavigate, useSearchParams} from 'react-router-dom';
-import {useAuth} from '../contexts/AuthContext';
-import {useLeaderboardInfiniteQuery, useMyLeaderboardQuery} from '../hooks/useLeaderboardQuery';
-import type {LeaderboardEntryResponse} from '../types/apiTypes';
+import { useEffect, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import {
+  useLeaderboardInfiniteQuery,
+  useMyLeaderboardQuery,
+} from '../hooks/useLeaderboardQuery';
+import type { LeaderboardEntryResponse } from '../types/apiTypes';
 import '../css/leaderBoard.css';
 
 type FilterType = 'all' | 'weekly';
@@ -18,22 +21,18 @@ const DEFAULT_AVATAR = `data:image/svg+xml,${encodeURIComponent(`
 
 export default function LeaderBoard() {
   const navigate = useNavigate();
-  const {user} = useAuth();
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const filter = (searchParams.get('filter') as FilterType) || 'all';
-  const category = (searchParams.get('category') as CategoryType) || 'firstReaction';
+  const category =
+    (searchParams.get('category') as CategoryType) || 'firstReaction';
 
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-  } = useLeaderboardInfiniteQuery(filter, category);
-  const {data: myData} = useMyLeaderboardQuery(filter, !!user);
+  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useLeaderboardInfiniteQuery(filter, category);
+  const { data: myData } = useMyLeaderboardQuery(filter, !!user);
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -78,8 +77,8 @@ export default function LeaderBoard() {
     return data.pages.flatMap((page) => page.categoryData.items);
   };
 
-  const getMyValue = (): {value: number | null; rank: number | null} => {
-    if (!myData) return {value: null, rank: null};
+  const getMyValue = (): { value: number | null; rank: number | null } => {
+    if (!myData) return { value: null, rank: null };
     switch (category) {
       case 'firstReaction':
         return {
@@ -97,7 +96,7 @@ export default function LeaderBoard() {
           rank: myData.bestCompetitionRateRank,
         };
       default:
-        return {value: null, rank: null};
+        return { value: null, rank: null };
     }
   };
 
@@ -112,15 +111,15 @@ export default function LeaderBoard() {
   const myRank = getMyValue();
 
   return (
-    <div className='containerX'>
-      <div className='leaderboard-page'>
-        <h1 className='leaderboard-title'>리더보드</h1>
+    <div className="containerX">
+      <div className="leaderboard-page">
+        <h1 className="leaderboard-title">리더보드</h1>
 
-        <div className='leaderboard-filter-tabs'>
+        <div className="leaderboard-filter-tabs">
           <button
             className={`leaderboard-filter-tab ${filter === 'all' ? 'active' : ''}`}
             onClick={() => setFilter('all')}
-            role='tab'
+            role="tab"
             aria-selected={filter === 'all'}
           >
             전체
@@ -128,17 +127,17 @@ export default function LeaderBoard() {
           <button
             className={`leaderboard-filter-tab ${filter === 'weekly' ? 'active' : ''}`}
             onClick={() => setFilter('weekly')}
-            role='tab'
+            role="tab"
           >
             주간
           </button>
         </div>
 
-        <div className='leaderboard-category-tabs'>
+        <div className="leaderboard-category-tabs">
           <button
             className={`leaderboard-category-tab ${category === 'firstReaction' ? 'active' : ''}`}
             onClick={() => setCategory('firstReaction')}
-            role='tab'
+            role="tab"
             aria-selected={category === 'firstReaction'}
           >
             1픽 반응속도
@@ -146,7 +145,7 @@ export default function LeaderBoard() {
           <button
             className={`leaderboard-category-tab ${category === 'secondReaction' ? 'active' : ''}`}
             onClick={() => setCategory('secondReaction')}
-            role='tab'
+            role="tab"
             aria-selected={category === 'secondReaction'}
           >
             2픽 반응속도
@@ -154,33 +153,33 @@ export default function LeaderBoard() {
           <button
             className={`leaderboard-category-tab ${category === 'competitionRate' ? 'active' : ''}`}
             onClick={() => setCategory('competitionRate')}
-            role='tab'
+            role="tab"
             aria-selected={category === 'competitionRate'}
           >
             경쟁률
           </button>
         </div>
 
-        <div className='leaderboard-container'>
-          <div className='leaderboard-list-header'>
+        <div className="leaderboard-container">
+          <div className="leaderboard-list-header">
             <span>순위</span>
             <span>유저</span>
-            <span style={{textAlign: 'right'}}>
+            <span style={{ textAlign: 'right' }}>
               {category === 'competitionRate' ? '경쟁률' : '반응속도'}
             </span>
           </div>
 
           {isLoading ? (
-            <div className='leaderboard-loading'>
-              <div className='leaderboard-loading-spinner' />
+            <div className="leaderboard-loading">
+              <div className="leaderboard-loading-spinner" />
               <p>로딩 중...</p>
             </div>
           ) : entries.length === 0 ? (
-            <div className='leaderboard-empty'>
+            <div className="leaderboard-empty">
               <p>아직 기록이 없습니다.</p>
             </div>
           ) : (
-            <div ref={scrollContainerRef} className='leaderboard-list'>
+            <div ref={scrollContainerRef} className="leaderboard-list">
               {entries.map((entry, index) => {
                 const rank = index + 1;
                 const isTop3 = rank <= 3;
@@ -202,26 +201,31 @@ export default function LeaderBoard() {
                     >
                       {rank}
                     </span>
-                    <div className='leaderboard-user'>
+                    <div className="leaderboard-user">
                       <img
-                        className='leaderboard-avatar'
+                        className="leaderboard-avatar"
                         src={entry.profileImageUrl || DEFAULT_AVATAR}
                         alt={entry.nickname}
                         onError={(e) => {
-                          (e.currentTarget as HTMLImageElement).src = DEFAULT_AVATAR;
+                          (e.currentTarget as HTMLImageElement).src =
+                            DEFAULT_AVATAR;
                         }}
                       />
-                      <span className='leaderboard-nickname'>{entry.nickname}</span>
+                      <span className="leaderboard-nickname">
+                        {entry.nickname}
+                      </span>
                     </div>
-                    <span className='leaderboard-value'>{formatValue(entry.value, category)}</span>
+                    <span className="leaderboard-value">
+                      {formatValue(entry.value, category)}
+                    </span>
                   </div>
                 );
               })}
 
-              <div ref={loadMoreRef} className='leaderboard-scroll-trigger'>
+              <div ref={loadMoreRef} className="leaderboard-scroll-trigger">
                 {isFetchingNextPage && (
-                  <div className='leaderboard-loading-more'>
-                    <div className='leaderboard-loading-spinner-small' />
+                  <div className="leaderboard-loading-more">
+                    <div className="leaderboard-loading-spinner-small" />
                   </div>
                 )}
               </div>
@@ -231,28 +235,35 @@ export default function LeaderBoard() {
 
         {user ? (
           myRank.rank !== null && myRank.value !== null ? (
-            <div className='leaderboard-my-rank'>
-              <div className='leaderboard-my-rank-title'>내 순위</div>
-              <div className='leaderboard-my-rank-item'>
-                <span className='leaderboard-rank'>{myRank.rank}</span>
-                <div className='leaderboard-user'>
-                  <span className='leaderboard-nickname'>{user.nickname}</span>
+            <div className="leaderboard-my-rank">
+              <div className="leaderboard-my-rank-title">내 순위</div>
+              <div className="leaderboard-my-rank-item">
+                <span className="leaderboard-rank">{myRank.rank}</span>
+                <div className="leaderboard-user">
+                  <span className="leaderboard-nickname">{user.nickname}</span>
                 </div>
-                <span className='leaderboard-value'>{formatValue(myRank.value, category)}</span>
+                <span className="leaderboard-value">
+                  {formatValue(myRank.value, category)}
+                </span>
               </div>
             </div>
           ) : (
-            <div className='leaderboard-my-rank'>
-              <div className='leaderboard-my-rank-title'>내 순위</div>
-              <div className='leaderboard-empty' style={{padding: '20px'}}>
+            <div className="leaderboard-my-rank">
+              <div className="leaderboard-my-rank-title">내 순위</div>
+              <div className="leaderboard-empty" style={{ padding: '20px' }}>
                 아직 기록이 없습니다. 수강신청 연습을 해보세요!
               </div>
             </div>
           )
         ) : (
-          <div className='leaderboard-login-required'>
-            <span className='leaderboard-login-text'>로그인하면 내 순위를 확인할 수 있습니다.</span>
-            <button className='leaderboard-login-btn' onClick={() => navigate('/login')}>
+          <div className="leaderboard-login-required">
+            <span className="leaderboard-login-text">
+              로그인하면 내 순위를 확인할 수 있습니다.
+            </span>
+            <button
+              className="leaderboard-login-btn"
+              onClick={() => navigate('/login')}
+            >
               로그인
             </button>
           </div>

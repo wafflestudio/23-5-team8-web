@@ -22,12 +22,6 @@
 .rightButtons {
   order: 3;
 }
-.infoPanel {
-  order: 4;
-}
-.noticePanel {
-  order: 5;
-}
 
 .homeGrid {
   display: grid;
@@ -43,11 +37,6 @@
   grid-row: 1;
   order: unset;
 }
-.infoPanel {
-  grid-column: 1;
-  grid-row: 2;
-  order: unset;
-}
 
 /* Right Column Items */
 .loginPanel {
@@ -58,11 +47,6 @@
 .rightButtons {
   grid-column: 2;
   grid-row: 2;
-  order: unset;
-}
-.noticePanel {
-  grid-column: 2;
-  grid-row: 3;
   order: unset;
 }
 
@@ -174,7 +158,7 @@
   border-right: none;
 }
 
-/* Info & Notice Panel */
+/* Info Panel */
 .panelTitle {
   color: var(--blue);
   font-size: 19px;
@@ -186,18 +170,6 @@
   margin: 0px 34px 22px;
   border-top: 1.5px solid #e7e7e7;
   padding: 18px 0;
-}
-.infoLineBold {
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.5;
-  padding: 0;
-}
-.infoLine {
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.5;
-  padding: 0;
 }
 
 .panelTitle {
@@ -300,53 +272,190 @@
   letter-spacing: -0.6px;
 }
 
-/* Notice Panel */
-.noticePanel {
+.leaderBoardPanel {
   margin-top: 18px;
 }
-.noticeHead {
-  padding: 30px 36px 18px;
-  gap: 9px;
-  align-items: flex-end;
-  border: none;
-  flex-wrap: wrap;
+
+.leaderBoardBody {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 12px;
 }
-.noticeBody {
-  padding: 16px 0 14px;
-  display: grid;
-  gap: 2px;
+
+/* Filter Tabs (전체/주간) */
+.home-leaderboard-filter-tabs {
+  display: flex;
+  gap: 8px;
 }
-.noticeMore {
-  text-decoration: none;
-  color: #969696;
+
+.home-leaderboard-filter-tab {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  border-radius: 6px;
   font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
 }
-.noticeMore::after {
-  content: ' >';
+
+.home-leaderboard-filter-tab.active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+.home-leaderboard-filter-tab:hover:not(.active) {
+  background: #f5f5f5;
+}
+
+/* Category Tabs (1픽/2픽/경쟁률) */
+.home-leaderboard-category-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.home-leaderboard-category-tab {
+  flex: 1;
+  padding: 6px 8px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 4px;
   font-size: 12px;
-  margin-left: 2px;
-  font-weight: 300;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
 }
-.noticeRow {
-  font-weight: 400;
+
+.home-leaderboard-category-tab.active {
+  background: #e8f0fe;
+  color: var(--blue);
+}
+
+.home-leaderboard-category-tab:hover:not(.active) {
+  background: #e5e5e5;
+}
+
+/* Loading & Empty States */
+.home-leaderboard-loading,
+.home-leaderboard-empty {
+  padding: 20px;
+  text-align: center;
+  color: #888;
   font-size: 14px;
+}
+
+/* Leaderboard List */
+.home-leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home-leaderboard-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  gap: 12px;
+}
+
+.home-leaderboard-item.top-3 {
+  background: #fefce8;
+}
+
+.home-leaderboard-item.my-rank {
+  background: #e8f0fe;
+  border: 1px solid var(--blue);
+}
+
+.home-leaderboard-rank {
+  font-size: 14px;
+  font-weight: 700;
+  color: #666;
+  min-width: 24px;
+  text-align: center;
+}
+
+.home-leaderboard-rank.rank-1 {
+  color: #fbbf24;
+}
+
+.home-leaderboard-rank.rank-2 {
+  color: #9ca3af;
+}
+
+.home-leaderboard-rank.rank-3 {
+  color: #cd7f32;
+}
+
+.home-leaderboard-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.home-leaderboard-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.home-leaderboard-nickname {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: block;
-  margin-top: 8px;
 }
-.noticeRow::before {
-  content: '·';
-  color: #9ca3af;
-  font-weight: 100;
-  margin-right: 8px;
-  font-size: 20px;
-  vertical-align: middle;
-  line-height: 0;
+
+.home-leaderboard-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue);
+  white-space: nowrap;
+}
+
+/* My Rank Section */
+.home-leaderboard-my-rank {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.home-leaderboard-my-rank-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+/* Detail Button */
+.home-leaderboard-detail-btn {
+  width: 100%;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid var(--blue);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--blue);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.home-leaderboard-detail-btn:hover {
+  background: var(--blue);
+  color: #fff;
 }
 
 /* Login Page Only */
