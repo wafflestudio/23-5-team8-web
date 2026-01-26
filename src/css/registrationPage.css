@@ -43,6 +43,14 @@
   color: #fff;
 }
 
+.regTabInfoText {
+  display: flex;
+  text-align: right;
+  align-items: flex-end;
+  font-size: 12px;
+  margin-left: auto;
+}
+
 /* 2단 레이아웃 */
 .regContent {
   display: flex;
@@ -91,7 +99,6 @@
 .courseItem {
   display: flex;
   align-items: stretch;
-  padding: 16px 0 24px;
   border-bottom: 1px solid #e0e0e0;
   background-color: #fff;
   transition: background-color 0.1s;
@@ -105,12 +112,9 @@
 
 /* 1. 왼쪽 체크박스 영역 */
 .courseCheckArea {
-  width: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 18px;
-  margin-right: 24px;
 }
 
 /* [수정] 커스텀 체크 버튼 */
@@ -367,9 +371,7 @@
   color: #333;
   font-weight: 600;
   border-radius: 6px;
-  cursor: pointer;
   font-size: 12px;
-  transition: all 0.2s;
 }
 
 .practiceToggleBtn:hover {
@@ -391,6 +393,13 @@
   border: 1px solid #ccc;
   background-color: #fff;
   cursor: pointer;
+}
+
+.timeSettingInfo {
+  font-size: 11px;
+  color: #666;
+  margin-top: 6px;
+  text-align: center;
 }
 
 /* PiP 스타일 생략 (기존과 동일) */
