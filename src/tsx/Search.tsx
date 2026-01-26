@@ -109,7 +109,9 @@ export default function SearchPage() {
     }
 
     const courseId = Array.from(selectedCourses)[0];
-    const selectedCourse = courses.find((c: CourseDetailResponse) => c.id === courseId);
+    const selectedCourse = courses.find(
+      (c: CourseDetailResponse) => c.id === courseId
+    );
 
     if (selectedCourse && cartData) {
       const selectedTimeStr = extractTimeFromPlaceAndTime(
@@ -139,7 +141,9 @@ export default function SearchPage() {
       if (isAxiosError(err) && err.response) {
         if (err.response.status === 409) {
           const courseId = Array.from(selectedCourses)[0];
-          const course = courses.find((c: CourseDetailResponse) => c.id === courseId);
+          const course = courses.find(
+            (c: CourseDetailResponse) => c.id === courseId
+          );
 
           if (course) {
             setConflictCourse({
@@ -279,7 +283,12 @@ export default function SearchPage() {
             <div className="legendItem">
               <span className="legendIcon">K</span> 거점국립대학 원격수업 강좌
             </div>
-            <button className="excelBtn">엑셀저장</button>
+            <button
+              className="excelBtn"
+              onClick={() => setShowNotSupporting(true)}
+            >
+              엑셀저장
+            </button>
           </div>
         </div>
 
