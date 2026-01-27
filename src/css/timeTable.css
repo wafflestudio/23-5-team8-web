@@ -140,10 +140,12 @@
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  text-align: center;
 }
 
 .timetable-block-code {
   font-size: 10px;
   color: rgba(255, 255, 255, 0.9);
   line-height: 1.2;
+  text-align: center;
 }
