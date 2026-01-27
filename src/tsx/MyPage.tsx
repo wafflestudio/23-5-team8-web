@@ -21,7 +21,7 @@ const MyPageHeader: React.FC<{ onLogout?: () => void }> = ({ onLogout }) => {
       <div className="mypage-header-content">
         <Link to="/" className="mypage-logo">
           <img src="/assets/logo.png" alt="All Clear Logo" />
-          <span className="mypage-logo-text">ALL CLEAR</span>
+          <span className="mypage-logo-text">ALLCLEAR</span>
         </Link>
         {onLogout && (
           <button className="logout-btn" onClick={onLogout}>
@@ -414,7 +414,9 @@ const MyPage: React.FC = () => {
                   {sessionsData.pageInfo.totalPages > 5 && currentPage > 2 && (
                     <button
                       className="pagination-arrow"
-                      onClick={() => setCurrentPage(Math.max(0, currentPage - 5))}
+                      onClick={() =>
+                        setCurrentPage(Math.max(0, currentPage - 5))
+                      }
                     >
                       <img src="/assets/btn-arrow-first.png" alt="이전" />
                     </button>
@@ -422,7 +424,11 @@ const MyPage: React.FC = () => {
                   {(() => {
                     const totalPages = sessionsData.pageInfo.totalPages;
                     const maxVisible = 5;
-                    const endPage = Math.min(totalPages, Math.max(0, currentPage - Math.floor(maxVisible / 2)) + maxVisible);
+                    const endPage = Math.min(
+                      totalPages,
+                      Math.max(0, currentPage - Math.floor(maxVisible / 2)) +
+                        maxVisible
+                    );
                     const startPage = Math.max(0, endPage - maxVisible);
                     return Array.from(
                       { length: endPage - startPage },
@@ -437,14 +443,22 @@ const MyPage: React.FC = () => {
                       </button>
                     ));
                   })()}
-                  {sessionsData.pageInfo.totalPages > 5 && currentPage < sessionsData.pageInfo.totalPages - 3 && (
-                    <button
-                      className="pagination-arrow"
-                      onClick={() => setCurrentPage(Math.min(sessionsData.pageInfo.totalPages - 1, currentPage + 5))}
-                    >
-                      <img src="/assets/btn-arrow-last.png" alt="다음" />
-                    </button>
-                  )}
+                  {sessionsData.pageInfo.totalPages > 5 &&
+                    currentPage < sessionsData.pageInfo.totalPages - 3 && (
+                      <button
+                        className="pagination-arrow"
+                        onClick={() =>
+                          setCurrentPage(
+                            Math.min(
+                              sessionsData.pageInfo.totalPages - 1,
+                              currentPage + 5
+                            )
+                          )
+                        }
+                      >
+                        <img src="/assets/btn-arrow-last.png" alt="다음" />
+                      </button>
+                    )}
                 </div>
               )}
             </>

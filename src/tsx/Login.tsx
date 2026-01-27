@@ -186,7 +186,7 @@ export default function Login() {
                 (e.currentTarget as HTMLImageElement).style.display = 'none';
               }}
             />
-            <span className="login-logo-text">ALL CLEAR</span>
+            <span className="login-logo-text">ALLCLEAR</span>
           </Link>
         </div>
       </header>
