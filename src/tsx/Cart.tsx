@@ -11,7 +11,8 @@ import Warning from '../utils/Warning';
 import TimeTable from './TimeTable';
 
 export default function Cart() {
-  const { data: cartCourses = [], isLoading } = useCartQuery();
+  const { data, isLoading } = useCartQuery();
+  const cartCourses = Array.isArray(data) ? data : [];
   const deleteFromCartMutation = useDeleteFromCartMutation();
   const updateCartCountMutation = useUpdateCartCountMutation();
   const { showDeleteSuccess, openDeleteSuccess, closeDeleteSuccess } =

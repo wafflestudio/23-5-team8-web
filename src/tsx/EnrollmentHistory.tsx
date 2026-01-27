@@ -5,7 +5,8 @@ import Warning from '../utils/Warning';
 import TimeTable from './TimeTable';
 
 export default function EnrollmentHistory() {
-  const { data: enrolledCourses = [], isLoading } = useEnrolledCoursesQuery();
+  const { data, isLoading } = useEnrolledCoursesQuery();
+  const enrolledCourses = Array.isArray(data) ? data : [];
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
   const [showNotSupported, setShowNotSupported] = useState(false);
 
