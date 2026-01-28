@@ -145,7 +145,7 @@ export default function EnrollmentHistory() {
                                 수강신청인원/정원(재학생)
                               </span>
                               <span className="c-val-blue">
-                                0/{course.quota} ({course.quota})
+                                0/{course.quota}({course.quota - course.freshmanQuota})
                               </span>
                               <span className="c-divider-light">|</span>
                               <span className="c-label">학점</span>
