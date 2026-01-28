@@ -97,8 +97,8 @@ export default function Warning(props: WarningProps) {
 
         if (variant === 'single' && onClose) {
           onClose();
-        } else if (variant === 'double' && onConfirm) {
-          onConfirm();
+        } else if (variant === 'double' && onClose) {
+          onClosd();
         }
       }
     };
