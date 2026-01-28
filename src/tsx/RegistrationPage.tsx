@@ -523,7 +523,7 @@ export default function Registration() {
                             수강신청인원/정원(재학생)
                           </span>
                           <span className="c-val-blue">
-                            0/{c.course.quota}({c.course.quota})
+                            0/{c.course.quota}({c.course.quota-c.course.freshmanQuota})
                           </span>
                           <span className="c-divider-light">|</span>
                           <span className="c-label">학점</span>
