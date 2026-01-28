@@ -211,7 +211,7 @@ export default function Cart() {
                             수강신청인원/정원(재학생)
                           </span>
                           <span className="c-val-blue">
-                            0/{item.course.quota} ({item.course.quota})
+                            0/{item.course.quota}({item.course.quota - item.course.freshmanQuota})
                           </span>
                           <span className="c-divider-light">|</span>
 
