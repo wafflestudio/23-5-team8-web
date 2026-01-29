@@ -12,6 +12,7 @@ import {
   getPracticeSessionDetailApi,
   getEnrolledCoursesApi,
 } from '../api/mypage';
+import { leaderboardKeys } from './useLeaderboardQuery';
 import type {
   MyPageResponse,
   ChangePasswordRequest,
@@ -48,6 +49,8 @@ export const useUpdateProfileMutation = () => {
     mutationFn: (data: { nickname: string }) => updateProfileApi(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: myPageKeys.profile() });
+      // 리더보드에 표시되는 닉네임도 갱신
+      queryClient.invalidateQueries({ queryKey: leaderboardKeys.all });
     },
   });
 };
@@ -69,6 +72,8 @@ export const useUpdateProfileImageMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: myPageKeys.profile() });
+      // 리더보드에 표시되는 프로필 이미지도 갱신
+      queryClient.invalidateQueries({ queryKey: leaderboardKeys.all });
     },
   });
 };
@@ -81,6 +86,8 @@ export const useDeleteProfileImageMutation = () => {
     mutationFn: () => deleteProfileImageApi(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: myPageKeys.profile() });
+      // 리더보드에 표시되는 프로필 이미지도 갱신
+      queryClient.invalidateQueries({ queryKey: leaderboardKeys.all });
     },
   });
 };

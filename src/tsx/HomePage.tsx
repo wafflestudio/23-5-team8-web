@@ -9,6 +9,7 @@ import {
   getMyWeeklyLeaderboardApi,
 } from '../api/leaderboard';
 import { useAuth } from '../contexts/AuthContext.ts';
+import { useMyPageQuery } from '../hooks/useMyPageQuery';
 import type {
   LeaderboardEntryResponse,
   LeaderboardResponse,
@@ -52,6 +53,7 @@ export default function HomePage() {
   const [showNotSupporting, setShowNotSupporting] = useState(false);
   const [filter, setFilter] = useState<FilterType>('all');
   const [category, setCategory] = useState<CategoryType>('firstReaction');
+  const { data: myProfile } = useMyPageQuery();
 
   const {
     data: leaderboardData,
@@ -312,8 +314,17 @@ export default function HomePage() {
                           {myRank.rank}
                         </span>
                         <div className="home-leaderboard-user">
+                          <img
+                            className="home-leaderboard-avatar"
+                            src={myProfile?.profileImageUrl || DEFAULT_AVATAR}
+                            alt={myProfile?.nickname || user.nickname}
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src =
+                                DEFAULT_AVATAR;
+                            }}
+                          />
                           <span className="home-leaderboard-nickname">
-                            {user.nickname}
+                            {myProfile?.nickname || user.nickname}
                           </span>
                         </div>
                         <span className="home-leaderboard-value">
