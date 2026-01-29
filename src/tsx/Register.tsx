@@ -44,7 +44,7 @@ export default function Register() {
       await signupApi({
         email: data.email,
         password: data.password,
-        nickname: data.name,
+        ...(data.name ? { nickname: data.name } : {}),
       });
 
       alert('회원가입 성공! 로그인 페이지로 이동합니다.');
@@ -132,10 +132,8 @@ export default function Register() {
               <input
                 type="text"
                 className="form-input"
-                placeholder="닉네임"
-                {...register('name', {
-                  required: '닉네임을 입력해주세요.',
-                })}
+                placeholder="닉네임 (선택)"
+                {...register('name')}
               />
               {errors.name && (
                 <span className="error-message">{errors.name.message}</span>
