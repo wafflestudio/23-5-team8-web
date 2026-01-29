@@ -80,7 +80,7 @@ export interface CourseDetailResponse {
   instructor?: string;
   placeAndTime?: string;
   quota: number;
-  freshmanQuota?: number;
+  freshmanQuota: number;
 }
 
 export interface PageInfo {

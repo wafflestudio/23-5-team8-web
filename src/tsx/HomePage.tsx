@@ -53,7 +53,11 @@ export default function HomePage() {
   const [filter, setFilter] = useState<FilterType>('all');
   const [category, setCategory] = useState<CategoryType>('firstReaction');
 
-  const { data: leaderboardData, isLoading } = useQuery({
+  const {
+    data: leaderboardData,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['leaderboard', 'home', filter],
     queryFn: async () => {
       const response =
@@ -62,6 +66,7 @@ export default function HomePage() {
           : await getWeeklyLeaderboardApi({ page: 0, size: 5 });
       return response.data;
     },
+    retry: 1,
   });
 
   const { data: myData } = useQuery({
@@ -251,6 +256,10 @@ export default function HomePage() {
 
                 {isLoading ? (
                   <div className="home-leaderboard-loading">로딩 중...</div>
+                ) : isError ? (
+                  <div className="home-leaderboard-empty">
+                    리더보드를 불러올 수 없습니다.
+                  </div>
                 ) : entries.length === 0 ? (
                   <div className="home-leaderboard-empty">
                     아직 기록이 없습니다.

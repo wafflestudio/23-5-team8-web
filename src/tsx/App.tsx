@@ -296,18 +296,19 @@ function Header({ handleLogout }: { handleLogout: () => void }) {
             >
               수강신청내역
             </Link>
+
+            <Link
+              className={`gnbItem ${loc.pathname === '/leaderboard' ? 'active' : ''}`}
+              to="/leaderboard"
+            >
+              리더보드
+            </Link>
             <Link
               className={`gnbItem ${loc.pathname === '/mypage' ? 'active' : ''}`}
               to="/mypage"
               onClick={handleProtectedClick}
             >
               연습 결과 상세
-            </Link>
-            <Link
-              className={`gnbItem ${loc.pathname === '/leaderboard' ? 'active' : ''}`}
-              to="/leaderboard"
-            >
-              리더보드
             </Link>
           </nav>
         </div>

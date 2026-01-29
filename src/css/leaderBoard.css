@@ -107,7 +107,7 @@
 /* List Header */
 .leaderboard-list-header {
   display: grid;
-  grid-template-columns: 60px 1fr 120px;
+  grid-template-columns: repeat(3, 1fr);
   padding: 12px 20px;
   background: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
@@ -142,7 +142,7 @@
 /* List Item */
 .leaderboard-item {
   display: grid;
-  grid-template-columns: 60px 1fr 120px;
+  grid-template-columns: repeat(3, 1fr);
   padding: 14px 20px;
   align-items: center;
   border-bottom: 1px solid #f3f4f6;
@@ -190,9 +190,18 @@
 
 /* User Info */
 .leaderboard-user {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
+}
+.leaderboard-user.tab {
+  justify-content: flex-start;
+  margin-left: 5vw;
+}
+.leaderboard-user.alignment {
+  justify-content: flex-start;
+  margin-left: 3vw;
 }
 
 .leaderboard-avatar {
@@ -235,7 +244,7 @@
 
 .leaderboard-my-rank-item {
   display: grid;
-  grid-template-columns: 530px 1fr 120px;
+  grid-template-columns: repeat(3, 1fr);
   align-items: center;
 }
 
