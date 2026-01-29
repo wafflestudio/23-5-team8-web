@@ -132,9 +132,9 @@ export default function Register() {
               <input
                 type="text"
                 className="form-input"
-                placeholder="이름"
+                placeholder="닉네임"
                 {...register('name', {
-                  required: '이름을 입력해주세요.',
+                  required: '닉네임을 입력해주세요.',
                 })}
               />
               {errors.name && (
