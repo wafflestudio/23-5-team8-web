@@ -49,6 +49,7 @@ export function useLeaderboardInfiniteQuery(filter: FilterType, category: Catego
       const {pageInfo} = lastPage.categoryData;
       return pageInfo.hasNext ? pageInfo.page + 1 : undefined;
     },
+    retry: 1,
   });
 }
 

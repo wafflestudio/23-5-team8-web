@@ -5,6 +5,7 @@ import {
   useLeaderboardInfiniteQuery,
   useMyLeaderboardQuery,
 } from '../hooks/useLeaderboardQuery';
+import { useMyPageQuery } from '../hooks/useMyPageQuery';
 import type { LeaderboardEntryResponse } from '../types/apiTypes';
 import '../css/leaderBoard.css';
 
@@ -30,9 +31,16 @@ export default function LeaderBoard() {
   const category =
     (searchParams.get('category') as CategoryType) || 'firstReaction';
 
-  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
-    useLeaderboardInfiniteQuery(filter, category);
+  const {
+    data,
+    isLoading,
+    isError,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useLeaderboardInfiniteQuery(filter, category);
   const { data: myData } = useMyLeaderboardQuery(filter, !!user);
+  const { data: myProfile } = useMyPageQuery();
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -164,9 +172,9 @@ export default function LeaderBoard() {
 
         <div className="leaderboard-container">
           <div className="leaderboard-list-header">
-            <span>순위</span>
-            <span>유저</span>
-            <span style={{ textAlign: 'right' }}>
+            <span className="leaderboard-rank">순위</span>
+            <span className="leaderboard-user tab">유저</span>
+            <span className="leaderboard-value">
               {category === 'competitionRate' ? '경쟁률' : '반응속도'}
             </span>
           </div>
@@ -175,6 +183,10 @@ export default function LeaderBoard() {
             <div className="leaderboard-loading">
               <div className="leaderboard-loading-spinner" />
               <p>로딩 중...</p>
+            </div>
+          ) : isError ? (
+            <div className="leaderboard-empty">
+              <p>리더보드를 불러올 수 없습니다.</p>
             </div>
           ) : entries.length === 0 ? (
             <div className="leaderboard-empty">
@@ -203,7 +215,7 @@ export default function LeaderBoard() {
                     >
                       {rank}
                     </span>
-                    <div className="leaderboard-user">
+                    <div className="leaderboard-user alignment">
                       <img
                         className="leaderboard-avatar"
                         src={entry.profileImageUrl || DEFAULT_AVATAR}
@@ -242,7 +254,16 @@ export default function LeaderBoard() {
               <div className="leaderboard-my-rank-item">
                 <span className="leaderboard-rank">{myRank.rank}</span>
                 <div className="leaderboard-user">
-                  <span className="leaderboard-nickname">{user.nickname}</span>
+                  <img
+                    className="leaderboard-avatar"
+                    src={myProfile?.profileImageUrl || DEFAULT_AVATAR}
+                    alt={myProfile?.nickname || user.nickname}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src =
+                        DEFAULT_AVATAR;
+                    }}
+                  />
+                  <span className="leaderboard-nickname">{myProfile?.nickname || user.nickname}</span>
                 </div>
                 <span className="leaderboard-value">
                   {formatValue(myRank.value, category)}

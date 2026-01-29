@@ -9,6 +9,7 @@ import {
   getMyWeeklyLeaderboardApi,
 } from '../api/leaderboard';
 import { useAuth } from '../contexts/AuthContext.ts';
+import { useMyPageQuery } from '../hooks/useMyPageQuery';
 import type {
   LeaderboardEntryResponse,
   LeaderboardResponse,
@@ -52,8 +53,13 @@ export default function HomePage() {
   const [showNotSupporting, setShowNotSupporting] = useState(false);
   const [filter, setFilter] = useState<FilterType>('all');
   const [category, setCategory] = useState<CategoryType>('firstReaction');
+  const { data: myProfile } = useMyPageQuery();
 
-  const { data: leaderboardData, isLoading } = useQuery({
+  const {
+    data: leaderboardData,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['leaderboard', 'home', filter],
     queryFn: async () => {
       const response =
@@ -62,6 +68,7 @@ export default function HomePage() {
           : await getWeeklyLeaderboardApi({ page: 0, size: 5 });
       return response.data;
     },
+    retry: 1,
   });
 
   const { data: myData } = useQuery({
@@ -251,6 +258,10 @@ export default function HomePage() {
 
                 {isLoading ? (
                   <div className="home-leaderboard-loading">로딩 중...</div>
+                ) : isError ? (
+                  <div className="home-leaderboard-empty">
+                    리더보드를 불러올 수 없습니다.
+                  </div>
                 ) : entries.length === 0 ? (
                   <div className="home-leaderboard-empty">
                     아직 기록이 없습니다.
@@ -303,8 +314,17 @@ export default function HomePage() {
                           {myRank.rank}
                         </span>
                         <div className="home-leaderboard-user">
+                          <img
+                            className="home-leaderboard-avatar"
+                            src={myProfile?.profileImageUrl || DEFAULT_AVATAR}
+                            alt={myProfile?.nickname || user.nickname}
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src =
+                                DEFAULT_AVATAR;
+                            }}
+                          />
                           <span className="home-leaderboard-nickname">
-                            {user.nickname}
+                            {myProfile?.nickname || user.nickname}
                           </span>
                         </div>
                         <span className="home-leaderboard-value">

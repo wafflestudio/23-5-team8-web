@@ -177,22 +177,11 @@ export default function Registration() {
   const handleStartPractice = async () => {
     try {
       const virtualStartTimeOption = getTimeOption(startOffset);
-      const startResponse = await practiceStartApi({ virtualStartTimeOption });
+      await practiceStartApi({ virtualStartTimeOption });
 
       setSucceededCourseIds(new Set());
       setFullCourseIds(new Set());
 
-      if (startResponse.data?.practiceLogId) {
-        localStorage.setItem(
-          'currentPracticeLogId',
-          String(startResponse.data.practiceLogId)
-        );
-      } else {
-        console.error(
-          'practiceLogId를 찾을 수 없습니다. 응답:',
-          startResponse.data
-        );
-      }
 
       startTimerAndPip();
     } catch (error) {
@@ -203,21 +192,8 @@ export default function Registration() {
             await practiceEndApi();
             const virtualStartTimeOption = getTimeOption(startOffset);
 
-            const retryStartResponse = await practiceStartApi({
-              virtualStartTimeOption,
-            });
+            await practiceStartApi({ virtualStartTimeOption });
 
-            if (retryStartResponse.data?.practiceLogId) {
-              localStorage.setItem(
-                'currentPracticeLogId',
-                String(retryStartResponse.data.practiceLogId)
-              );
-            } else {
-              console.error(
-                'practiceLogId를 찾을 수 없습니다. 응답:',
-                retryStartResponse.data
-              );
-            }
 
             startTimerAndPip();
           } catch {
@@ -523,7 +499,8 @@ export default function Registration() {
                             수강신청인원/정원(재학생)
                           </span>
                           <span className="c-val-blue">
-                            0/{c.course.quota}({c.course.quota-c.course.freshmanQuota})
+                            0/{c.course.quota}(
+                            {c.course.quota - c.course.freshmanQuota})
                           </span>
                           <span className="c-divider-light">|</span>
                           <span className="c-label">학점</span>
