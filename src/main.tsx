@@ -2,9 +2,9 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import App from './tsx/App.tsx';
-import Login from './tsx/Login.tsx';
-import { AuthProvider } from './contexts/AuthProvider.tsx';
+import App from '@app/index';
+import Login from '@pages/login';
+import { AuthProvider } from '@app/providers';
 
 const queryClient = new QueryClient({
   defaultOptions: {
