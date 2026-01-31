@@ -81,7 +81,9 @@ function SortableCourseItem({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: courseData.course.id });
+  } = useSortable({
+    id: courseData.course.id,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -122,11 +124,7 @@ function SortableCourseItem({
         </button>
       </div>
 
-      <div
-        className="courseInfoArea"
-        {...attributes}
-        {...listeners}
-      >
+      <div className="courseInfoArea" {...attributes} {...listeners}>
         <div className="infoRow top">
           <span className="c-type">[{c.course.classification}]</span>
           <span className="c-title">{c.course.courseTitle}</span>
@@ -209,18 +207,61 @@ export default function Registration() {
 
   const { data: cartData } = useCartQuery(true);
   const [localCourseList, setLocalCourseList] = useState<CourseData[]>([]);
+  const [isDraggingActive, setIsDraggingActive] = useState(false);
+  const hasUserReordered = useRef(false);
 
   useEffect(() => {
-    if (cartData) {
-      setLocalCourseList(
-        cartData.map((item) => ({
+    if (!cartData || isDraggingActive) return;
+
+    setLocalCourseList((prevList) => {
+      // Initial load: use server order
+      if (prevList.length === 0) {
+        return cartData.map((item) => ({
           preEnrollId: item.preEnrollId,
           course: item.course,
           cartCount: item.cartCount,
-        }))
+        }));
+      }
+
+      // If user hasn't reordered, use server order
+      if (!hasUserReordered.current) {
+        return cartData.map((item) => ({
+          preEnrollId: item.preEnrollId,
+          course: item.course,
+          cartCount: item.cartCount,
+        }));
+      }
+
+      // Smart merge: preserve user's order, update data, handle additions/deletions
+      const serverDataMap = new Map(
+        cartData.map((item) => [item.course.id, item])
       );
-    }
-  }, [cartData]);
+
+      // Keep user's order for existing items, update their data
+      const updatedList = prevList
+        .filter((local) => serverDataMap.has(local.course.id))
+        .map((local) => {
+          const serverItem = serverDataMap.get(local.course.id)!;
+          return {
+            preEnrollId: serverItem.preEnrollId,
+            course: serverItem.course,
+            cartCount: serverItem.cartCount,
+          };
+        });
+
+      // Append new items at the end
+      const existingIds = new Set(updatedList.map((item) => item.course.id));
+      const newItems = cartData
+        .filter((item) => !existingIds.has(item.course.id))
+        .map((item) => ({
+          preEnrollId: item.preEnrollId,
+          course: item.course,
+          cartCount: item.cartCount,
+        }));
+
+      return [...updatedList, ...newItems];
+    });
+  }, [cartData, isDraggingActive]);
 
   const courseList = localCourseList.length > 0 ? localCourseList : null;
 
@@ -266,12 +307,20 @@ export default function Registration() {
     })
   );
 
+  const handleDragStart = () => {
+    setIsDraggingActive(true);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
+    setIsDraggingActive(false);
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
+      hasUserReordered.current = true;
       setLocalCourseList((items) => {
-        const oldIndex = items.findIndex((item) => item.course.id === active.id);
+        const oldIndex = items.findIndex(
+          (item) => item.course.id === active.id
+        );
         const newIndex = items.findIndex((item) => item.course.id === over.id);
         return arrayMove(items, oldIndex, newIndex);
       });
@@ -441,27 +490,31 @@ export default function Registration() {
   const proceedToApiCall = async () => {
     setWaitingInfo(null);
 
+    // Capture values at call time to avoid stale closure issues
+    const currentCourseId = selectedCourseId!;
+    const currentCourseInfo = selectedCourseInfo!;
+
     try {
       const payload = {
-        courseId: selectedCourseId!,
-        totalCompetitors: selectedCourseInfo!.totalCompetitors,
-        capacity: selectedCourseInfo!.capacity,
+        courseId: currentCourseId,
+        totalCompetitors: currentCourseInfo.totalCompetitors,
+        capacity: currentCourseInfo.capacity,
       };
 
       const response = await practiceAttemptApi(payload);
+
       setCaptchaInput('');
-      setSelectedCourseId(null);
 
       if (!response.data.isSuccess) {
+        // Keep selectedCourseInfo for the error modal to display course details
         setWarningType('quotaOver');
-        if (selectedCourseId) {
-          setFullCourseIds((prev) => new Set(prev).add(selectedCourseId));
-        }
+        setFullCourseIds((prev) => new Set(prev).add(currentCourseId));
       } else {
+        // Clear UI state only on success
+        setSelectedCourseId(null);
+        setSelectedCourseInfo(null);
         setShowSuccessModal(true);
-        if (selectedCourseId) {
-          setSucceededCourseIds((prev) => new Set(prev).add(selectedCourseId));
-        }
+        setSucceededCourseIds((prev) => new Set(prev).add(currentCourseId));
       }
     } catch (error) {
       if (isAxiosError(error) && error.response) {
@@ -600,6 +653,7 @@ export default function Registration() {
           <p className="regTabInfoText">
             ※ 장바구니 탭에서 담은 수를 수정할 수 있습니다.
             <br />※ 마우스 드래그를 통해 강의 순서를 변경할 수 있습니다.
+            <br />※ 변경한 강의 순서는 페이지를 새로고침 하면 리셋됩니다.
           </p>
         </div>
 
@@ -620,6 +674,7 @@ export default function Registration() {
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
               >
                 <SortableContext
@@ -752,7 +807,11 @@ export default function Registration() {
         createPortal(
           <WarningModal
             warningType={warningType}
-            onClose={() => setWarningType('none')}
+            onClose={() => {
+              setWarningType('none');
+              setSelectedCourseId(null);
+              setSelectedCourseInfo(null);
+            }}
             courseTitle={selectedCourseInfo?.title ?? null}
             courseNumber={selectedCourseInfo?.courseNumber ?? null}
             lectureNumber={selectedCourseInfo?.lectureNumber ?? null}
