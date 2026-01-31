@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import '../css/registrationPage.css';
@@ -20,6 +20,7 @@ import {
   WaitingModal,
   SuccessModal,
 } from './RegistrationWarning';
+import Warning from '../utils/Warning';
 import { calculateQueueInfo } from '../utils/RegistrationUtils';
 import PracticeClock from './PracticeClock';
 import { usePracticeWindow } from '../hooks/usePracticeWindow';
@@ -100,6 +101,7 @@ export default function Registration() {
     new Set()
   );
   const [fullCourseIds, setFullCourseIds] = useState<Set<number>>(new Set());
+  const [showPracticeEndModal, setShowPracticeEndModal] = useState(false);
 
   const navigate = useNavigate();
   const practiceState = useRef({
@@ -133,35 +135,32 @@ export default function Registration() {
     }
   };
 
-  const handleStopPractice = useCallback(
-    async (isManual = false) => {
-      if (!practiceState.current.isRunning) return;
-      practiceState.current.isRunning = false;
+  const handleStopPractice = async (isManual = false) => {
+    if (!practiceState.current.isRunning) return;
+    practiceState.current.isRunning = false;
 
-      if (practiceState.current.timerId) {
-        clearInterval(practiceState.current.timerId);
-        practiceState.current.timerId = undefined;
+    if (practiceState.current.timerId) {
+      clearInterval(practiceState.current.timerId);
+      practiceState.current.timerId = undefined;
+    }
+
+    closeWindow();
+
+    try {
+      await practiceEndApi();
+      if (!isManual) {
+        setShowPracticeEndModal(true);
       }
-
-      closeWindow();
-
-      try {
-        await practiceEndApi();
-        if (!isManual) {
-          alert('연습 시간이 종료되었습니다! (08:33)');
-        }
-      } catch (error) {
-        if (isAxiosError(error) && error.response) {
-          alert(
-            `연습 종료 실패: ${error.response.data.message || '알 수 없는 오류'}`
-          );
-        } else {
-          alert('연습 종료 중 네트워크 오류가 발생했습니다.');
-        }
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        alert(
+          `연습 종료 실패: ${error.response.data.message || '알 수 없는 오류'}`
+        );
+      } else {
+        alert('연습 종료 중 네트워크 오류가 발생했습니다.');
       }
-    },
-    [closeWindow]
-  );
+    }
+  };
 
   const getTimeOption = (offset: number): VirtualStartTimeOption => {
     const optionMap: Record<number, VirtualStartTimeOption> = {
@@ -180,7 +179,6 @@ export default function Registration() {
       setSucceededCourseIds(new Set());
       setFullCourseIds(new Set());
 
-
       startTimerAndPip();
     } catch (error) {
       if (isAxiosError(error) && error.response) {
@@ -191,7 +189,6 @@ export default function Registration() {
             const virtualStartTimeOption = getTimeOption(startOffset);
 
             await practiceStartApi({ virtualStartTimeOption });
-
 
             startTimerAndPip();
           } catch {
@@ -384,13 +381,14 @@ export default function Registration() {
 
   // 페이지 이동 시 연습 종료
   useEffect(() => {
+    const state = practiceState.current;
     return () => {
-      if (practiceState.current.isRunning) {
-        if (practiceState.current.timerId) {
-          clearInterval(practiceState.current.timerId);
+      if (state.isRunning) {
+        if (state.timerId) {
+          clearInterval(state.timerId);
         }
 
-        practiceState.current.isRunning = false;
+        state.isRunning = false;
 
         practiceEndApi().catch((error) => {
           console.error('세션 자동 종료 실패:', error);
@@ -681,6 +679,18 @@ export default function Registration() {
             courseTitle={selectedCourseInfo?.title ?? null}
             courseNumber={selectedCourseInfo?.courseNumber ?? null}
             lectureNumber={selectedCourseInfo?.lectureNumber ?? null}
+          />,
+          document.body
+        )}
+
+      {showPracticeEndModal &&
+        createPortal(
+          <Warning
+            isOpen={showPracticeEndModal}
+            variant="single"
+            icon="warning"
+            title="연습 시간이 종료되었습니다! (08:33)"
+            onClose={() => setShowPracticeEndModal(false)}
           />,
           document.body
         )}
