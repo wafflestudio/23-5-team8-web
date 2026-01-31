@@ -110,6 +110,12 @@
   background-color: rgba(0, 0, 0, 0.03);
 }
 
+/* 드래그 중인 아이템 스타일 */
+.courseItem.dragging {
+  background-color: #e8f4ff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
 /* 1. 왼쪽 체크박스 영역 */
 .courseCheckArea {
   display: flex;
@@ -165,12 +171,17 @@
   stroke: #3b87f5; /* 체크 아이콘 파란색으로 변경 */
 }
 
-/* 2. 가운데 정보 영역 */
+/* 2. 가운데 정보 영역 (드래그 핸들) */
 .courseInfoArea {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 3px;
+  cursor: grab;
+}
+
+.courseInfoArea:active {
+  cursor: grabbing;
 }
 
 .infoRow {
