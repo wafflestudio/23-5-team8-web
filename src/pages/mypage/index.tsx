@@ -173,6 +173,9 @@ const MyPage: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [successModalCallback, setSuccessModalCallback] = useState<
+    (() => void) | null
+  >(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { logout } = useAuth();
 
@@ -201,10 +204,11 @@ const MyPage: React.FC = () => {
         setShowSuccessModal(true);
       } catch (error) {
         if (isAxiosError(error)) {
-          alert(
+          setErrorMessage(
             error.response?.data?.message ||
               '프로필 이미지 변경에 실패했습니다.'
           );
+          setShowErrorModal(true);
         }
       }
     }
@@ -220,7 +224,7 @@ const MyPage: React.FC = () => {
     } catch (error) {
       if (isAxiosError(error)) {
         setShowNameModal(false);
-        setErrorMessage('닉네임은 2자 이상 6자 이하여야 합니다.');
+        setErrorMessage('닉네임은 2자 이상 20자 이하여야 합니다.');
         setShowErrorModal(true);
       }
     }
@@ -233,7 +237,8 @@ const MyPage: React.FC = () => {
     confirmPassword: string
   ) => {
     if (newPassword !== confirmPassword) {
-      alert('새 비밀번호가 일치하지 않습니다.');
+      setErrorMessage('새 비밀번호가 일치하지 않습니다.');
+      setShowErrorModal(true);
       return;
     }
 
@@ -242,11 +247,15 @@ const MyPage: React.FC = () => {
         currentPassword,
         newPassword,
       });
-      alert('비밀번호가 변경되었습니다.');
       setShowPasswordModal(false);
+      setSuccessMessage('비밀번호가 변경되었습니다.');
+      setShowSuccessModal(true);
     } catch (error) {
       if (isAxiosError(error)) {
-        alert(error.response?.data?.message || '비밀번호 변경에 실패했습니다.');
+        setErrorMessage(
+          error.response?.data?.message || '비밀번호 변경에 실패했습니다.'
+        );
+        setShowErrorModal(true);
       }
     }
   };
@@ -255,11 +264,16 @@ const MyPage: React.FC = () => {
   const handleDeleteAccount = async (password: string) => {
     try {
       await deleteAccountMutation.mutateAsync(password);
-      alert('계정이 삭제되었습니다.');
-      navigate('/login');
+      setShowDeleteModal(false);
+      setSuccessMessage('계정이 삭제되었습니다.');
+      setSuccessModalCallback(() => () => navigate('/login'));
+      setShowSuccessModal(true);
     } catch (error) {
       if (isAxiosError(error)) {
-        alert(error.response?.data?.message || '계정 삭제에 실패했습니다.');
+        setErrorMessage(
+          error.response?.data?.message || '계정 삭제에 실패했습니다.'
+        );
+        setShowErrorModal(true);
       }
     }
   };
@@ -492,7 +506,13 @@ const MyPage: React.FC = () => {
         variant="single"
         icon="none"
         title={successMessage}
-        onClose={() => setShowSuccessModal(false)}
+        onClose={() => {
+          setShowSuccessModal(false);
+          if (successModalCallback) {
+            successModalCallback();
+            setSuccessModalCallback(null);
+          }
+        }}
       />
 
       {/* 에러 안내 모달 */}

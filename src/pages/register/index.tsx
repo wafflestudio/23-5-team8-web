@@ -133,7 +133,12 @@ export default function Register() {
                 type="text"
                 className="form-input"
                 placeholder="닉네임 (선택)"
-                {...register('name')}
+                {...register('name', {
+                  validate: (value) =>
+                    !value ||
+                    (value.length >= 2 && value.length <= 20) ||
+                    '닉네임은 2자 이상 20자 이하여야 합니다.',
+                })}
               />
               {errors.name && (
                 <span className="error-message">{errors.name.message}</span>

@@ -6,7 +6,7 @@ import './enrollmentHistory.css';
 
 export default function EnrollmentHistory() {
   const { data, isLoading } = useEnrolledCoursesQuery();
-  const enrolledCourses = Array.isArray(data) ? data : [];
+  const enrolledCourses = useMemo(() => (Array.isArray(data) ? data : []), [data]);
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
   const [showNotSupported, setShowNotSupported] = useState(false);
 
@@ -145,7 +145,8 @@ export default function EnrollmentHistory() {
                                 수강신청인원/정원(재학생)
                               </span>
                               <span className="c-val-blue">
-                                0/{course.quota}({course.quota - course.freshmanQuota})
+                                0/{course.quota}(
+                                {course.quota - course.freshmanQuota})
                               </span>
                               <span className="c-divider-light">|</span>
                               <span className="c-label">학점</span>
