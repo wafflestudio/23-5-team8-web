@@ -40,6 +40,10 @@ export default function App() {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  useEffect(() => {
     document.body.style.overflow = showLoginWarningOpen ? 'hidden' : 'auto';
     return () => {
       document.body.style.overflow = 'auto';
