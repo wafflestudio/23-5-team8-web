@@ -37,20 +37,22 @@
   align-items: flex-start;
   gap: 20px;
   position: relative;
-  padding-bottom: 165px;
 }
 
 /* 왼쪽 칼럼 */
 .searchLeftColumn {
   flex: 1;
   min-width: 0; /* flex 자식 요소 overflow 방지 */
+  /* sticky sidebar가 footer 경계에서도 top offset을 유지하도록 충분한 높이 확보 */
+  min-height: calc(100vh - 200px);
 }
 
 /* 오른쪽 칼럼 */
 .searchRightColumn {
   width: 140px;
-  flex-shrink: 0;
+  height: auto;
   position: sticky;
+  flex-shrink: 0;
   top: 165px;
   z-index: 50;
   align-self: flex-start;

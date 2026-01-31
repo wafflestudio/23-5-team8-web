@@ -57,7 +57,6 @@
   align-items: flex-start;
   gap: 30px;
   position: relative;
-  padding-bottom: 165px;
 }
 .regInfoLine {
   margin-top: 40px;
@@ -72,7 +71,8 @@
 .regLeftColumn {
   flex: 1;
   min-width: 0;
-  min-height: 400px;
+  /* sticky sidebar가 footer 경계에서도 top offset을 유지하도록 충분한 높이 확보 */
+  min-height: calc(100vh - 200px);
 }
 
 .regDarkSeparator {
@@ -271,6 +271,7 @@
 /* 오른쪽 플로팅 컬럼 */
 .regRightColumn {
   width: 140px;
+  height: auto;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
