@@ -109,7 +109,8 @@ export const useDeleteAccountMutation = () => {
 // 연습 세션 목록 조회
 export const usePracticeSessionsQuery = (
   page: number = 0,
-  size: number = 10
+  size: number = 10,
+  isActive: boolean = true
 ) => {
   return useQuery<PracticeSessionsListResponse>({
     queryKey: myPageKeys.sessions(page),
@@ -117,7 +118,7 @@ export const usePracticeSessionsQuery = (
       const response = await getPracticeSessionsApi(page, size);
       return response.data;
     },
-    refetchInterval: 5000, // 5초마다 자동 refetch
+    refetchInterval: () => (isActive ? 30000 : false),
   });
 };
 
