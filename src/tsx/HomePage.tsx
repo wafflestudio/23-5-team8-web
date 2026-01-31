@@ -166,16 +166,7 @@ export default function HomePage() {
                     로그인
                   </Link>
                   <div className="loginDesc">
-                    본인 아이디 또는 비밀번호 찾기가 가능합니다.
-                  </div>
-                  <div className="loginFind">
-                    <button className="findBtn" type="button">
-                      아이디 찾기
-                    </button>
-                    <span className="findSep">/</span>
-                    <button className="findBtn" type="button">
-                      비밀번호 찾기
-                    </button>
+                    아이디 / 비밀번호 찾기 기능을 지원하지 않습니다.
                   </div>
                 </div>
               </section>
@@ -361,48 +352,6 @@ export default function HomePage() {
 }
 
 const SCHEDULE_DATA = [
-  {
-    category: '예비장바구니 신청',
-    date: '2026-01-20(화) ~ 2026-01-20(화)',
-    time: '09:00 ~ 16:00',
-    target: '재·휴학생 전체\n(국내학점교류 제외)',
-  },
-  {
-    category: '예비장바구니 전산확정',
-    date: '2026-01-21(수) ~ 2026-01-21(수)',
-    time: '09:00 ~ 18:00',
-    target: '학사과 전산확정',
-  },
-  {
-    category: '예비선착순수강신청\n(1일차)',
-    date: '2026-01-22(목) ~ 2026-01-22(목)',
-    time: '08:30 ~ 16:30',
-    target: '재·휴학생\n(선착순수강1일)',
-  },
-  {
-    category: '예비선착순수강신청\n(2일차)',
-    date: '2026-01-23(금) ~ 2026-01-23(금)',
-    time: '08:30 ~ 16:30',
-    target: '재·휴학생\n(선착순수강2일)',
-  },
-  {
-    category: '장바구니신청(1일차)',
-    date: '2026-01-27(화) ~ 2026-01-27(화)',
-    time: '09:00 ~ 23:59',
-    target: '재·휴학생\n(국내학점교류생 제외)',
-  },
-  {
-    category: '장바구니신청(2일차)',
-    date: '2026-01-28(수) ~ 2026-01-28(수)',
-    time: '00:00 ~ 16:00',
-    target: '재·휴학생\n(국내학점교류생 제외)',
-  },
-  {
-    category: '장바구니 전산확정',
-    date: '2026-01-29(목) ~ 2026-01-29(목)',
-    time: '09:00 ~ 18:00',
-    target: '학사과 전산확정',
-  },
   {
     category: '선착순수강신청(1일차)',
     date: '2026-01-30(금) ~ 2026-01-30(금)',
