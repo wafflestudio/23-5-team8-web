@@ -257,7 +257,6 @@ export default function Registration() {
       setWarningType('quotaOver');
       setCaptchaInput('');
       setSelectedCourseId(null);
-      setSelectedCourseInfo(null);
       return;
     }
 
