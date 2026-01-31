@@ -377,7 +377,8 @@ export default function Registration() {
         pipWindow.close();
       }
     };
-  }, [pipWindow, handleStopPractice]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pipWindow]);
 
   // 페이지 이동 시 연습 종료
   useEffect(() => {
