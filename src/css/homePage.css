@@ -146,6 +146,9 @@
 
   white-space: pre-wrap;
 }
+.periodTable tbody tr:first-child td {
+  background-color: #eef5ff;
+}
 .periodTable td:first-child {
   text-align: left;
   padding-left: 18px;
@@ -211,25 +214,6 @@
   font-size: 13px;
   font-weight: 500;
   letter-spacing: -0.7px;
-}
-.loginFind {
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  gap: 0px;
-}
-.findBtn {
-  color: #376dc8;
-  font-weight: 600;
-  font-size: 13px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 7px;
-}
-.findSep {
-  color: #376dc8;
 }
 
 /* Right Buttons */

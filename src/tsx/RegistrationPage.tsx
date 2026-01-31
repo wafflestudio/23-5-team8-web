@@ -1,8 +1,22 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import '../css/registrationPage.css';
-import Warning from '../utils/Warning';
 import {
   practiceStartApi,
   practiceEndApi,
@@ -21,6 +35,7 @@ import {
   WaitingModal,
   SuccessModal,
 } from './RegistrationWarning';
+import Warning from '../utils/Warning';
 import { calculateQueueInfo } from '../utils/RegistrationUtils';
 import PracticeClock from './PracticeClock';
 import { usePracticeWindow } from '../hooks/usePracticeWindow';
@@ -48,6 +63,128 @@ interface SelectedCourseInfo {
   lectureNumber: string;
 }
 
+interface SortableCourseItemProps {
+  courseData: CourseData;
+  isSelected: boolean;
+  onSelect: () => void;
+}
+
+function SortableCourseItem({
+  courseData,
+  isSelected,
+  onSelect,
+}: SortableCourseItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: courseData.course.id,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 1000 : 'auto',
+  };
+
+  const c = courseData;
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`courseItem${isDragging ? ' dragging' : ''}`}
+    >
+      <div
+        className="courseCheckArea"
+        onClick={(e) => {
+          e.stopPropagation();
+          onSelect();
+        }}
+      >
+        <button className={`customCheckBtn ${isSelected ? 'checked' : ''}`}>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="checkIcon"
+          >
+            <path
+              d="M4 12L9 17L20 6"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div className="courseInfoArea" {...attributes} {...listeners}>
+        <div className="infoRow top">
+          <span className="c-type">[{c.course.classification}]</span>
+          <span className="c-title">{c.course.courseTitle}</span>
+        </div>
+        <div className="infoRow middle">
+          <span className="c-prof">{c.course.instructor}</span>
+          <span className="c-divider">|</span>
+          <span className="c-dept">{c.course.department}</span>
+        </div>
+        <div className="infoRow bottom">
+          <span className="c-label">수강신청인원/정원(재학생)</span>
+          <span className="c-val-blue">
+            0/{c.course.quota}({c.course.quota - c.course.freshmanQuota})
+          </span>
+          <span className="c-divider-light">|</span>
+          <span className="c-label">학점</span>
+          <span className="c-val-blue">{c.course.credit}</span>
+          <span className="c-divider-light">|</span>
+          <span className="c-schedule">
+            {c.course.placeAndTime
+              ? JSON.parse(c.course.placeAndTime).time?.replace(/\//g, ' ') ||
+                '시간 미정'
+              : '시간 미정'}
+          </span>
+        </div>
+      </div>
+
+      <div className="courseActionArea">
+        <div className="cartInfoBox">
+          <svg
+            className="cartIconSvg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span className={'cartCountNum red'}>{c.cartCount}</span>
+        </div>
+        <div className="arrowBox">
+          <svg width="12" height="12" viewBox="0 0 10 18" fill="none">
+            <path
+              d="M1 1L9 9L1 17"
+              stroke="#000000"
+              strokeWidth="1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function makeCaptchaDigits(): CaptchaDigit[] {
   const num1 = Math.floor(Math.random() * 10);
   const num2 = Math.floor(Math.random() * 10);
@@ -66,17 +203,67 @@ function makeCaptchaDigits(): CaptchaDigit[] {
 
 export default function Registration() {
   const { pipWindow, openWindow, closeWindow } = usePracticeWindow();
-  const { showNotSupported, openNotSupported, closeNotSupported } =
-    useModalStore();
+  const { openNotSupported } = useModalStore();
 
   const { data: cartData } = useCartQuery(true);
-  const courseList: CourseData[] | null = cartData
-    ? cartData.map((item) => ({
-        preEnrollId: item.preEnrollId,
-        course: item.course,
-        cartCount: item.cartCount,
-      }))
-    : null;
+  const [localCourseList, setLocalCourseList] = useState<CourseData[]>([]);
+  const [isDraggingActive, setIsDraggingActive] = useState(false);
+  const hasUserReordered = useRef(false);
+
+  useEffect(() => {
+    if (!cartData || isDraggingActive) return;
+
+    setLocalCourseList((prevList) => {
+      // Initial load: use server order
+      if (prevList.length === 0) {
+        return cartData.map((item) => ({
+          preEnrollId: item.preEnrollId,
+          course: item.course,
+          cartCount: item.cartCount,
+        }));
+      }
+
+      // If user hasn't reordered, use server order
+      if (!hasUserReordered.current) {
+        return cartData.map((item) => ({
+          preEnrollId: item.preEnrollId,
+          course: item.course,
+          cartCount: item.cartCount,
+        }));
+      }
+
+      // Smart merge: preserve user's order, update data, handle additions/deletions
+      const serverDataMap = new Map(
+        cartData.map((item) => [item.course.id, item])
+      );
+
+      // Keep user's order for existing items, update their data
+      const updatedList = prevList
+        .filter((local) => serverDataMap.has(local.course.id))
+        .map((local) => {
+          const serverItem = serverDataMap.get(local.course.id)!;
+          return {
+            preEnrollId: serverItem.preEnrollId,
+            course: serverItem.course,
+            cartCount: serverItem.cartCount,
+          };
+        });
+
+      // Append new items at the end
+      const existingIds = new Set(updatedList.map((item) => item.course.id));
+      const newItems = cartData
+        .filter((item) => !existingIds.has(item.course.id))
+        .map((item) => ({
+          preEnrollId: item.preEnrollId,
+          course: item.course,
+          cartCount: item.cartCount,
+        }));
+
+      return [...updatedList, ...newItems];
+    });
+  }, [cartData, isDraggingActive]);
+
+  const courseList = localCourseList.length > 0 ? localCourseList : null;
 
   const [captchaDigits, setCaptchaDigits] = useState<CaptchaDigit[]>(() =>
     makeCaptchaDigits()
@@ -102,6 +289,7 @@ export default function Registration() {
     new Set()
   );
   const [fullCourseIds, setFullCourseIds] = useState<Set<number>>(new Set());
+  const [showPracticeEndModal, setShowPracticeEndModal] = useState(false);
 
   const navigate = useNavigate();
   const practiceState = useRef({
@@ -110,6 +298,34 @@ export default function Registration() {
     startTime: 0,
     virtualOffset: 0,
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    })
+  );
+
+  const handleDragStart = () => {
+    setIsDraggingActive(true);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setIsDraggingActive(false);
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      hasUserReordered.current = true;
+      setLocalCourseList((items) => {
+        const oldIndex = items.findIndex(
+          (item) => item.course.id === active.id
+        );
+        const newIndex = items.findIndex((item) => item.course.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
 
   const handleSelectedCourse = (
     courseId: number,
@@ -135,35 +351,32 @@ export default function Registration() {
     }
   };
 
-  const handleStopPractice = useCallback(
-    async (isManual = false) => {
-      if (!practiceState.current.isRunning) return;
-      practiceState.current.isRunning = false;
+  const handleStopPractice = async (isManual = false) => {
+    if (!practiceState.current.isRunning) return;
+    practiceState.current.isRunning = false;
 
-      if (practiceState.current.timerId) {
-        clearInterval(practiceState.current.timerId);
-        practiceState.current.timerId = undefined;
+    if (practiceState.current.timerId) {
+      clearInterval(practiceState.current.timerId);
+      practiceState.current.timerId = undefined;
+    }
+
+    closeWindow();
+
+    try {
+      await practiceEndApi();
+      if (!isManual) {
+        setShowPracticeEndModal(true);
       }
-
-      closeWindow();
-
-      try {
-        await practiceEndApi();
-        if (!isManual) {
-          alert('연습 시간이 종료되었습니다! (08:33)');
-        }
-      } catch (error) {
-        if (isAxiosError(error) && error.response) {
-          alert(
-            `연습 종료 실패: ${error.response.data.message || '알 수 없는 오류'}`
-          );
-        } else {
-          alert('연습 종료 중 네트워크 오류가 발생했습니다.');
-        }
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        alert(
+          `연습 종료 실패: ${error.response.data.message || '알 수 없는 오류'}`
+        );
+      } else {
+        alert('연습 종료 중 네트워크 오류가 발생했습니다.');
       }
-    },
-    [closeWindow]
-  );
+    }
+  };
 
   const getTimeOption = (offset: number): VirtualStartTimeOption => {
     const optionMap: Record<number, VirtualStartTimeOption> = {
@@ -182,18 +395,15 @@ export default function Registration() {
       setSucceededCourseIds(new Set());
       setFullCourseIds(new Set());
 
-
       startTimerAndPip();
     } catch (error) {
       if (isAxiosError(error) && error.response) {
         if (error.response.status === 409) {
-          // Already practicing - auto-recover by ending current session
           try {
             await practiceEndApi();
             const virtualStartTimeOption = getTimeOption(startOffset);
 
             await practiceStartApi({ virtualStartTimeOption });
-
 
             startTimerAndPip();
           } catch {
@@ -262,7 +472,6 @@ export default function Registration() {
       setWarningType('quotaOver');
       setCaptchaInput('');
       setSelectedCourseId(null);
-      setSelectedCourseInfo(null);
       return;
     }
 
@@ -281,27 +490,31 @@ export default function Registration() {
   const proceedToApiCall = async () => {
     setWaitingInfo(null);
 
+    // Capture values at call time to avoid stale closure issues
+    const currentCourseId = selectedCourseId!;
+    const currentCourseInfo = selectedCourseInfo!;
+
     try {
       const payload = {
-        courseId: selectedCourseId!,
-        totalCompetitors: selectedCourseInfo!.totalCompetitors,
-        capacity: selectedCourseInfo!.capacity,
+        courseId: currentCourseId,
+        totalCompetitors: currentCourseInfo.totalCompetitors,
+        capacity: currentCourseInfo.capacity,
       };
 
       const response = await practiceAttemptApi(payload);
+
       setCaptchaInput('');
-      setSelectedCourseId(null);
 
       if (!response.data.isSuccess) {
+        // Keep selectedCourseInfo for the error modal to display course details
         setWarningType('quotaOver');
-        if (selectedCourseId) {
-          setFullCourseIds((prev) => new Set(prev).add(selectedCourseId));
-        }
+        setFullCourseIds((prev) => new Set(prev).add(currentCourseId));
       } else {
+        // Clear UI state only on success
+        setSelectedCourseId(null);
+        setSelectedCourseInfo(null);
         setShowSuccessModal(true);
-        if (selectedCourseId) {
-          setSucceededCourseIds((prev) => new Set(prev).add(selectedCourseId));
-        }
+        setSucceededCourseIds((prev) => new Set(prev).add(currentCourseId));
       }
     } catch (error) {
       if (isAxiosError(error) && error.response) {
@@ -354,7 +567,6 @@ export default function Registration() {
     openWindow();
   };
 
-  // PIP 창이 열리면 타이머 시작
   useEffect(() => {
     if (!pipWindow) return;
 
@@ -382,17 +594,18 @@ export default function Registration() {
         pipWindow.close();
       }
     };
-  }, [pipWindow, handleStopPractice]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pipWindow]);
 
-  // 페이지 이동 시 연습 종료
   useEffect(() => {
+    const state = practiceState.current;
     return () => {
-      if (practiceState.current.isRunning) {
-        if (practiceState.current.timerId) {
-          clearInterval(practiceState.current.timerId);
+      if (state.isRunning) {
+        if (state.timerId) {
+          clearInterval(state.timerId);
         }
 
-        practiceState.current.isRunning = false;
+        state.isRunning = false;
 
         practiceEndApi().catch((error) => {
           console.error('세션 자동 종료 실패:', error);
@@ -410,17 +623,37 @@ export default function Registration() {
 
         <div className="regTabs">
           <button className="regTabItem active">장바구니 보류강좌</button>
-          <button className="regTabItem" onClick={openNotSupported}>
+          <button
+            className="regTabItem"
+            onClick={() => {
+              setWarningType('none');
+              openNotSupported();
+            }}
+          >
             관심강좌
           </button>
-          <button className="regTabItem" onClick={openNotSupported}>
+          <button
+            className="regTabItem"
+            onClick={() => {
+              setWarningType('none');
+              openNotSupported();
+            }}
+          >
             교과목검색
           </button>
-          <button className="regTabItem" onClick={openNotSupported}>
+          <button
+            className="regTabItem"
+            onClick={() => {
+              setWarningType('none');
+              openNotSupported();
+            }}
+          >
             교과목번호 검색
           </button>
           <p className="regTabInfoText">
             ※ 장바구니 탭에서 담은 수를 수정할 수 있습니다.
+            <br />※ 마우스 드래그를 통해 강의 순서를 변경할 수 있습니다.
+            <br />※ 변경한 강의 순서는 페이지를 새로고침 하면 리셋됩니다.
           </p>
         </div>
 
@@ -438,16 +671,23 @@ export default function Registration() {
                 장바구니에 남은 보류강좌가 없습니다.
               </div>
             ) : (
-              <div className="courseListContainer">
-                {courseList?.map((c) => {
-                  const isSelected = selectedCourseId === c.course.id;
-
-                  return (
-                    <div key={c.course.id} className="courseItem">
-                      <div
-                        className="courseCheckArea"
-                        onClick={(e) => {
-                          e.stopPropagation();
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={courseList?.map((c) => c.course.id) ?? []}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="courseListContainer">
+                    {courseList?.map((c) => (
+                      <SortableCourseItem
+                        key={c.course.id}
+                        courseData={c}
+                        isSelected={selectedCourseId === c.course.id}
+                        onSelect={() =>
                           handleSelectedCourse(
                             c.course.id,
                             0,
@@ -456,107 +696,13 @@ export default function Registration() {
                             c.course.courseTitle,
                             c.course.courseNumber,
                             c.course.lectureNumber || ''
-                          );
-                        }}
-                      >
-                        <button
-                          className={`customCheckBtn ${
-                            isSelected ? 'checked' : ''
-                          }`}
-                        >
-                          <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="checkIcon"
-                          >
-                            <path
-                              d="M4 12L9 17L20 6"
-                              strokeWidth="3"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-
-                      <div className="courseInfoArea">
-                        <div className="infoRow top">
-                          <span className="c-type">
-                            [{c.course.classification}]
-                          </span>
-                          <span className="c-title">
-                            {c.course.courseTitle}
-                          </span>
-                        </div>
-                        <div className="infoRow middle">
-                          <span className="c-prof">{c.course.instructor}</span>
-                          <span className="c-divider">|</span>
-                          <span className="c-dept">{c.course.department}</span>
-                        </div>
-                        <div className="infoRow bottom">
-                          <span className="c-label">
-                            수강신청인원/정원(재학생)
-                          </span>
-                          <span className="c-val-blue">
-                            0/{c.course.quota}(
-                            {c.course.quota - c.course.freshmanQuota})
-                          </span>
-                          <span className="c-divider-light">|</span>
-                          <span className="c-label">학점</span>
-                          <span className="c-val-blue">{c.course.credit}</span>
-                          <span className="c-divider-light">|</span>
-                          <span className="c-schedule">
-                            {c.course.placeAndTime
-                              ? JSON.parse(c.course.placeAndTime).time?.replace(
-                                  /\//g,
-                                  ' '
-                                ) || '시간 미정'
-                              : '시간 미정'}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="courseActionArea">
-                        <div className="cartInfoBox">
-                          <svg
-                            className="cartIconSvg"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <circle cx="9" cy="21" r="1"></circle>
-                            <circle cx="20" cy="21" r="1"></circle>
-                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                          </svg>
-                          <span className={'cartCountNum red'}>
-                            {c.cartCount}
-                          </span>
-                        </div>
-                        <div className="arrowBox">
-                          <svg
-                            width="12"
-                            height="12"
-                            viewBox="0 0 10 18"
-                            fill="none"
-                          >
-                            <path
-                              d="M1 1L9 9L1 17"
-                              stroke="#000000"
-                              strokeWidth="1"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                          )
+                        }
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
             )}
           </div>
 
@@ -661,23 +807,27 @@ export default function Registration() {
         createPortal(
           <WarningModal
             warningType={warningType}
-            onClose={() => setWarningType('none')}
+            onClose={() => {
+              setWarningType('none');
+              setSelectedCourseId(null);
+              setSelectedCourseInfo(null);
+            }}
             courseTitle={selectedCourseInfo?.title ?? null}
             courseNumber={selectedCourseInfo?.courseNumber ?? null}
             lectureNumber={selectedCourseInfo?.lectureNumber ?? null}
           />,
           document.body
         )}
-      {showNotSupported &&
+
+      {showPracticeEndModal &&
         createPortal(
           <Warning
+            isOpen={showPracticeEndModal}
             variant="single"
             icon="warning"
-            isOpen={showNotSupported}
-            onClose={closeNotSupported}
-          >
-            <p className="warningText">지원하지 않는 기능입니다.</p>
-          </Warning>,
+            title="연습 시간이 종료되었습니다! (08:33)"
+            onClose={() => setShowPracticeEndModal(false)}
+          />,
           document.body
         )}
     </div>
