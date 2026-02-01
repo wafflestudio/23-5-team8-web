@@ -15,7 +15,7 @@ import type {
   LeaderboardResponse,
   MyLeaderboardResponse,
 } from '@features/leaderboard';
-import { Warning } from '@shared/ui/Warning';
+import { WarningModal } from '@shared/ui/Warning';
 import './home.css';
 
 type FilterType = 'all' | 'weekly';
@@ -339,14 +339,13 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <Warning
-        variant="single"
-        icon="warning"
+      <WarningModal.Alert
         isOpen={showNotSupporting}
         onClose={() => setShowNotSupporting(false)}
+        icon="warning"
       >
         <p className="warningText">지원하지 않는 기능입니다.</p>
-      </Warning>
+      </WarningModal.Alert>
     </main>
   );
 }

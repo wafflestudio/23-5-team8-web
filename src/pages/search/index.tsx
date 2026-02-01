@@ -4,7 +4,7 @@ import { isAxiosError } from 'axios';
 import { useCourseSearchQuery } from '@features/course-search';
 import { useAddToCartMutation, useCartQuery } from '@features/cart-management';
 import type { CourseDetailResponse } from '@entities/course';
-import { Warning } from '@shared/ui/Warning';
+import { WarningModal } from '@shared/ui/Warning';
 import { hasTimeConflict, extractTimeFromPlaceAndTime } from '@shared/lib/timeUtils';
 import './search.css';
 
@@ -163,10 +163,9 @@ export default function SearchPage() {
 
   return (
     <div className="searchPage">
-      <Warning
-        variant="double"
+      <WarningModal.Confirm
         isOpen={showCartModal}
-        onClose={() => setShowCartModal(false)}
+        onCancel={() => setShowCartModal(false)}
         onConfirm={() => {
           setShowCartModal(false);
           navigate('/cart');
@@ -178,10 +177,9 @@ export default function SearchPage() {
       />
 
       {conflictCourse && (
-        <Warning
-          variant="double"
+        <WarningModal.Confirm
           isOpen={showConflictModal}
-          onClose={() => {
+          onCancel={() => {
             setShowConflictModal(false);
             setConflictCourse(null);
           }}
@@ -202,39 +200,36 @@ export default function SearchPage() {
             <br />
             이동하시겠습니까?
           </p>
-        </Warning>
+        </WarningModal.Confirm>
       )}
 
-      <Warning
-        variant="single"
-        icon="warning"
+      <WarningModal.Alert
         isOpen={showNotSupporting}
         onClose={() => setShowNotSupporting(false)}
+        icon="warning"
       >
         <p className="warningText">지원하지 않는 기능입니다.</p>
-      </Warning>
+      </WarningModal.Alert>
 
-      <Warning
-        variant="single"
-        icon="warning"
+      <WarningModal.Alert
         isOpen={showNoCourseSelected}
         onClose={() => setShowNoCourseSelected(false)}
+        icon="warning"
       >
         <p className="warningText">장바구니 담기할 강좌를 선택해주십시오.</p>
-      </Warning>
+      </WarningModal.Alert>
 
-      <Warning
-        variant="single"
-        icon="warning"
+      <WarningModal.Alert
         isOpen={showTimeOverlapModal}
         onClose={() => setShowTimeOverlapModal(false)}
+        icon="warning"
       >
         <p className="warningText">
           중복된 시간대의 강의를
           <br />
           장바구니에 담을 수 없습니다.
         </p>
-      </Warning>
+      </WarningModal.Alert>
 
       <div className="containerX">
         <div className="searchHeader">

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import '@shared/ui/Warning/warning.css';
 import { calculateQueueInfo } from '../lib/registrationUtils';
-import { Warning } from '@shared/ui/Warning';
+import { WarningModal } from '@shared/ui/Warning';
 
 export type WarningType =
   | 'beforeTime'
@@ -55,7 +55,7 @@ const getWarningMessage = (
   }
 };
 
-export function WarningModal({
+export function RegistrationWarningModal({
   warningType,
   onClose,
   courseTitle,
@@ -63,11 +63,10 @@ export function WarningModal({
   lectureNumber,
 }: WarningModalProps) {
   return (
-    <Warning
-      variant="single"
-      icon="warning"
+    <WarningModal.Alert
       isOpen={warningType !== 'none'}
       onClose={onClose}
+      icon="warning"
     >
       <p className="warningText">
         {getWarningMessage(
@@ -77,7 +76,7 @@ export function WarningModal({
           lectureNumber
         )}
       </p>
-    </Warning>
+    </WarningModal.Alert>
   );
 }
 
@@ -127,8 +126,7 @@ export const WaitingModal = ({
   }, [onComplete]);
 
   return (
-    <Warning
-      variant="none"
+    <WarningModal.Custom
       isOpen={true}
       containerClassName="waiting-modal-box"
     >
@@ -158,16 +156,15 @@ export const WaitingModal = ({
       <p className="waiting-warning-text">
         ※ 재접속하시면 대기시간이 더 길어집니다.
       </p>
-    </Warning>
+    </WarningModal.Custom>
   );
 };
 
 export const SuccessModal = ({ onKeep, onGoToHistory }: SuccessModalProps) => {
   return (
-    <Warning
-      variant="double"
+    <WarningModal.Confirm
       isOpen={true}
-      onClose={onKeep}
+      onCancel={onKeep}
       onConfirm={onGoToHistory}
       title="수강신청되었습니다."
       subtitle="지금 바로 수강신청내역으로 이동하시겠습니까?"

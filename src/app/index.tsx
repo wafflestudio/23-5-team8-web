@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth, useTimer } from '@features/auth';
 import { Header } from '@widgets/header';
 import { Footer } from '@widgets/footer';
-import { Warning } from '@shared/ui/Warning';
+import { WarningModal } from '@shared/ui/Warning';
 import { AppRoutes } from './routes';
 import './styles/global.css';
 
@@ -75,10 +75,9 @@ function SessionWarningModal({
   };
 
   return (
-    <Warning
-      variant="double"
+    <WarningModal.Confirm
       isOpen={true}
-      onClose={onLogout}
+      onCancel={onLogout}
       onConfirm={() => {
         onExtend();
         setShowLoginWarningOpen(false);
@@ -109,6 +108,6 @@ function SessionWarningModal({
         </svg>
         <span className="sessionTimerText">{formatTime(timeLeft)}</span>
       </div>
-    </Warning>
+    </WarningModal.Confirm>
   );
 }

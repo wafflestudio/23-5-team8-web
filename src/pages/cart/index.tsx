@@ -6,7 +6,7 @@ import {
   useUpdateCartCountMutation,
 } from '@features/cart-management';
 import { useModalStore } from '@shared/model/modalStore';
-import { Warning } from '@shared/ui/Warning';
+import { WarningModal } from '@shared/ui/Warning';
 import { TimeTable } from '@widgets/timetable';
 import './cart.css';
 
@@ -327,28 +327,25 @@ export default function Cart() {
         </div>
       </div>
 
-      <Warning
-        variant="single"
-        icon="warning"
+      <WarningModal.Alert
         isOpen={showDeleteSuccess}
         onClose={closeDeleteSuccess}
+        icon="warning"
         title="삭제되었습니다."
       />
 
-      <Warning
-        variant="single"
-        icon="warning"
+      <WarningModal.Alert
         isOpen={showNoCourseSelected}
         onClose={() => setShowNoCourseSelected(false)}
+        icon="warning"
       >
         <p className="warningText">삭제할 강좌를 선택해주십시오.</p>
-      </Warning>
+      </WarningModal.Alert>
 
-      <Warning
-        variant="single"
-        icon="warning"
+      <WarningModal.Alert
         isOpen={showNotSupported}
         onClose={() => setShowNotSupported(false)}
+        icon="warning"
         title="지원하지 않는 기능입니다."
       />
     </main>
