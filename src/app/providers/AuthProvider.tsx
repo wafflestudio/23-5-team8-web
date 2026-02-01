@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext, type User, logoutApi } from '@features/auth';
+import { setAuthToken, clearAuthToken } from '@shared/api/axios';
 
 const MAX_LOGIN_TIME = 10 * 60;
 const WARNING_THRESHOLD = 60;
@@ -25,7 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = (userData: User, accessToken: string) => {
     setUser(userData);
     sessionStorage.setItem('userInfo', JSON.stringify(userData));
-    sessionStorage.setItem('authToken', accessToken);
+    setAuthToken(accessToken);
     timeLeftRef.current = MAX_LOGIN_TIME;
     setTimeLeft(MAX_LOGIN_TIME);
   };
@@ -38,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setUser(null);
       sessionStorage.removeItem('userInfo');
-      sessionStorage.removeItem('authToken');
+      clearAuthToken();
     }
   }, []);
 
