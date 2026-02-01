@@ -10,7 +10,7 @@ import type {LeaderboardResponse, LeaderboardCategoryResponse} from './types';
 type FilterType = 'all' | 'weekly';
 type CategoryType = 'firstReaction' | 'secondReaction' | 'competitionRate';
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 10;
 
 export const leaderboardKeys = {
   all: ['leaderboard'] as const,

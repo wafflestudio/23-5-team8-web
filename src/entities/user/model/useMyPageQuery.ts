@@ -139,11 +139,7 @@ export const useEnrolledCoursesQuery = () => {
   return useQuery<CourseDetailResponse[]>({
     queryKey: myPageKeys.enrolledCourses(),
     queryFn: async () => {
-      console.log(
-        '🔍 Fetching enrolled courses from /api/practice/enrolled-courses'
-      );
       const response = await getEnrolledCoursesApi();
-      console.log('✅ Enrolled courses response:', response.data);
       return response.data;
     },
     retry: 1,

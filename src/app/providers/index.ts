@@ -1,1 +1,1 @@
-export { AuthProvider } from './AuthProvider';
+export { AuthProvider, TimerProvider } from './AuthProvider';

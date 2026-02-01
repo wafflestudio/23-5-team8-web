@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '@features/auth';
+import { useAuth, useTimer } from '@features/auth';
 import { Header } from '@widgets/header';
 import { Footer } from '@widgets/footer';
 import { Warning } from '@shared/ui/Warning';
@@ -10,7 +10,8 @@ import './styles/global.css';
 export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, timeLeft, extendLogin, logout } = useAuth();
+  const { user, logout } = useAuth();
+  const { timeLeft, extendLogin } = useTimer();
   const [showLoginWarningOpen, setShowLoginWarningOpen] = useState(false);
   const isAuthPage =
     location.pathname === '/login' ||

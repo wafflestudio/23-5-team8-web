@@ -57,7 +57,8 @@ export default function LeaderBoard() {
       },
       {
         root: scrollContainer,
-        threshold: 0.1,
+        rootMargin: '0px 0px 200px 0px',
+        threshold: 0,
       }
     );
 
@@ -80,10 +81,9 @@ export default function LeaderBoard() {
     setSearchParams(newParams);
   };
 
-  const getAllEntries = (): LeaderboardEntryResponse[] => {
-    if (!data?.pages) return [];
-    return data.pages.flatMap((page) => page.categoryData.items);
-  };
+  const entries: LeaderboardEntryResponse[] = data?.pages
+    ? data.pages.flatMap((page) => page.categoryData.items)
+    : [];
 
   const getMyValue = (): { value: number | null; rank: number | null } => {
     if (!myData) return { value: null, rank: null };
@@ -115,7 +115,6 @@ export default function LeaderBoard() {
     return `${value}ms`;
   };
 
-  const entries = getAllEntries();
   const myRank = getMyValue();
 
   return (
