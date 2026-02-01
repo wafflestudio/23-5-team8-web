@@ -1,4 +1,4 @@
-import { useAuth } from '@features/auth';
+import { useAuth, useTimer } from '@features/auth';
 import { useModalStore } from '@shared/model/modalStore';
 import './footer.css';
 
@@ -7,7 +7,8 @@ interface FooterProps {
 }
 
 export default function Footer({ onOpenModal }: FooterProps) {
-  const { user, timeLeft } = useAuth();
+  const { user } = useAuth();
+  const { timeLeft } = useTimer();
   const { openNotSupported } = useModalStore();
 
   const formatTime = (seconds: number) => {

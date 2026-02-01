@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { AuthContext, type User, logoutApi } from '@features/auth';
+import { AuthContext, TimerContext, type User, logoutApi, useAuth } from '@features/auth';
 import { setAuthToken, clearAuthToken } from '@shared/api/axios';
 
 const MAX_LOGIN_TIME = 10 * 60;
-const WARNING_THRESHOLD = 60;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const location = useLocation();
-  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = sessionStorage.getItem('userInfo');
     if (!storedUser) return null;
@@ -20,15 +17,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   });
 
-  const timeLeftRef = useRef<number>(MAX_LOGIN_TIME);
-  const [timeLeft, setTimeLeft] = useState<number>(MAX_LOGIN_TIME);
-
   const login = (userData: User, accessToken: string) => {
     setUser(userData);
     sessionStorage.setItem('userInfo', JSON.stringify(userData));
     setAuthToken(accessToken);
-    timeLeftRef.current = MAX_LOGIN_TIME;
-    setTimeLeft(MAX_LOGIN_TIME);
   };
 
   const logout = useCallback(async () => {
@@ -43,6 +35,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  return (
+    <AuthContext.Provider value={{ user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function TimerProvider({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const timeLeftRef = useRef<number>(MAX_LOGIN_TIME);
+  const [timeLeft, setTimeLeft] = useState<number>(MAX_LOGIN_TIME);
+  const prevLocationRef = useRef(location.pathname);
+
   const extendLogin = useCallback(() => {
     if (user) {
       timeLeftRef.current = MAX_LOGIN_TIME;
@@ -52,15 +60,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!user) return;
-    extendLogin();
-  }, [location, user, extendLogin]);
-
-  useEffect(() => {
-    if (!user) return;
 
     timeLeftRef.current = MAX_LOGIN_TIME;
 
     const timer = setInterval(() => {
+      // 페이지 이동 시 타이머 리셋 (location 변경 감지)
+      if (prevLocationRef.current !== location.pathname) {
+        prevLocationRef.current = location.pathname;
+        timeLeftRef.current = MAX_LOGIN_TIME;
+      }
+
       timeLeftRef.current -= 1;
       const currentTime = timeLeftRef.current;
 
@@ -72,18 +81,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Only update state at warning threshold or every 10 seconds during warning period
-      if (currentTime === WARNING_THRESHOLD || (currentTime < WARNING_THRESHOLD && currentTime % 10 === 0)) {
-        setTimeLeft(currentTime);
-      }
+      setTimeLeft(currentTime);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [user, logout, navigate]);
+  }, [user, logout, navigate, location.pathname]);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, timeLeft, extendLogin }}>
+    <TimerContext.Provider value={{ timeLeft, extendLogin }}>
       {children}
-    </AuthContext.Provider>
+    </TimerContext.Provider>
   );
 }

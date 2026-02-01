@@ -183,9 +183,6 @@ const MyPage: React.FC = () => {
   const { data: myPageData, isLoading } = useMyPageQuery();
   const { data: sessionsData } = usePracticeSessionsQuery(currentPage);
 
-  // 마이페이지 데이터 콘솔 출력
-  console.log('마이페이지 데이터:', myPageData);
-
   // Mutations
   const updateProfileMutation = useUpdateProfileMutation();
   const updateProfileImageMutation = useUpdateProfileImageMutation();

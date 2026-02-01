@@ -9,8 +9,6 @@ export interface AuthContextType {
   user: User | null;
   login: (userData: User, accessToken: string) => void;
   logout: () => Promise<void>;
-  timeLeft: number;
-  extendLogin: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
