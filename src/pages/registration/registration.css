@@ -21,12 +21,14 @@
 /* 탭 메뉴 스타일 */
 .regTabs {
   display: flex;
+  align-items: flex-end;
   border-bottom: 1px solid #d1d1d1;
 }
 
 .regTabItem {
   padding: 16px 10px;
   width: 164px;
+  height: 56px;
   font-size: 16px;
   cursor: pointer;
   border: 1px solid #d1d1d1;

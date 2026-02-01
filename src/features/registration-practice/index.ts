@@ -11,7 +11,7 @@ export { calculateQueueInfo } from './lib/registrationUtils';
 
 export { default as PracticeClock } from './ui/PracticeClock';
 export {
-  WarningModal,
+  RegistrationWarningModal as WarningModal,
   WaitingModal,
   SuccessModal,
 } from './ui/RegistrationWarning';

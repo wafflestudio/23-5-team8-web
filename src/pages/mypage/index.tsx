@@ -11,7 +11,7 @@ import {
 } from '@entities/user';
 import type { PracticeSessionItem } from '@entities/user';
 import { useAuth } from '@features/auth';
-import { Warning } from '@shared/ui/Warning';
+import { WarningModal } from '@shared/ui/Warning';
 import './mypage.css';
 
 // MyPage 헤더 컴포넌트
@@ -498,11 +498,8 @@ const MyPage: React.FC = () => {
       />
 
       {/* 성공 안내 모달 */}
-      <Warning
+      <WarningModal.Alert
         isOpen={showSuccessModal}
-        variant="single"
-        icon="none"
-        title={successMessage}
         onClose={() => {
           setShowSuccessModal(false);
           if (successModalCallback) {
@@ -510,15 +507,16 @@ const MyPage: React.FC = () => {
             setSuccessModalCallback(null);
           }
         }}
+        icon="none"
+        title={successMessage}
       />
 
       {/* 에러 안내 모달 */}
-      <Warning
+      <WarningModal.Alert
         isOpen={showErrorModal}
-        variant="single"
+        onClose={() => setShowErrorModal(false)}
         icon="none"
         title={errorMessage}
-        onClose={() => setShowErrorModal(false)}
       />
     </div>
   );

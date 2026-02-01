@@ -25,14 +25,14 @@ import {
   calculateQueueInfo,
   PracticeClock,
   type WarningType,
-  WarningModal,
+  WarningModal as RegistrationWarningModal,
   WaitingModal,
   SuccessModal,
 } from '@features/registration-practice';
 import type { CourseDetailResponse, VirtualStartTimeOption } from '@entities/course';
 import { useCartQuery } from '@features/cart-management';
 import { useModalStore } from '@shared/model/modalStore';
-import { Warning } from '@shared/ui/Warning';
+import { WarningModal } from '@shared/ui/Warning';
 import './registration.css';
 
 interface CaptchaDigit {
@@ -800,7 +800,7 @@ export default function Registration() {
 
       {warningType !== 'none' &&
         createPortal(
-          <WarningModal
+          <RegistrationWarningModal
             warningType={warningType}
             onClose={() => {
               setWarningType('none');
@@ -816,12 +816,11 @@ export default function Registration() {
 
       {showPracticeEndModal &&
         createPortal(
-          <Warning
+          <WarningModal.Alert
             isOpen={showPracticeEndModal}
-            variant="single"
+            onClose={() => setShowPracticeEndModal(false)}
             icon="warning"
             title="연습 시간이 종료되었습니다! (08:33)"
-            onClose={() => setShowPracticeEndModal(false)}
           />,
           document.body
         )}

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useEnrolledCoursesQuery } from '@features/registration-practice';
-import { Warning } from '@shared/ui/Warning';
+import { WarningModal } from '@shared/ui/Warning';
 import { TimeTable } from '@widgets/timetable';
 import './enrollmentHistory.css';
 
@@ -182,11 +182,10 @@ export default function EnrollmentHistory() {
         </div>
       </div>
 
-      <Warning
-        variant="single"
-        icon="warning"
+      <WarningModal.Alert
         isOpen={showNotSupported}
         onClose={() => setShowNotSupported(false)}
+        icon="warning"
         title="지원하지 않는 기능입니다."
       />
     </main>

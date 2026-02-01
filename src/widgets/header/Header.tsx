@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@features/auth';
 import { useModalStore } from '@shared/model/modalStore';
-import { Warning } from '@shared/ui/Warning';
+import { WarningModal } from '@shared/ui/Warning';
 import './header.css';
 
 interface HeaderProps {
@@ -241,27 +241,25 @@ export default function Header({ handleLogout }: HeaderProps) {
           </nav>
         </div>
       </div>
-      <Warning
-        variant="double"
-        icon="question"
+      <WarningModal.Confirm
         isOpen={showLoginWarning}
-        onClose={closeLoginWarning}
+        onCancel={closeLoginWarning}
         onConfirm={handleConfirmLogin}
+        icon="question"
       >
         <p className="warningText">
           로그인 후 사용할 수 있는 기능입니다.
           <br />
           로그인하시겠습니까?
         </p>
-      </Warning>
-      <Warning
-        variant="single"
-        icon="warning"
+      </WarningModal.Confirm>
+      <WarningModal.Alert
         isOpen={showNotSupported}
         onClose={closeNotSupported}
+        icon="warning"
       >
         <p className="warningText">지원하지 않는 기능입니다.</p>
-      </Warning>
+      </WarningModal.Alert>
     </header>
   );
 }
