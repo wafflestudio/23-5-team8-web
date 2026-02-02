@@ -64,11 +64,13 @@ export const useUpdateProfileImageMutation = () => {
       // Step 1: Presigned URL 받기 (파일 객체 전체 전달)
       const { data: urlData } = await getPresignedUrlApi(file);
 
-      // Step 2: Presigned URL로 파일 업로드
-      await uploadToPresignedUrlApi(urlData.presignedUrl, file);
+      // Step 2 & 3: S3 업로드와 프로필 이미지 URL 저장을 병렬 처리
+      const [, profileResponse] = await Promise.all([
+        uploadToPresignedUrlApi(urlData.presignedUrl, file),
+        updateProfileImageApi(urlData.imageUrl),
+      ]);
 
-      // Step 3: 이미지 URL을 /api/mypage/profile-image에 저장
-      return await updateProfileImageApi(urlData.imageUrl);
+      return profileResponse;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: myPageKeys.profile() });
