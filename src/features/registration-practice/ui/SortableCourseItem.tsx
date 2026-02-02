@@ -47,7 +47,10 @@ export function SortableCourseItem({
           onSelect();
         }}
       >
-        <button className={`customCheckBtn ${isSelected ? 'checked' : ''}`}>
+        <button
+          className={`customCheckBtn ${isSelected ? 'checked' : ''}`}
+          aria-label={`${c.course.courseTitle} 선택`}
+        >
           <svg
             viewBox="0 0 24 24"
             fill="none"

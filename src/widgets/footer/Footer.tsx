@@ -1,5 +1,4 @@
 import { useAuth, useTimer } from '@features/auth';
-import { useModalStore } from '@shared/model/modalStore';
 import './footer.css';
 
 interface FooterProps {
@@ -9,7 +8,6 @@ interface FooterProps {
 export default function Footer({ onOpenModal }: FooterProps) {
   const { user } = useAuth();
   const { timeLeft } = useTimer();
-  const { openNotSupported } = useModalStore();
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -24,23 +22,15 @@ export default function Footer({ onOpenModal }: FooterProps) {
           <div className="footerLinks">
             <a
               href="https://boulder-argon-568.notion.site/AllClear-2f70bdb7bbc1801585bbda989f431714"
-                target="_blank"
-                rel="noopener noreferrer"
+              target="_blank"
+              rel="noopener noreferrer"
               className="footerLinkItem bold"
             >
               개인정보처리방침
             </a>
-            <span className="divider">|</span>
-            <a
-              href="#"
-              className="footerLinkItem bold"
-              onClick={() => openNotSupported()}
-            >
-              이메일무단수집거부
-            </a>
           </div>
           <div className="footerCopy">
-            Copyright (C) 2020 SEOUL NATIONAL UNIVERSITY. All Rights Reserved.
+            Copyright (C) 2020 ALLCLEAR SERVICE. All Rights Reserved.
           </div>
         </div>
 

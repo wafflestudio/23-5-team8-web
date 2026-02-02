@@ -262,6 +262,8 @@ export default function Registration() {
                   <input
                     className="regCaptchaInput"
                     placeholder="입 력"
+                    name="captchaInput"
+                    autoComplete="off"
                     value={captcha.captchaInput}
                     onChange={(e) => captcha.setCaptchaInput(e.target.value)}
                   />
@@ -281,6 +283,7 @@ export default function Registration() {
                 className={`practiceToggleBtn ${pipWindow ? 'active' : ''}`}
                 onClick={timer.handleToggleWithCooldown}
                 disabled={timer.isCooldown}
+                aria-label="연습 시작 시간 설정"
                 style={{
                   cursor: timer.isCooldown ? 'not-allowed' : 'pointer',
                   opacity: timer.isCooldown ? 0.6 : 1,

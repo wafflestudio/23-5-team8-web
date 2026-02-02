@@ -248,7 +248,7 @@ export default function HomePage() {
                 </div>
 
                 {isLoading ? (
-                  <div className="home-leaderboard-loading">로딩 중...</div>
+                  <div className="home-leaderboard-loading">로딩 중…</div>
                 ) : isError ? (
                   <div className="home-leaderboard-empty">
                     리더보드를 불러올 수 없습니다.
@@ -276,6 +276,8 @@ export default function HomePage() {
                               className="home-leaderboard-avatar"
                               src={entry.profileImageUrl || DEFAULT_AVATAR}
                               alt={entry.nickname}
+                              width={28}
+                              height={28}
                               onError={(e) => {
                                 (e.currentTarget as HTMLImageElement).src =
                                   DEFAULT_AVATAR;
@@ -309,6 +311,8 @@ export default function HomePage() {
                             className="home-leaderboard-avatar"
                             src={myProfile?.profileImageUrl || DEFAULT_AVATAR}
                             alt={myProfile?.nickname || user.nickname}
+                            width={28}
+                            height={28}
                             onError={(e) => {
                               (e.currentTarget as HTMLImageElement).src =
                                 DEFAULT_AVATAR;
