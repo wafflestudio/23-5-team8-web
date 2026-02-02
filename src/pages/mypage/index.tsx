@@ -123,12 +123,15 @@ const PasswordChangeModal: React.FC<{
 // 계정 삭제 모달
 const DeleteAccountModal: React.FC<{
   isOpen: boolean;
+  isSocialUser: boolean;
   onClose: () => void;
   onConfirm: (password: string) => void;
-}> = ({ isOpen, onClose, onConfirm }) => {
-  const [password, setPassword] = useState('');
+}> = ({ isOpen, isSocialUser, onClose, onConfirm }) => {
+  const [inputValue, setInputValue] = useState('');
 
   if (!isOpen) return null;
+
+  const canSubmit = isSocialUser ? inputValue === '계정삭제' : inputValue.length > 0;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -138,18 +141,33 @@ const DeleteAccountModal: React.FC<{
       >
         <h2>계정 삭제</h2>
         <p>정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="비밀번호 입력"
-        />
+        {isSocialUser ? (
+          <>
+            <p style={{ fontSize: '14px', color: '#666', marginBottom: '8px' }}>
+              확인을 위해 <strong>계정삭제</strong>를 입력해주세요.
+            </p>
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="계정삭제"
+            />
+          </>
+        ) : (
+          <input
+            type="password"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder="비밀번호 입력"
+          />
+        )}
         <div className="modal-buttons">
           <button
             className="delete-button"
+            disabled={!canSubmit}
             onClick={() => {
-              onConfirm(password);
-              setPassword('');
+              onConfirm(inputValue);
+              setInputValue('');
             }}
           >
             삭제
@@ -177,7 +195,8 @@ const MyPage: React.FC = () => {
     (() => void) | null
   >(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+  const isSocialUser = user?.provider === 'kakao' || user?.provider === 'google';
 
   // Queries
   const { data: myPageData, isLoading } = useMyPageQuery();
@@ -493,6 +512,7 @@ const MyPage: React.FC = () => {
 
       <DeleteAccountModal
         isOpen={showDeleteModal}
+        isSocialUser={isSocialUser}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={handleDeleteAccount}
       />
