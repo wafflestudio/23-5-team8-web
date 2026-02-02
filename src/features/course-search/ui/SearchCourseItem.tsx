@@ -1,4 +1,6 @@
+import { useMemo } from 'react';
 import type { CourseDetailResponse } from '@entities/course';
+import { formatSchedule } from '@shared/lib/timeUtils';
 
 export interface SearchCourseItemProps {
   course: CourseDetailResponse;
@@ -13,6 +15,10 @@ export function SearchCourseItem({
   cartCount = 0,
   onSelect,
 }: SearchCourseItemProps) {
+  const schedule = useMemo(
+    () => formatSchedule(course.placeAndTime, '시간 미정'),
+    [course.placeAndTime]
+  );
   return (
     <div className="courseItem" onClick={onSelect}>
       <div className="courseCheckArea">
@@ -63,12 +69,7 @@ export function SearchCourseItem({
           <span className="c-label">학점</span>
           <span className="c-val-blue">{course.credit}</span>
           <span className="c-divider-light">|</span>
-          <span className="c-schedule">
-            {course.placeAndTime
-              ? JSON.parse(course.placeAndTime).time?.replace(/\//g, ' ') ||
-                '시간 미정'
-              : ''}
-          </span>
+          <span className="c-schedule">{schedule}</span>
         </div>
       </div>
 

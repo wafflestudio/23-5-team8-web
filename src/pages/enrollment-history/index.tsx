@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useEnrolledCoursesQuery } from '@features/registration-practice';
 import { WarningModal } from '@shared/ui/Warning';
 import { TimeTable } from '@widgets/timetable';
+import { formatSchedule } from '@shared/lib/timeUtils';
 import './enrollmentHistory.css';
 
 export default function EnrollmentHistory() {
@@ -155,11 +156,7 @@ export default function EnrollmentHistory() {
                               </span>
                               <span className="c-divider-light">|</span>
                               <span className="c-schedule">
-                                {course.placeAndTime
-                                  ? JSON.parse(
-                                      course.placeAndTime
-                                    ).time?.replace(/\//g, ' ') || '시간 미정'
-                                  : '시간 미정'}
+                                {formatSchedule(course.placeAndTime, '시간 미정')}
                               </span>
                             </div>
                           </div>
