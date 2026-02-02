@@ -257,12 +257,16 @@ export default function LeaderBoard() {
                     className="leaderboard-avatar"
                     src={myProfile?.profileImageUrl || DEFAULT_AVATAR}
                     alt={myProfile?.nickname || user.nickname}
+                    width={36}
+                    height={36}
                     onError={(e) => {
                       (e.currentTarget as HTMLImageElement).src =
                         DEFAULT_AVATAR;
                     }}
                   />
-                  <span className="leaderboard-nickname">{myProfile?.nickname || user.nickname}</span>
+                  <span className="leaderboard-nickname">
+                    {myProfile?.nickname || user.nickname}
+                  </span>
                 </div>
                 <span className="leaderboard-value">
                   {formatValue(myRank.value, category)}

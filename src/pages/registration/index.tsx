@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useNavigate } from 'react-router-dom';
 import {
   DndContext,
   closestCenter,
@@ -12,194 +11,53 @@ import {
 import {
   arrayMove,
   SortableContext,
-  useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { isAxiosError } from 'axios';
 import {
-  practiceStartApi,
-  practiceEndApi,
-  practiceAttemptApi,
   usePracticeWindow,
-  calculateQueueInfo,
+  useCaptcha,
+  useCourseSelection,
+  usePracticeTimer,
+  useRegistrationAttempt,
   PracticeClock,
-  type WarningType,
   WarningModal as RegistrationWarningModal,
   WaitingModal,
   SuccessModal,
+  SortableCourseItem,
+  type CourseData,
 } from '@features/registration-practice';
-import type { CourseDetailResponse, VirtualStartTimeOption } from '@entities/course';
 import { useCartQuery } from '@features/cart-management';
 import { useModalStore } from '@shared/model/modalStore';
 import { WarningModal } from '@shared/ui/Warning';
 import './registration.css';
 
-interface CaptchaDigit {
-  value: string;
-  rotation: number;
-  yOffset: number;
-  xOffset: number;
-  color: string;
-  fontSize: number;
-}
-
-interface CourseData {
-  preEnrollId: number;
-  course: CourseDetailResponse;
-  cartCount: number;
-}
-
-interface SelectedCourseInfo {
-  totalCompetitors: number;
-  capacity: number;
-  title: string;
-  courseNumber: string;
-  lectureNumber: string;
-}
-
-interface SortableCourseItemProps {
-  courseData: CourseData;
-  isSelected: boolean;
-  onSelect: () => void;
-}
-
-function SortableCourseItem({
-  courseData,
-  isSelected,
-  onSelect,
-}: SortableCourseItemProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: courseData.course.id,
-  });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 1000 : 'auto',
-  };
-
-  const c = courseData;
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={`courseItem${isDragging ? ' dragging' : ''}`}
-    >
-      <div
-        className="courseCheckArea"
-        onClick={(e) => {
-          e.stopPropagation();
-          onSelect();
-        }}
-      >
-        <button className={`customCheckBtn ${isSelected ? 'checked' : ''}`}>
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="checkIcon"
-          >
-            <path
-              d="M4 12L9 17L20 6"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-      </div>
-
-      <div className="courseInfoArea" {...attributes} {...listeners}>
-        <div className="infoRow top">
-          <span className="c-type">[{c.course.classification}]</span>
-          <span className="c-title">{c.course.courseTitle}</span>
-        </div>
-        <div className="infoRow middle">
-          <span className="c-prof">{c.course.instructor}</span>
-          <span className="c-divider">|</span>
-          <span className="c-dept">{c.course.department}</span>
-        </div>
-        <div className="infoRow bottom">
-          <span className="c-label">수강신청인원/정원(재학생)</span>
-          <span className="c-val-blue">
-            0/{c.course.quota}({c.course.quota - c.course.freshmanQuota})
-          </span>
-          <span className="c-divider-light">|</span>
-          <span className="c-label">학점</span>
-          <span className="c-val-blue">{c.course.credit}</span>
-          <span className="c-divider-light">|</span>
-          <span className="c-schedule">
-            {c.course.placeAndTime
-              ? JSON.parse(c.course.placeAndTime).time?.replace(/\//g, ' ') ||
-                '시간 미정'
-              : '시간 미정'}
-          </span>
-        </div>
-      </div>
-
-      <div className="courseActionArea">
-        <div className="cartInfoBox">
-          <svg
-            className="cartIconSvg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="9" cy="21" r="1"></circle>
-            <circle cx="20" cy="21" r="1"></circle>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-          </svg>
-          <span className={'cartCountNum red'}>{c.cartCount}</span>
-        </div>
-        <div className="arrowBox">
-          <svg width="12" height="12" viewBox="0 0 10 18" fill="none">
-            <path
-              d="M1 1L9 9L1 17"
-              stroke="#000000"
-              strokeWidth="1"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function makeCaptchaDigits(): CaptchaDigit[] {
-  const num1 = Math.floor(Math.random() * 10);
-  const num2 = Math.floor(Math.random() * 10);
-  const chars = [num1, num2];
-  const colors = ['#4a235a', '#154360', '#1b2631', '#78281f', '#0e6251'];
-
-  return chars.map((char) => ({
-    value: char.toString(),
-    rotation: Math.random() * 30 - 15,
-    yOffset: Math.random() * 6 - 3,
-    xOffset: Math.random() * 6 - 3,
-    color: colors[Math.floor(Math.random() * colors.length)],
-    fontSize: Math.floor(Math.random() * 5) + 24,
-  }));
-}
-
 export default function Registration() {
   const { pipWindow, openWindow, closeWindow } = usePracticeWindow();
   const { openNotSupported } = useModalStore();
+  const [showPracticeEndModal, setShowPracticeEndModal] = useState(false);
 
+  // Custom hooks
+  const captcha = useCaptcha();
+  const courseSelection = useCourseSelection();
+
+  const timer = usePracticeTimer({
+    pipWindow,
+    openWindow,
+    closeWindow,
+    onPracticeEnd: () => setShowPracticeEndModal(true),
+  });
+
+  const attempt = useRegistrationAttempt({
+    isPracticeRunning: !!pipWindow,
+    currentTime: timer.currentTime,
+    selectedCourseId: courseSelection.selectedCourseId,
+    selectedCourseInfo: courseSelection.selectedCourseInfo,
+    validateCaptcha: captcha.validate,
+    onCaptchaReset: captcha.reset,
+    onSelectionClear: courseSelection.clear,
+  });
+
+  // Cart data and local course list management
   const { data: cartData } = useCartQuery(true);
   const [localCourseList, setLocalCourseList] = useState<CourseData[]>([]);
   const [isDraggingActive, setIsDraggingActive] = useState(false);
@@ -209,7 +67,6 @@ export default function Registration() {
     if (!cartData || isDraggingActive) return;
 
     setLocalCourseList((prevList) => {
-      // Initial load: use server order
       if (prevList.length === 0) {
         return cartData.map((item) => ({
           preEnrollId: item.preEnrollId,
@@ -218,7 +75,6 @@ export default function Registration() {
         }));
       }
 
-      // If user hasn't reordered, use server order
       if (!hasUserReordered.current) {
         return cartData.map((item) => ({
           preEnrollId: item.preEnrollId,
@@ -227,12 +83,10 @@ export default function Registration() {
         }));
       }
 
-      // Smart merge: preserve user's order, update data, handle additions/deletions
       const serverDataMap = new Map(
         cartData.map((item) => [item.course.id, item])
       );
 
-      // Keep user's order for existing items, update their data
       const updatedList = prevList
         .filter((local) => serverDataMap.has(local.course.id))
         .map((local) => {
@@ -244,7 +98,6 @@ export default function Registration() {
           };
         });
 
-      // Append new items at the end
       const existingIds = new Set(updatedList.map((item) => item.course.id));
       const newItems = cartData
         .filter((item) => !existingIds.has(item.course.id))
@@ -258,53 +111,24 @@ export default function Registration() {
     });
   }, [cartData, isDraggingActive]);
 
+  // Reset attempt state when practice starts
+  useEffect(() => {
+    if (pipWindow) {
+      attempt.resetAttemptState();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pipWindow]);
+
   const courseList = localCourseList.length > 0 ? localCourseList : null;
 
-  const [captchaDigits, setCaptchaDigits] = useState<CaptchaDigit[]>(() =>
-    makeCaptchaDigits()
-  );
-  const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
-  const [selectedCourseInfo, setSelectedCourseInfo] =
-    useState<SelectedCourseInfo | null>(null);
-  const [captchaInput, setCaptchaInput] = useState('');
-  const [currentTime, setCurrentTime] = useState<Date>(() => {
-    const now = new Date();
-    now.setHours(8, 29, 30, 0);
-    return now;
-  });
-  const [startOffset, setStartOffset] = useState<number>(0);
-  const [warningType, setWarningType] = useState<WarningType>('none');
-  const [waitingInfo, setWaitingInfo] = useState<{
-    count: number;
-    seconds: number;
-  } | null>(null);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [isCooldown, setIsCooldown] = useState(false);
-  const [succeededCourseIds, setSucceededCourseIds] = useState<Set<number>>(
-    new Set()
-  );
-  const [fullCourseIds, setFullCourseIds] = useState<Set<number>>(new Set());
-  const [showPracticeEndModal, setShowPracticeEndModal] = useState(false);
-
-  const navigate = useNavigate();
-  const practiceState = useRef({
-    timerId: undefined as number | undefined,
-    isRunning: false,
-    startTime: 0,
-    virtualOffset: 0,
-  });
-
+  // Drag and drop
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 5,
-      },
+      activationConstraint: { distance: 5 },
     })
   );
 
-  const handleDragStart = () => {
-    setIsDraggingActive(true);
-  };
+  const handleDragStart = () => setIsDraggingActive(true);
 
   const handleDragEnd = (event: DragEndEvent) => {
     setIsDraggingActive(false);
@@ -322,293 +146,6 @@ export default function Registration() {
     }
   };
 
-  const handleSelectedCourse = (
-    courseId: number,
-    currentStd: number,
-    maxStd_current: number,
-    cartCount: number,
-    courseTitle: string,
-    courseNumber: string,
-    lectureNumber: string
-  ) => {
-    if (selectedCourseId === courseId) {
-      setSelectedCourseId(null);
-      setSelectedCourseInfo(null);
-    } else {
-      setSelectedCourseId(courseId);
-      setSelectedCourseInfo({
-        totalCompetitors: cartCount,
-        capacity: maxStd_current - currentStd,
-        title: courseTitle,
-        courseNumber: courseNumber,
-        lectureNumber: lectureNumber,
-      });
-    }
-  };
-
-  const handleStopPractice = async (isManual = false) => {
-    if (!practiceState.current.isRunning) return;
-    practiceState.current.isRunning = false;
-
-    if (practiceState.current.timerId) {
-      clearInterval(practiceState.current.timerId);
-      practiceState.current.timerId = undefined;
-    }
-
-    closeWindow();
-
-    try {
-      await practiceEndApi();
-      if (!isManual) {
-        setShowPracticeEndModal(true);
-      }
-    } catch (error) {
-      if (isAxiosError(error) && error.response) {
-        alert(
-          `연습 종료 실패: ${error.response.data.message || '알 수 없는 오류'}`
-        );
-      } else {
-        alert('연습 종료 중 네트워크 오류가 발생했습니다.');
-      }
-    }
-  };
-
-  const getTimeOption = (offset: number): VirtualStartTimeOption => {
-    const optionMap: Record<number, VirtualStartTimeOption> = {
-      60: 'TIME_08_29_00',
-      30: 'TIME_08_29_30',
-      15: 'TIME_08_29_45',
-    };
-    return optionMap[offset] || 'TIME_08_29_30';
-  };
-
-  const handleStartPractice = async () => {
-    try {
-      const virtualStartTimeOption = getTimeOption(startOffset);
-      await practiceStartApi({ virtualStartTimeOption });
-
-      setSucceededCourseIds(new Set());
-      setFullCourseIds(new Set());
-
-      startTimerAndPip();
-    } catch (error) {
-      if (isAxiosError(error) && error.response) {
-        if (error.response.status === 409) {
-          try {
-            await practiceEndApi();
-            const virtualStartTimeOption = getTimeOption(startOffset);
-
-            await practiceStartApi({ virtualStartTimeOption });
-
-            startTimerAndPip();
-          } catch {
-            alert('이미 연습 중인 상태를 종료하는 데 실패했습니다.');
-          }
-        } else {
-          alert(
-            `연습 시작 실패: ${error.response.data.message || '알 수 없는 오류'}`
-          );
-        }
-      } else {
-        alert('연습 시작 중 네트워크 오류가 발생했습니다.');
-      }
-    }
-  };
-
-  const handleRegisterAttempt = async () => {
-    if (!pipWindow) {
-      setWarningType('practiceNotStarted');
-      setCaptchaInput('');
-      setSelectedCourseId(null);
-      setSelectedCourseInfo(null);
-      setCaptchaDigits(makeCaptchaDigits());
-      return;
-    }
-
-    if (selectedCourseId === null) {
-      setWarningType('notChosen');
-      setCaptchaInput('');
-      setCaptchaDigits(makeCaptchaDigits());
-      return;
-    }
-
-    const correctCaptcha = captchaDigits.map((d) => d.value).join('');
-    setCaptchaDigits(makeCaptchaDigits());
-    if (captchaInput !== correctCaptcha) {
-      setWarningType('captchaError');
-      setCaptchaInput('');
-      setSelectedCourseId(null);
-      setSelectedCourseInfo(null);
-      return;
-    }
-
-    const targetTime = new Date(currentTime);
-    targetTime.setHours(8, 30, 0, 0);
-
-    const diffMs = currentTime.getTime() - targetTime.getTime();
-
-    if (diffMs < 0) {
-      setWarningType('beforeTime');
-      setCaptchaInput('');
-      setSelectedCourseId(null);
-      setSelectedCourseInfo(null);
-      return;
-    }
-
-    if (succeededCourseIds.has(selectedCourseId)) {
-      setWarningType('alreadyAttempted');
-      setCaptchaInput('');
-      setSelectedCourseId(null);
-      setSelectedCourseInfo(null);
-      return;
-    }
-
-    if (fullCourseIds.has(selectedCourseId)) {
-      setWarningType('quotaOver');
-      setCaptchaInput('');
-      setSelectedCourseId(null);
-      return;
-    }
-
-    const queueData = calculateQueueInfo(diffMs);
-
-    if (queueData.queueCount > 0) {
-      setWaitingInfo({
-        count: queueData.queueCount,
-        seconds: queueData.waitSeconds,
-      });
-    } else {
-      proceedToApiCall();
-    }
-  };
-
-  const proceedToApiCall = async () => {
-    setWaitingInfo(null);
-
-    // Capture values at call time to avoid stale closure issues
-    const currentCourseId = selectedCourseId!;
-    const currentCourseInfo = selectedCourseInfo!;
-
-    try {
-      const payload = {
-        courseId: currentCourseId,
-        totalCompetitors: currentCourseInfo.totalCompetitors,
-        capacity: currentCourseInfo.capacity,
-      };
-
-      const response = await practiceAttemptApi(payload);
-
-      setCaptchaInput('');
-
-      if (!response.data.isSuccess) {
-        // Keep selectedCourseInfo for the error modal to display course details
-        setWarningType('quotaOver');
-        setFullCourseIds((prev) => new Set(prev).add(currentCourseId));
-      } else {
-        // Clear UI state only on success
-        setSelectedCourseId(null);
-        setSelectedCourseInfo(null);
-        setShowSuccessModal(true);
-        setSucceededCourseIds((prev) => new Set(prev).add(currentCourseId));
-      }
-    } catch (error) {
-      if (isAxiosError(error) && error.response) {
-        alert(error.response.data.message || '수강신청에 실패했습니다.');
-      } else {
-        alert('수강신청 요청 중 오류가 발생했습니다.');
-      }
-    }
-  };
-
-  const handleSuccessClose = (move: boolean) => {
-    setShowSuccessModal(false);
-    if (move) {
-      navigate('/enrollment-history');
-      setCaptchaInput('');
-    } else {
-      setSelectedCourseId(null);
-      setSelectedCourseInfo(null);
-      setCaptchaInput('');
-    }
-  };
-
-  const handleToggleWithCooldown = () => {
-    if (isCooldown) return;
-
-    if (pipWindow) {
-      handleStopPractice(true);
-    } else {
-      handleStartPractice();
-    }
-
-    setIsCooldown(true);
-
-    setTimeout(() => {
-      setIsCooldown(false);
-    }, 1500);
-  };
-
-  const startTimerAndPip = async () => {
-    const offsetSeconds = startOffset === 0 ? 30 : startOffset;
-    const virtualStart = new Date();
-    virtualStart.setHours(8, 30, 0, 0);
-    virtualStart.setSeconds(virtualStart.getSeconds() - offsetSeconds);
-
-    practiceState.current.startTime = Date.now();
-    practiceState.current.virtualOffset = virtualStart.getTime();
-
-    setCurrentTime(virtualStart);
-    practiceState.current.isRunning = true;
-    openWindow();
-  };
-
-  useEffect(() => {
-    if (!pipWindow) return;
-
-    const state = practiceState.current;
-
-    if (state.timerId) clearInterval(state.timerId);
-
-    state.timerId = window.setInterval(() => {
-      const now = Date.now();
-      const elapsed = now - state.startTime;
-      const nextTime = new Date(state.virtualOffset + elapsed);
-
-      setCurrentTime(nextTime);
-
-      if (nextTime.getHours() === 8 && nextTime.getMinutes() >= 33) {
-        handleStopPractice(false);
-      }
-    }, 1000);
-
-    return () => {
-      if (state.timerId) {
-        clearInterval(state.timerId);
-      }
-      if (!pipWindow.closed) {
-        pipWindow.close();
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pipWindow]);
-
-  useEffect(() => {
-    const state = practiceState.current;
-    return () => {
-      if (state.isRunning) {
-        if (state.timerId) {
-          clearInterval(state.timerId);
-        }
-
-        state.isRunning = false;
-
-        practiceEndApi().catch((error) => {
-          console.error('세션 자동 종료 실패:', error);
-        });
-      }
-    };
-  }, []);
-
   return (
     <div className="registrationPage">
       <div className="containerX">
@@ -621,7 +158,7 @@ export default function Registration() {
           <button
             className="regTabItem"
             onClick={() => {
-              setWarningType('none');
+              attempt.setWarningType('none');
               openNotSupported();
             }}
           >
@@ -630,7 +167,7 @@ export default function Registration() {
           <button
             className="regTabItem"
             onClick={() => {
-              setWarningType('none');
+              attempt.setWarningType('none');
               openNotSupported();
             }}
           >
@@ -639,7 +176,7 @@ export default function Registration() {
           <button
             className="regTabItem"
             onClick={() => {
-              setWarningType('none');
+              attempt.setWarningType('none');
               openNotSupported();
             }}
           >
@@ -681,9 +218,11 @@ export default function Registration() {
                       <SortableCourseItem
                         key={c.course.id}
                         courseData={c}
-                        isSelected={selectedCourseId === c.course.id}
+                        isSelected={
+                          courseSelection.selectedCourseId === c.course.id
+                        }
                         onSelect={() =>
-                          handleSelectedCourse(
+                          courseSelection.handleSelectCourse(
                             c.course.id,
                             0,
                             c.course.quota,
@@ -705,7 +244,7 @@ export default function Registration() {
             <div className="regFloatingBox">
               <div className="regCaptchaRow">
                 <div className="regCaptchaDisplay">
-                  {captchaDigits.map((digit, index) => (
+                  {captcha.captchaDigits.map((digit, index) => (
                     <span
                       key={index}
                       className="regCaptchaDigit"
@@ -723,13 +262,18 @@ export default function Registration() {
                   <input
                     className="regCaptchaInput"
                     placeholder="입 력"
-                    value={captchaInput}
-                    onChange={(e) => setCaptchaInput(e.target.value)}
+                    name="captchaInput"
+                    autoComplete="off"
+                    value={captcha.captchaInput}
+                    onChange={(e) => captcha.setCaptchaInput(e.target.value)}
                   />
                 </div>
               </div>
 
-              <button className="regSubmitBtn" onClick={handleRegisterAttempt}>
+              <button
+                className="regSubmitBtn"
+                onClick={attempt.handleRegisterAttempt}
+              >
                 수강신청
               </button>
             </div>
@@ -737,15 +281,16 @@ export default function Registration() {
             <div className="practiceArea">
               <button
                 className={`practiceToggleBtn ${pipWindow ? 'active' : ''}`}
-                onClick={handleToggleWithCooldown}
-                disabled={isCooldown}
+                onClick={timer.handleToggleWithCooldown}
+                disabled={timer.isCooldown}
+                aria-label="연습 시작 시간 설정"
                 style={{
-                  cursor: isCooldown ? 'not-allowed' : 'pointer',
-                  opacity: isCooldown ? 0.6 : 1,
+                  cursor: timer.isCooldown ? 'not-allowed' : 'pointer',
+                  opacity: timer.isCooldown ? 0.6 : 1,
                   transition: 'all 0.2s ease',
                 }}
               >
-                {isCooldown
+                {timer.isCooldown
                   ? '잠시 대기... (1.5s)'
                   : pipWindow
                     ? '연습 종료 (Stop)'
@@ -753,8 +298,8 @@ export default function Registration() {
               </button>
               <select
                 className="timeSettingDropdown"
-                value={startOffset}
-                onChange={(e) => setStartOffset(Number(e.target.value))}
+                value={timer.startOffset}
+                onChange={(e) => timer.setStartOffset(Number(e.target.value))}
               >
                 <option value={0} disabled hidden>
                   연습 시작 설정
@@ -775,41 +320,44 @@ export default function Registration() {
 
       {pipWindow &&
         createPortal(
-          <PracticeClock currentTime={currentTime} />,
+          <PracticeClock currentTime={timer.currentTime} />,
           pipWindow.document.body
         )}
 
-      {waitingInfo &&
+      {attempt.waitingInfo &&
         createPortal(
           <WaitingModal
-            initialQueueCount={waitingInfo.count}
-            initialWaitSeconds={waitingInfo.seconds}
-            onComplete={proceedToApiCall}
+            initialQueueCount={attempt.waitingInfo.count}
+            initialWaitSeconds={attempt.waitingInfo.seconds}
+            onComplete={attempt.proceedToApiCall}
           />,
           document.body
         )}
 
-      {showSuccessModal &&
+      {attempt.showSuccessModal &&
         createPortal(
           <SuccessModal
-            onKeep={() => handleSuccessClose(false)}
-            onGoToHistory={() => handleSuccessClose(true)}
+            onKeep={() => attempt.handleSuccessClose(false)}
+            onGoToHistory={() => attempt.handleSuccessClose(true)}
           />,
           document.body
         )}
 
-      {warningType !== 'none' &&
+      {attempt.warningType !== 'none' &&
         createPortal(
           <RegistrationWarningModal
-            warningType={warningType}
+            warningType={attempt.warningType}
             onClose={() => {
-              setWarningType('none');
-              setSelectedCourseId(null);
-              setSelectedCourseInfo(null);
+              attempt.setWarningType('none');
+              courseSelection.clear();
             }}
-            courseTitle={selectedCourseInfo?.title ?? null}
-            courseNumber={selectedCourseInfo?.courseNumber ?? null}
-            lectureNumber={selectedCourseInfo?.lectureNumber ?? null}
+            courseTitle={courseSelection.selectedCourseInfo?.title ?? null}
+            courseNumber={
+              courseSelection.selectedCourseInfo?.courseNumber ?? null
+            }
+            lectureNumber={
+              courseSelection.selectedCourseInfo?.lectureNumber ?? null
+            }
           />,
           document.body
         )}

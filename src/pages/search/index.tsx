@@ -1,38 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { isAxiosError } from 'axios';
-import { useCourseSearchQuery } from '@features/course-search';
+import { useCourseSearchQuery, SearchCourseItem } from '@features/course-search';
 import { useAddToCartMutation, useCartQuery } from '@features/cart-management';
+import { useCaptcha } from '@features/registration-practice';
 import type { CourseDetailResponse } from '@entities/course';
 import { WarningModal } from '@shared/ui/Warning';
+import { Pagination } from '@shared/ui/Pagination';
 import { hasTimeConflict, extractTimeFromPlaceAndTime } from '@shared/lib/timeUtils';
 import './search.css';
-
-interface CaptchaDigit {
-  value: string;
-  rotation: number;
-  yOffset: number;
-  xOffset: number;
-  color: string;
-  fontSize: number;
-}
-
-function makeCaptchaDigits(): CaptchaDigit[] {
-  const num1 = Math.floor(Math.random() * 10);
-  const num2 = Math.floor(Math.random() * 10);
-  const chars = [num1, num2];
-
-  const colors = ['#1f4e38', '#5a3e1b', '#2b2b80', '#631818', '#2f4f4f'];
-
-  return chars.map((char) => ({
-    value: char.toString(),
-    rotation: Math.random() * 40 - 20,
-    yOffset: Math.random() * 8 - 4,
-    xOffset: Math.random() * 10 - 5,
-    color: colors[Math.floor(Math.random() * colors.length)],
-    fontSize: Math.floor(Math.random() * 7) + 20,
-  }));
-}
 
 const PAGE_SIZE = 10;
 
@@ -43,7 +19,7 @@ export default function SearchPage() {
   const keyword = searchParams.get('query') || '';
   const currentPage = parseInt(searchParams.get('page') || '0', 10);
 
-  const [captchaDigits] = useState<CaptchaDigit[]>(() => makeCaptchaDigits());
+  const captcha = useCaptcha();
   const [selectedCourses, setSelectedCourses] = useState<Set<number>>(
     new Set()
   );
@@ -296,119 +272,15 @@ export default function SearchPage() {
                 <p className="stateMessage">검색 결과가 없습니다.</p>
               )}
               {!isLoading &&
-                courses.map((course: CourseDetailResponse) => {
-                  const isSelected = selectedCourses.has(course.id);
-                  const cartCount = 0;
-
-                  return (
-                    <div
-                      key={course.id}
-                      className="courseItem"
-                      onClick={() => toggleCourseSelection(course.id)}
-                    >
-                      <div className="courseCheckArea">
-                        <button
-                          className={`customCheckBtn ${isSelected ? 'checked' : ''}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleCourseSelection(course.id);
-                          }}
-                        >
-                          <svg
-                            className="checkIcon"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        </button>
-                      </div>
-
-                      <div className="courseInfoArea">
-                        <div className="infoRow">
-                          <span className="c-type">
-                            [
-                            {course.academicCourse === '학사'
-                              ? '학사'
-                              : '대학원'}
-                            ] [{course.classification}]
-                          </span>
-                          <span className="c-title">{course.courseTitle}</span>
-                        </div>
-                        <div className="infoRow">
-                          <span className="c-prof">{course.instructor}</span>
-                          <span className="c-divider">|</span>
-                          <span className="c-dept">{course.department}</span>
-                          <span className="c-divider">|</span>
-                          <span className="c-coursenum">
-                            {course.courseNumber}({course.lectureNumber})
-                          </span>
-                        </div>
-                        <div className="infoRow">
-                          <span className="c-label">
-                            수강신청인원/정원(재학생)
-                          </span>
-                          <span className="c-val-blue">
-                            0/{course.quota}({course.quota - course.freshmanQuota})
-                          </span>
-                          <span className="c-divider-light">|</span>
-                          <span className="c-label">총수강인원</span>
-                          <span className="c-val-blue">0</span>
-                          <span className="c-divider-light">|</span>
-                          <span className="c-label">학점</span>
-                          <span className="c-val-blue">{course.credit}</span>
-                          <span className="c-divider-light">|</span>
-                          <span className="c-schedule">
-                            {course.placeAndTime
-                              ? JSON.parse(course.placeAndTime).time?.replace(
-                                  /\//g,
-                                  ' '
-                                ) || '시간 미정'
-                              : ''}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="courseActionArea">
-                        <div className="cartInfoBox">
-                          <svg
-                            className="cartIconSvg"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <circle cx="9" cy="21" r="1" />
-                            <circle cx="20" cy="21" r="1" />
-                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                          </svg>
-                          <span
-                            className={`cartCountNum ${cartCount > 0 ? 'red' : ''}`}
-                          >
-                            {cartCount}
-                          </span>
-                        </div>
-                        <div className="arrowBox">
-                          <svg
-                            width="10"
-                            height="16"
-                            viewBox="0 0 10 16"
-                            fill="none"
-                          >
-                            <path
-                              d="M1 1L8 8L1 15"
-                              stroke="#aaa"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                courses.map((course: CourseDetailResponse) => (
+                  <SearchCourseItem
+                    key={course.id}
+                    course={course}
+                    isSelected={selectedCourses.has(course.id)}
+                    cartCount={0}
+                    onSelect={() => toggleCourseSelection(course.id)}
+                  />
+                ))}
             </div>
             <div>
               <p
@@ -421,61 +293,12 @@ export default function SearchPage() {
               </p>
             </div>
 
-            {!isLoading && !error && totalPages > 1 && (
-              <div className="pagination">
-                <button
-                  className="pageBtn"
-                  onClick={() => setPage(0)}
-                  disabled={currentPage === 0}
-                >
-                  <img src="/assets/btn-arrow-first.png" alt="처음" />
-                </button>
-                <button
-                  className="pageBtn"
-                  onClick={() => setPage(Math.max(0, currentPage - 1))}
-                  disabled={currentPage === 0}
-                >
-                  <img src="/assets/btn_page_back.png" alt="이전" />
-                </button>
-
-                {Array.from(
-                  {
-                    length: Math.min(5, totalPages),
-                  },
-                  (_, i) => {
-                    const startPage = Math.floor(currentPage / 5) * 5;
-                    const pageNum = startPage + i;
-                    if (pageNum >= totalPages) return null;
-
-                    return (
-                      <button
-                        key={pageNum}
-                        className={`pageNumber ${currentPage === pageNum ? 'active' : ''}`}
-                        onClick={() => setPage(pageNum)}
-                      >
-                        {pageNum + 1}
-                      </button>
-                    );
-                  }
-                )}
-
-                <button
-                  className="pageBtn"
-                  onClick={() =>
-                    setPage(Math.min(totalPages - 1, currentPage + 1))
-                  }
-                  disabled={currentPage >= totalPages - 1}
-                >
-                  <img src="/assets/btn_page_next.png" alt="다음" />
-                </button>
-                <button
-                  className="pageBtn"
-                  onClick={() => setPage(totalPages - 1)}
-                  disabled={currentPage >= totalPages - 1}
-                >
-                  <img src="/assets/btn-arrow-last.png" alt="마지막" />
-                </button>
-              </div>
+            {!isLoading && !error && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
             )}
           </div>
 
@@ -498,7 +321,7 @@ export default function SearchPage() {
 
               <div className="captchaRow">
                 <div className="captchaBox">
-                  {captchaDigits.map((digit, index) => (
+                  {captcha.captchaDigits.map((digit, index) => (
                     <span
                       key={index}
                       className="captchaDigit"
@@ -512,7 +335,12 @@ export default function SearchPage() {
                     </span>
                   ))}
                 </div>
-                <input className="captchaInput" placeholder="입 력" />
+                <input
+                  className="captchaInput"
+                  placeholder="입 력"
+                  value={captcha.captchaInput}
+                  onChange={(e) => captcha.setCaptchaInput(e.target.value)}
+                />
               </div>
 
               <button

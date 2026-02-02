@@ -124,6 +124,7 @@
   font-size: 18px;
   color: #ff5722; /* 붉은 오렌지색 */
   font-weight: 400;
+  font-variant-numeric: tabular-nums;
 }
 
 /* 하단 버튼 영역 (반반 쪼개기) */

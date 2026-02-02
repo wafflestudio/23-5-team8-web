@@ -76,6 +76,8 @@ export default function Header({ handleLogout }: HeaderProps) {
               <img
                 src="/assets/logo.png"
                 alt="ALLCLEAR"
+                width={50}
+                height={50}
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).style.display = 'none';
                 }}
@@ -93,11 +95,13 @@ export default function Header({ handleLogout }: HeaderProps) {
 
           <div className="searchArea">
             <div className="searchBox">
-              <select className="searchSelect" disabled>
+              <select className="searchSelect" aria-hidden="true" disabled>
                 <option>Search</option>
               </select>
               <input
                 className="searchInput"
+                name="search"
+                autoComplete="off"
                 placeholder="전체 강좌 검색은 돋보기 버튼을 클릭하세요"
                 ref={searchInputRef}
                 onKeyDown={handleKeyDown}
@@ -174,9 +178,9 @@ export default function Header({ handleLogout }: HeaderProps) {
                   <Link to="/mypage" className="userDropItem">
                     마이페이지
                   </Link>
-                  <a href="#" className="userDropItem" onClick={handleLogout}>
+                  <button className="userDropItem" onClick={handleLogout}>
                     로그아웃
-                  </a>
+                  </button>
                 </div>
               </div>
             )}

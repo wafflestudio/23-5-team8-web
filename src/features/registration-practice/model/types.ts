@@ -2,6 +2,27 @@ import type { CourseDetailResponse, VirtualStartTimeOption } from '@entities/cou
 
 export type { VirtualStartTimeOption };
 
+export type { CaptchaDigit } from '../lib/captchaUtils';
+
+export interface SelectedCourseInfo {
+  totalCompetitors: number;
+  capacity: number;
+  title: string;
+  courseNumber: string;
+  lectureNumber: string;
+}
+
+export interface WaitingInfo {
+  count: number;
+  seconds: number;
+}
+
+export interface CourseData {
+  preEnrollId: number;
+  course: CourseDetailResponse;
+  cartCount: number;
+}
+
 export interface PracticeStartRequest {
   virtualStartTimeOption?: VirtualStartTimeOption;
 }
