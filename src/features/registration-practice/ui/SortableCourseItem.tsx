@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { formatSchedule } from '@shared/lib/timeUtils';
 
 import type { CourseData } from '../model/types';
 
@@ -33,6 +35,10 @@ export function SortableCourseItem({
   };
 
   const c = courseData;
+  const schedule = useMemo(
+    () => formatSchedule(c.course.placeAndTime, '시간 미정'),
+    [c.course.placeAndTime]
+  );
 
   return (
     <div
@@ -86,12 +92,7 @@ export function SortableCourseItem({
           <span className="c-label">학점</span>
           <span className="c-val-blue">{c.course.credit}</span>
           <span className="c-divider-light">|</span>
-          <span className="c-schedule">
-            {c.course.placeAndTime
-              ? JSON.parse(c.course.placeAndTime).time?.replace(/\//g, ' ') ||
-                '시간 미정'
-              : '시간 미정'}
-          </span>
+          <span className="c-schedule">{schedule}</span>
         </div>
       </div>
 

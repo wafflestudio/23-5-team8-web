@@ -1,5 +1,5 @@
 export { AuthContext, useAuth } from './model/authContext';
-export type { User, AuthContextType } from './model/authContext';
+export type { User, AuthContextType, LoginProvider } from './model/authContext';
 
 export { TimerContext, useTimer } from './model/timerContext';
 export type { TimerContextType } from './model/timerContext';

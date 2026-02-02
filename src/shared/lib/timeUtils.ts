@@ -82,3 +82,13 @@ export function extractTimeFromPlaceAndTime(placeAndTime: string | null | undefi
     return null;
   }
 }
+
+/**
+ * Parse placeAndTime JSON and return formatted schedule string.
+ * e.g. "월(11:00~12:15)/수(11:00~12:15)" → "월(11:00~12:15) 수(11:00~12:15)"
+ */
+export function formatSchedule(placeAndTime: string | null | undefined, fallback = ''): string {
+  const time = extractTimeFromPlaceAndTime(placeAndTime);
+  if (!time) return fallback;
+  return time.replace(/\//g, ' ');
+}

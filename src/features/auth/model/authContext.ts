@@ -1,8 +1,11 @@
 import {createContext, useContext} from 'react';
 
+export type LoginProvider = 'local' | 'kakao' | 'google';
+
 export interface User {
   id: string;
   nickname: string;
+  provider: LoginProvider;
 }
 
 export interface AuthContextType {

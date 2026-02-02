@@ -8,6 +8,7 @@ import {
 import { useModalStore } from '@shared/model/modalStore';
 import { WarningModal } from '@shared/ui/Warning';
 import { TimeTable } from '@widgets/timetable';
+import { formatSchedule } from '@shared/lib/timeUtils';
 import './cart.css';
 
 export default function Cart() {
@@ -222,11 +223,7 @@ export default function Cart() {
                           <span className="c-divider-light">|</span>
                           <div className="infoRow">
                             <span className="c-schedule">
-                              {item.course.placeAndTime
-                                ? JSON.parse(
-                                    item.course.placeAndTime
-                                  ).time?.replace(/\//g, ' ') || '시간 미정'
-                                : '시간 미정'}
+                              {formatSchedule(item.course.placeAndTime, '시간 미정')}
                             </span>
                           </div>
                         </div>

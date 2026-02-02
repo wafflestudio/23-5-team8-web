@@ -9,6 +9,7 @@ import EnrollmentHistory from '@pages/enrollment-history';
 import LeaderBoard from '@pages/leaderboard';
 import MyPage from '@pages/mypage';
 import PracticeSessionDetail from '@pages/practice-session';
+import PracticeResults from '@pages/practice-results';
 
 export function AppRoutes() {
   return (
@@ -22,6 +23,7 @@ export function AppRoutes() {
       <Route path="/enrollment-history" element={<EnrollmentHistory />} />
       <Route path="/leaderboard" element={<LeaderBoard />} />
       <Route path="/mypage" element={<MyPage />} />
+      <Route path="/practice-results" element={<PracticeResults />} />
       <Route
         path="/practice-session/:sessionId"
         element={<PracticeSessionDetail />}

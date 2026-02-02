@@ -69,6 +69,7 @@ export default function Login() {
         {
           id: userData.id.toString(),
           nickname: userData.nickname,
+          provider: 'local',
         },
         accessToken || ''
       );
@@ -126,6 +127,7 @@ export default function Login() {
           {
             id: user.id.toString(),
             nickname: user.nickname,
+            provider: provider,
           },
           accessToken
         );
