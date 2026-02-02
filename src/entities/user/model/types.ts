@@ -49,7 +49,7 @@ export interface PracticeAttemptResult {
   rank: number;
   percentile: number;
   reactionTime: number;
-  success: boolean;
+  isSuccess: boolean;
 }
 
 export interface PracticeResultResponse {

@@ -1,0 +1,141 @@
+.practice-results-page {
+  padding: 40px 0 60px;
+}
+
+.practice-results-header {
+  margin-bottom: 24px;
+}
+
+.practice-results-title {
+  font-size: 28px;
+  font-weight: 400;
+  margin: 0;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.practice-results-container {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.practice-results-container .leaderboard-list-header {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  padding: 16px 20px;
+  background: #f8f9fa;
+  border-bottom: 2px solid #e0e0e0;
+  font-weight: 600;
+  font-size: 14px;
+  color: #666;
+}
+
+.practice-results-container .leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-height: none;
+  overflow-y: visible;
+}
+
+.practice-results-container .leaderboard-item {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  transition: background 0.2s;
+  align-items: center;
+  cursor: pointer;
+}
+
+.practice-results-container .leaderboard-item:hover {
+  background: #f8f9fa;
+}
+
+.practice-results-container .leaderboard-item:last-child {
+  border-bottom: none;
+}
+
+.practice-results-container .leaderboard-nickname {
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+}
+
+.practice-results-container .leaderboard-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.practice-results-container .leaderboard-value {
+  text-align: right;
+  font-size: 15px;
+  color: #666;
+  font-weight: 500;
+}
+
+.practice-results-container .results-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+  font-size: 16px;
+}
+
+.practice-results-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.practice-results-pagination button {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 36px;
+}
+
+.practice-results-pagination button:hover:not(:disabled):not(.active) {
+  border-color: #2491c9;
+  color: #2491c9;
+}
+
+.practice-results-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.practice-results-pagination button.active {
+  background: #2491c9;
+  color: white;
+  border-color: #2491c9;
+}
+
+.practice-results-pagination .pagination-arrow {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.practice-results-pagination .pagination-arrow:hover {
+  border-color: #2491c9;
+  background: #f0f8ff;
+}
+
+.practice-results-pagination .pagination-arrow img {
+  width: 12px;
+  height: 12px;
+}

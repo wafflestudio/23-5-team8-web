@@ -236,8 +236,8 @@ export default function Header({ handleLogout }: HeaderProps) {
               리더보드
             </Link>
             <Link
-              className={`gnbItem ${loc.pathname === '/mypage' ? 'active' : ''}`}
-              to="/mypage"
+              className={`gnbItem ${loc.pathname === '/practice-results' ? 'active' : ''}`}
+              to="/practice-results"
               onClick={handleProtectedClick}
             >
               연습 결과 상세

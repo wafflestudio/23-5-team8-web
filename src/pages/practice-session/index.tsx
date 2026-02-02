@@ -92,38 +92,43 @@ const PracticeSessionDetail: React.FC = () => {
 
           {sessionDetail.attempts && sessionDetail.attempts.length > 0 && (
             <>
-              <div className="leaderboard-list-header">
+              <div className="session-detail-list-header">
                 <span>과목이름</span>
-                <span style={{ textAlign: 'center' }}>반응속도</span>
-                <span style={{ textAlign: 'right' }}>상위%</span>
+                <span className="session-detail-col-reaction">반응속도</span>
+                <span className="session-detail-col-percentile">상위%</span>
               </div>
-              <div className="leaderboard-list">
+              <div className="session-detail-list">
                 {(showAllAttempts
                   ? sessionDetail.attempts
                   : sessionDetail.attempts.slice(0, 3)
-                ).map((detail: PracticeAttemptResult, index: number) => (
+                ).map((detail: PracticeAttemptResult, index: number) => {
+                  const isSuccess = detail.isSuccess === true;
+                  return (
                   <div
                     key={index}
-                    className={`leaderboard-item ${detail.success ? '' : 'failed'}`}
+                    className="session-detail-item"
                   >
-                    <div className="leaderboard-user">
-                      <span className="leaderboard-nickname">
+                    <div className="session-detail-course">
+                      <span className="session-detail-course-title">
                         {detail.courseTitle}
                       </span>
-                      {detail.success && (
-                        <span className="success-badge">✓ 성공</span>
-                      )}
+                      <span
+                        className={`session-detail-badge ${isSuccess ? 'success' : 'fail'}`}
+                      >
+                        {isSuccess ? '성공' : '실패'}
+                      </span>
                     </div>
-                    <span className="leaderboard-value" style={{ textAlign: 'center' }}>
+                    <span className="session-detail-col-reaction session-detail-value">
                       {detail.reactionTime}ms
                     </span>
-                    <span className="leaderboard-value">
+                    <span className="session-detail-col-percentile session-detail-value">
                       {detail.percentile
                         ? `상위 ${(detail.percentile * 100).toFixed(1)}%`
                         : '-'}
                     </span>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </>
           )}

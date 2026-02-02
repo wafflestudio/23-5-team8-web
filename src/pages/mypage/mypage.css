@@ -558,6 +558,93 @@
   color: #721c24;
 }
 
+/* Session Detail List (연습 세션 상세 조회) */
+.session-detail-list-header {
+  display: flex;
+  padding: 16px 20px;
+  background: #f8f9fa;
+  border-bottom: 2px solid #e0e0e0;
+  font-weight: 600;
+  font-size: 14px;
+  color: #666;
+}
+
+.session-detail-list-header > span:first-child {
+  flex: 1;
+}
+
+.session-detail-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.session-detail-item {
+  display: flex;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  transition: background 0.2s;
+  align-items: center;
+}
+
+.session-detail-item:last-child {
+  border-bottom: none;
+}
+
+.session-detail-item:hover {
+  background: #f8f9fa;
+}
+
+.session-detail-course {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.session-detail-course-title {
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+}
+
+.session-detail-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.session-detail-badge.success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.session-detail-badge.fail {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.session-detail-col-reaction {
+  width: 12vw;
+  text-align: right;
+  flex-shrink: 0;
+  margin-right: 2vw;
+}
+
+.session-detail-col-percentile {
+  width: 10vw;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.session-detail-value {
+  font-size: 15px;
+  color: #666;
+  font-weight: 500;
+}
+
 /* Old result-item styles (keep for backwards compatibility) */
 .result-item {
   border: 1px solid #e0e0e0;
