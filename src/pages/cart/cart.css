@@ -126,6 +126,10 @@
   padding-bottom: 30px;
 }
 
+.cart-content-box.has-items {
+  border-bottom: none;
+}
+
 .cart-empty-state {
   text-align: center;
   padding: 30px 20px 30px;
