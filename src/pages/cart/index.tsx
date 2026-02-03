@@ -141,7 +141,7 @@ export default function Cart() {
             </span>
           </div>
 
-          <div className="cart-content-box">
+          <div className={`cart-content-box${cartCourses.length > 0 ? ' has-items' : ''}`}>
             {isLoading ? (
               <div className="cart-empty-state">
                 <p className="cart-empty-title">로딩 중...</p>
