@@ -139,3 +139,23 @@
   width: 12px;
   height: 12px;
 }
+
+.back-to-list-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.back-to-list-btn:hover {
+  border-color: #2491c9;
+  color: #2491c9;
+  background: #f0f8ff;
+}
