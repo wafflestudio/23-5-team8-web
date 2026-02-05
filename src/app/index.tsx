@@ -13,11 +13,13 @@ export default function App() {
   const { user, logout } = useAuth();
   const { timeLeft, extendLogin } = useTimer();
   const [showLoginWarningOpen, setShowLoginWarningOpen] = useState(false);
+  const searchParams = new URLSearchParams(location.search);
+  const fromHome = searchParams.get('from') === 'home';
   const isAuthPage =
     location.pathname === '/login' ||
     location.pathname === '/register' ||
     location.pathname === '/mypage' ||
-    location.pathname.startsWith('/practice-session/');
+    (location.pathname.startsWith('/practice-session/') && !fromHome);
 
   const handleLogout = async () => {
     setShowLoginWarningOpen(false);

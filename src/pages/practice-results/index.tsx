@@ -39,7 +39,7 @@ export default function PracticeResults() {
                     key={session.id}
                     className="leaderboard-item"
                     onClick={() =>
-                      navigate(`/practice-session/${session.id}`)
+                      navigate(`/practice-session/${session.id}?from=home`)
                     }
                   >
                     <span className="leaderboard-nickname">
