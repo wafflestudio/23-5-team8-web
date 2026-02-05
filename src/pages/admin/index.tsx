@@ -25,13 +25,10 @@ export default function AdminPage() {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  // 로그인 직후 뒤로가기 방지
+  // 뒤로가기 방지
   useEffect(() => {
-    const isFreshLogin = sessionStorage.getItem('freshLogin') === 'true';
-    if (isFreshLogin) {
-      sessionStorage.removeItem('freshLogin');
-      window.history.pushState(null, '', window.location.href);
-    }
+    sessionStorage.removeItem('freshLogin');
+    window.history.pushState(null, '', window.location.href);
 
     const handlePopState = () => {
       window.history.pushState(null, '', window.location.href);
