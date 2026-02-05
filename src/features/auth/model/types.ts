@@ -1,6 +1,7 @@
 export interface UserDto {
   id: number;
   nickname: string;
+  isAdmin: boolean;
 }
 
 export interface LoginRequest {

@@ -104,21 +104,27 @@ export function usePracticeTimer({
   };
 
   const handleStartPractice = async () => {
-    try {
-      const virtualStartTimeOption = getTimeOption(startOffset);
-      await practiceStartApi({ virtualStartTimeOption });
+    // 매크로 방지용 랜덤 offset 생성 (0~999ms)
+    const randomOffsetMs = Math.floor(Math.random() * 1000);
 
-      startTimerAndPip();
+    const startPracticeWithOffset = async () => {
+      const virtualStartTimeOption = getTimeOption(startOffset);
+      await practiceStartApi({ virtualStartTimeOption, randomOffsetMs });
+
+      // 백엔드와 시간 동기화를 위해 offset만큼 delay 후 PIP 창 열기
+      setTimeout(() => {
+        startTimerAndPip();
+      }, randomOffsetMs);
+    };
+
+    try {
+      await startPracticeWithOffset();
     } catch (error) {
       if (isAxiosError(error) && error.response) {
         if (error.response.status === 409) {
           try {
             await practiceEndApi();
-            const virtualStartTimeOption = getTimeOption(startOffset);
-
-            await practiceStartApi({ virtualStartTimeOption });
-
-            startTimerAndPip();
+            await startPracticeWithOffset();
           } catch {
             alert('이미 연습 중인 상태를 종료하는 데 실패했습니다.');
           }

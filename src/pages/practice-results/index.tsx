@@ -73,9 +73,7 @@ export default function PracticeResults() {
               {sessionsData.pageInfo.totalPages > 5 && currentPage > 2 && (
                 <button
                   className="pagination-arrow"
-                  onClick={() =>
-                    setCurrentPage(Math.max(0, currentPage - 5))
-                  }
+                  onClick={() => setCurrentPage(Math.max(0, currentPage - 5))}
                 >
                   <img src="/assets/btn-arrow-first.png" alt="이전" />
                 </button>

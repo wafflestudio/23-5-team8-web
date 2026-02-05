@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
@@ -9,6 +9,7 @@ import {
   getMyWeeklyLeaderboardApi,
 } from '@features/leaderboard';
 import { useAuth } from '@features/auth';
+import { useNoticesQuery } from '@features/notice';
 import { useMyPageQuery } from '@entities/user';
 import type {
   LeaderboardEntryResponse,
@@ -47,6 +48,13 @@ const formatValue = (value: number, category: CategoryType): string => {
   return `${value}ms`;
 };
 
+const formatNoticeDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${month}.${day}`;
+};
+
 export default function HomePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -54,6 +62,21 @@ export default function HomePage() {
   const [filter, setFilter] = useState<FilterType>('all');
   const [category, setCategory] = useState<CategoryType>('firstReaction');
   const { data: myProfile } = useMyPageQuery();
+
+  const { data: noticesData } = useNoticesQuery(0, 10);
+
+  const noticeItems = noticesData?.items;
+  const sortedNotices = useMemo(() => {
+    if (!noticeItems) return [];
+    return [...noticeItems]
+      .sort((a, b) => {
+        if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      })
+      .slice(0, 5);
+  }, [noticeItems]);
 
   const {
     data: leaderboardData,
@@ -190,6 +213,64 @@ export default function HomePage() {
                 개발자에게 피드백
               </a>
             </div>
+
+            <section className="panel noticePanel">
+              <div className="panelHead">
+                <div className="panelTitle">공지사항</div>
+                <button
+                  className="home-notice-detail-btn"
+                  onClick={() => navigate('/notices')}
+                >
+                  상세보기
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M6 4L10 8L6 12"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <div className="panelBody noticeBody">
+                {sortedNotices.length === 0 ? (
+                  <div className="home-notice-empty">
+                    등록된 공지사항이 없습니다.
+                  </div>
+                ) : (
+                  <ul className="home-notice-list">
+                    {sortedNotices.map((notice) => (
+                      <li
+                        key={notice.id}
+                        className="home-notice-item"
+                        onClick={() => navigate(`/notices/${notice.id}`)}
+                      >
+                        <span className="home-notice-pin-wrapper">
+                          {notice.isPinned && (
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                              className="home-notice-pin-icon"
+                            >
+                              <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
+                            </svg>
+                          )}
+                        </span>
+                        <span className="home-notice-title">
+                          {notice.title}
+                        </span>
+                        <span className="home-notice-date">
+                          {formatNoticeDate(notice.createdAt)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </section>
 
             <section className="panel leaderBoardPanel">
               <div className="panelHead">

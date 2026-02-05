@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { AuthContext, TimerContext, type User, logoutApi, useAuth } from '@features/auth';
 import { setAuthToken, clearAuthToken } from '@shared/api/axios';
 
 const MAX_LOGIN_TIME = 10 * 60;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
+  const location = useLocation();
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = sessionStorage.getItem('userInfo');
     if (!storedUser) return null;
@@ -16,6 +19,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return null;
     }
   });
+
+  // 관리자 감지 시 어드민 페이지로 리다이렉트
+  useEffect(() => {
+    if (user?.admin && !location.pathname.startsWith('/admin')) {
+      window.location.replace('/admin');
+    }
+  }, [user, location.pathname]);
 
   const login = (userData: User, accessToken: string) => {
     setUser(userData);
@@ -32,8 +42,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       sessionStorage.removeItem('userInfo');
       clearAuthToken();
+      queryClient.clear();
     }
-  }, []);
+  }, [queryClient]);
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>

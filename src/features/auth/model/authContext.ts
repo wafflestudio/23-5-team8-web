@@ -6,6 +6,7 @@ export interface User {
   id: string;
   nickname: string;
   provider: LoginProvider;
+  admin: boolean;
 }
 
 export interface AuthContextType {
