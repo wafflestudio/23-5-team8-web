@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { AuthContext, TimerContext, type User, logoutApi, useAuth } from '@features/auth';
 import { setAuthToken, clearAuthToken } from '@shared/api/axios';
 
 const MAX_LOGIN_TIME = 10 * 60;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = sessionStorage.getItem('userInfo');
     if (!storedUser) return null;
@@ -32,8 +34,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       sessionStorage.removeItem('userInfo');
       clearAuthToken();
+      queryClient.clear();
     }
-  }, []);
+  }, [queryClient]);
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
