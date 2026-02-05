@@ -23,7 +23,7 @@
 
 .practice-results-container .leaderboard-list-header {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr;
   padding: 16px 20px;
   background: #f8f9fa;
   border-bottom: 2px solid #e0e0e0;
@@ -67,6 +67,7 @@
 .practice-results-container .leaderboard-user {
   display: flex;
   align-items: center;
+  margin-left: -7vw;
   gap: 8px;
 }
 
