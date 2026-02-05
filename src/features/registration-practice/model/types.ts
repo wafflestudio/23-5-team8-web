@@ -25,6 +25,7 @@ export interface CourseData {
 
 export interface PracticeStartRequest {
   virtualStartTimeOption?: VirtualStartTimeOption;
+  randomOffsetMs?: number;
 }
 
 export interface PracticeStartResponse {
