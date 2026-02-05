@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { isAxiosError } from 'axios';
@@ -14,7 +14,14 @@ interface RegisterFormData {
 
 export default function Register() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { user, login } = useAuth();
+
+  // 이미 로그인된 사용자는 홈으로 리다이렉트
+  useEffect(() => {
+    if (user) {
+      navigate('/', { replace: true });
+    }
+  }, [user, navigate]);
 
   const {
     register,
@@ -69,7 +76,7 @@ export default function Register() {
         accessToken || ''
       );
 
-      navigate('/');
+      navigate('/', { replace: true });
     } catch (error) {
       if (isAxiosError(error) && error.response) {
         const status = error.response.status;

@@ -15,9 +15,16 @@ interface LoginFormData {
 }
 
 export default function Login() {
-  const { login } = useAuth();
+  const { user, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // 이미 로그인된 사용자는 홈으로 리다이렉트
+  useEffect(() => {
+    if (user) {
+      navigate('/', { replace: true });
+    }
+  }, [user, navigate]);
 
   const {
     register,
@@ -70,11 +77,19 @@ export default function Login() {
           id: userData.id.toString(),
           nickname: userData.nickname,
           provider: 'local',
+          admin: userData.admin ?? false,
         },
         accessToken || ''
       );
 
-      navigate('/');
+      // 로그인 후 뒤로가기 방지를 위한 플래그 설정
+      sessionStorage.setItem('freshLogin', 'true');
+
+      if (userData.admin) {
+        window.location.replace('/admin');
+      } else {
+        window.location.replace('/');
+      }
     } catch (error) {
       if (isAxiosError(error) && error.response) {
         const status = error.response.status;
@@ -128,10 +143,19 @@ export default function Login() {
             id: user.id.toString(),
             nickname: user.nickname,
             provider: provider,
+            admin: user.admin ?? false,
           },
           accessToken
         );
-        navigate('/');
+
+        // 로그인 후 뒤로가기 방지를 위한 플래그 설정
+        sessionStorage.setItem('freshLogin', 'true');
+
+        if (user.admin) {
+          window.location.replace('/admin');
+        } else {
+          window.location.replace('/');
+        }
       } catch (error) {
         if (isAxiosError(error) && error.response) {
           const status = error.response.status;
@@ -159,7 +183,7 @@ export default function Login() {
         sessionStorage.removeItem('pendingSocialProvider');
       }
     },
-    [login, navigate, redirectUri]
+    [login, redirectUri]
   );
 
   useEffect(() => {

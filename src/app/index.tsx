@@ -19,6 +19,7 @@ export default function App() {
     location.pathname === '/login' ||
     location.pathname === '/register' ||
     location.pathname === '/mypage' ||
+    location.pathname === '/admin' ||
     (location.pathname.startsWith('/practice-session/') && !fromHome);
 
   const handleLogout = async () => {
@@ -30,6 +31,32 @@ export default function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  // 로그인 직후 랜딩 페이지에서만 뒤로가기 방지
+  useEffect(() => {
+    const isFreshLogin = sessionStorage.getItem('freshLogin') === 'true';
+    const isLandingPage = location.pathname === '/' || location.pathname === '/admin';
+
+    // 로그인 직후 + 랜딩 페이지에서만 뒤로가기 차단
+    if (user && isFreshLogin && isLandingPage) {
+      window.history.pushState(null, '', window.location.href);
+
+      const handlePopState = () => {
+        window.history.pushState(null, '', window.location.href);
+      };
+
+      window.addEventListener('popstate', handlePopState);
+
+      return () => {
+        window.removeEventListener('popstate', handlePopState);
+      };
+    }
+
+    // 랜딩 페이지를 벗어나면 플래그 제거
+    if (isFreshLogin && !isLandingPage) {
+      sessionStorage.removeItem('freshLogin');
+    }
+  }, [user, location.pathname]);
 
   useEffect(() => {
     document.body.style.overflow = showLoginWarningOpen ? 'hidden' : 'auto';

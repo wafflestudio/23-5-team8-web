@@ -10,6 +10,9 @@ import LeaderBoard from '@pages/leaderboard';
 import MyPage from '@pages/mypage';
 import PracticeSessionDetail from '@pages/practice-session';
 import PracticeResults from '@pages/practice-results';
+import AdminPage from '@pages/admin';
+import NoticesPage from '@pages/notices';
+import NoticeDetailPage from '@pages/notices/NoticeDetailPage';
 
 export function AppRoutes() {
   return (
@@ -28,6 +31,9 @@ export function AppRoutes() {
         path="/practice-session/:sessionId"
         element={<PracticeSessionDetail />}
       />
+      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/notices" element={<NoticesPage />} />
+      <Route path="/notices/:noticeId" element={<NoticeDetailPage />} />
     </Routes>
   );
 }
