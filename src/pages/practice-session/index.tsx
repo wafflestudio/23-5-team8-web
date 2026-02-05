@@ -68,16 +68,6 @@ const PracticeSessionDetail: React.FC = () => {
 
       <div className={fromHome ? 'practice-results-page' : 'mypage-container'}>
         {/* 연습 세션 상세 조회 섹션 */}
-        {fromHome && (
-          <div className="practice-results-header">
-            <button
-              className="back-to-list-btn"
-              onClick={() => navigate(-1)}
-            >
-              &larr; 목록으로
-            </button>
-          </div>
-        )}
         <section className="results-section">
           <div className="results-header">
             <h2 className="results-title">연습 세션 상세 조회</h2>
