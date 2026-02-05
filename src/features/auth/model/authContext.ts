@@ -5,6 +5,7 @@ export type LoginProvider = 'local' | 'kakao' | 'google';
 export interface User {
   id: string;
   nickname: string;
+  email?: string;
   provider: LoginProvider;
   admin: boolean;
 }

@@ -80,6 +80,7 @@ export default function Login() {
         {
           id: userData.id.toString(),
           nickname: userData.nickname,
+          email: data.email,
           provider: 'local',
           admin: userData.isAdmin ?? false,
         },

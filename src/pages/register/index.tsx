@@ -71,7 +71,9 @@ export default function Register() {
         {
           id: userData.id.toString(),
           nickname: userData.nickname,
+          email: data.email,
           provider: 'local',
+          admin: false,
         },
         accessToken || ''
       );
