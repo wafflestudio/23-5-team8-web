@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { isAxiosError } from 'axios';
-import { signupApi } from '@features/auth';
+import { signupApi, loginApi, useAuth } from '@features/auth';
 import '@pages/login/login.css';
 
 interface RegisterFormData {
@@ -14,6 +14,7 @@ interface RegisterFormData {
 
 export default function Register() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const {
     register,
@@ -47,8 +48,28 @@ export default function Register() {
         ...(data.name ? { nickname: data.name } : {}),
       });
 
-      alert('회원가입 성공! 로그인 페이지로 이동합니다.');
-      navigate('/login');
+      // 자동 로그인
+      const loginResponse = await loginApi({
+        email: data.email,
+        password: data.password,
+      });
+
+      const responseData = loginResponse.data;
+      const userData =
+        'user' in responseData ? responseData.user : responseData;
+      const accessToken =
+        'accessToken' in responseData ? responseData.accessToken : '';
+
+      login(
+        {
+          id: userData.id.toString(),
+          nickname: userData.nickname,
+          provider: 'local',
+        },
+        accessToken || ''
+      );
+
+      navigate('/');
     } catch (error) {
       if (isAxiosError(error) && error.response) {
         const status = error.response.status;

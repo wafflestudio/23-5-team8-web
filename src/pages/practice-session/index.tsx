@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { usePracticeSessionDetailQuery } from '@entities/user';
 import type { PracticeAttemptResult } from '@entities/user';
 import '@pages/mypage/mypage.css';
+import '@pages/practice-results/practice-results.css';
 
 // 헤더 컴포넌트
 const MyPageHeader: React.FC = () => {
@@ -24,6 +25,8 @@ const MyPageHeader: React.FC = () => {
 const PracticeSessionDetail: React.FC = () => {
   const { sessionId } = useParams<{ sessionId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const fromHome = searchParams.get('from') === 'home';
   const [showAllAttempts, setShowAllAttempts] = useState(false);
 
   const { data: sessionDetail, isLoading } = usePracticeSessionDetailQuery(
@@ -32,8 +35,8 @@ const PracticeSessionDetail: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="mypage-page">
-        <MyPageHeader />
+      <div className={fromHome ? 'containerX' : 'mypage-page'}>
+        {!fromHome && <MyPageHeader />}
         <div className="loading-spinner">
           <div className="spinner"></div>
         </div>
@@ -43,16 +46,16 @@ const PracticeSessionDetail: React.FC = () => {
 
   if (!sessionDetail) {
     return (
-      <div className="mypage-page">
-        <MyPageHeader />
-        <div className="mypage-container">
+      <div className={fromHome ? 'containerX' : 'mypage-page'}>
+        {!fromHome && <MyPageHeader />}
+        <div className={fromHome ? '' : 'mypage-container'}>
           <div className="error-message">데이터를 불러올 수 없습니다.</div>
           <button
             className="profile-action-btn"
-            onClick={() => navigate('/mypage')}
+            onClick={() => navigate(fromHome ? '/practice-results' : '/mypage')}
             style={{ marginTop: '20px' }}
           >
-            마이페이지로 돌아가기
+            {fromHome ? '연습 결과 상세로 돌아가기' : '마이페이지로 돌아가기'}
           </button>
         </div>
       </div>
@@ -60,10 +63,10 @@ const PracticeSessionDetail: React.FC = () => {
   }
 
   return (
-    <div className="mypage-page">
-      <MyPageHeader />
+    <div className={fromHome ? 'containerX' : 'mypage-page'}>
+      {!fromHome && <MyPageHeader />}
 
-      <div className="mypage-container">
+      <div className={fromHome ? 'practice-results-page' : 'mypage-container'}>
         {/* 연습 세션 상세 조회 섹션 */}
         <section className="results-section">
           <div className="results-header">
