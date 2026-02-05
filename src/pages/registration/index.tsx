@@ -33,8 +33,7 @@ import './registration.css';
 
 export default function Registration() {
   const { pipWindow, openWindow, closeWindow } = usePracticeWindow();
-  const { openNotSupported } = useModalStore();
-  const [showPracticeEndModal, setShowPracticeEndModal] = useState(false);
+  const { openNotSupported, isOpen, openModal, closeModal } = useModalStore();
 
   // Custom hooks
   const captcha = useCaptcha();
@@ -44,7 +43,7 @@ export default function Registration() {
     pipWindow,
     openWindow,
     closeWindow,
-    onPracticeEnd: () => setShowPracticeEndModal(true),
+    onPracticeEnd: () => openModal('registration/practiceEnd'),
   });
 
   const attempt = useRegistrationAttempt({
@@ -362,11 +361,11 @@ export default function Registration() {
           document.body
         )}
 
-      {showPracticeEndModal &&
+      {isOpen('registration/practiceEnd') &&
         createPortal(
           <WarningModal.Alert
-            isOpen={showPracticeEndModal}
-            onClose={() => setShowPracticeEndModal(false)}
+            isOpen={isOpen('registration/practiceEnd')}
+            onClose={() => closeModal('registration/practiceEnd')}
             icon="warning"
             title="연습 시간이 종료되었습니다! (08:33)"
           />,

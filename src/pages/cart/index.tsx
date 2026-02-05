@@ -16,16 +16,23 @@ export default function Cart() {
   const cartCourses = Array.isArray(data) ? data : [];
   const deleteFromCartMutation = useDeleteFromCartMutation();
   const updateCartCountMutation = useUpdateCartCountMutation();
-  const { showDeleteSuccess, openDeleteSuccess, closeDeleteSuccess } =
-    useModalStore();
+  const {
+    showDeleteSuccess,
+    openDeleteSuccess,
+    closeDeleteSuccess,
+    showNotSupported,
+    openNotSupported,
+    closeNotSupported,
+    isOpen,
+    openModal,
+    closeModal,
+  } = useModalStore();
 
   const [selectedCourses, setSelectedCourses] = useState<Set<number>>(
     new Set()
   );
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null);
   const [editingValue, setEditingValue] = useState<string>('');
-  const [showNoCourseSelected, setShowNoCourseSelected] = useState(false);
-  const [showNotSupported, setShowNotSupported] = useState(false);
 
   const toggleCourseSelection = (courseId: number) => {
     setSelectedCourses((prev) => {
@@ -41,7 +48,7 @@ export default function Cart() {
 
   const handleDeleteSelected = async () => {
     if (selectedCourses.size === 0) {
-      setShowNoCourseSelected(true);
+      openModal('cart/noCourseSelected');
       return;
     }
 
@@ -117,7 +124,7 @@ export default function Cart() {
             >
               선택삭제
             </button>
-            <button className="cart-tab-button" onClick={() => setShowNotSupported(true)}>
+            <button className="cart-tab-button" onClick={() => openNotSupported()}>
               관심강좌
               <img
                 src="/assets/btn_arrow_view_gray.png"
@@ -125,7 +132,7 @@ export default function Cart() {
                 className="cart-btn-arrow"
               />
             </button>
-            <button className="cart-tab-button" onClick={() => setShowNotSupported(true)}>
+            <button className="cart-tab-button" onClick={() => openNotSupported()}>
               전공이수내역조회
               <img
                 src="/assets/btn_arrow_view_gray.png"
@@ -319,7 +326,7 @@ export default function Cart() {
         </div>
 
         <div className="cart-right-section">
-          <TimeTable title="장바구니 시간표" courses={coursesForTimeTable} onPrintClick={() => setShowNotSupported(true)} />
+          <TimeTable title="장바구니 시간표" courses={coursesForTimeTable} onPrintClick={() => openNotSupported()} />
         </div>
         </div>
       </div>
@@ -332,8 +339,8 @@ export default function Cart() {
       />
 
       <WarningModal.Alert
-        isOpen={showNoCourseSelected}
-        onClose={() => setShowNoCourseSelected(false)}
+        isOpen={isOpen('cart/noCourseSelected')}
+        onClose={() => closeModal('cart/noCourseSelected')}
         icon="warning"
       >
         <p className="warningText">삭제할 강좌를 선택해주십시오.</p>
@@ -341,7 +348,7 @@ export default function Cart() {
 
       <WarningModal.Alert
         isOpen={showNotSupported}
-        onClose={() => setShowNotSupported(false)}
+        onClose={closeNotSupported}
         icon="warning"
         title="지원하지 않는 기능입니다."
       />

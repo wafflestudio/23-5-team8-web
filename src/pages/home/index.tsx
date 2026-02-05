@@ -16,6 +16,7 @@ import type {
   LeaderboardResponse,
   MyLeaderboardResponse,
 } from '@features/leaderboard';
+import { useModalStore } from '@shared/model/modalStore';
 import { WarningModal } from '@shared/ui/Warning';
 import './home.css';
 
@@ -58,7 +59,7 @@ const formatNoticeDate = (dateString: string): string => {
 export default function HomePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [showNotSupporting, setShowNotSupporting] = useState(false);
+  const { isOpen, closeModal } = useModalStore();
   const [filter, setFilter] = useState<FilterType>('all');
   const [category, setCategory] = useState<CategoryType>('firstReaction');
   const { data: myProfile } = useMyPageQuery();
@@ -425,8 +426,8 @@ export default function HomePage() {
         </div>
       </div>
       <WarningModal.Alert
-        isOpen={showNotSupporting}
-        onClose={() => setShowNotSupporting(false)}
+        isOpen={isOpen('notSupported')}
+        onClose={() => closeModal('notSupported')}
         icon="warning"
       >
         <p className="warningText">지원하지 않는 기능입니다.</p>

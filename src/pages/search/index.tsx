@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { isAxiosError } from 'axios';
 import { useCourseSearchQuery, SearchCourseItem } from '@features/course-search';
 import { useAddToCartMutation, useCartQuery } from '@features/cart-management';
 import { useCaptcha } from '@features/registration-practice';
 import type { CourseDetailResponse } from '@entities/course';
+import { useModalStore } from '@shared/model/modalStore';
 import { WarningModal } from '@shared/ui/Warning';
 import { Pagination } from '@shared/ui/Pagination';
 import { hasTimeConflict, extractTimeFromPlaceAndTime } from '@shared/lib/timeUtils';
@@ -20,18 +21,10 @@ export default function SearchPage() {
   const currentPage = parseInt(searchParams.get('page') || '0', 10);
 
   const captcha = useCaptcha();
+  const { isOpen, openModal, closeModal, getData } = useModalStore();
   const [selectedCourses, setSelectedCourses] = useState<Set<number>>(
     new Set()
   );
-  const [showCartModal, setShowCartModal] = useState(false);
-  const [showConflictModal, setShowConflictModal] = useState(false);
-  const [showNotSupporting, setShowNotSupporting] = useState(false);
-  const [showNoCourseSelected, setShowNoCourseSelected] = useState(false);
-  const [showTimeOverlapModal, setShowTimeOverlapModal] = useState(false);
-  const [conflictCourse, setConflictCourse] = useState<{
-    name: string;
-    code: string;
-  } | null>(null);
 
   const { data: cartData } = useCartQuery();
   const { data, isLoading, error } = useCourseSearchQuery({
@@ -45,19 +38,6 @@ export default function SearchPage() {
   const courses = data?.items ?? [];
   const totalCount = data?.pageInfo.totalElements ?? 0;
   const totalPages = data?.pageInfo.totalPages ?? 0;
-
-  const isModalOpen =
-    showCartModal ||
-    showConflictModal ||
-    showNotSupporting ||
-    showTimeOverlapModal;
-
-  useEffect(() => {
-    document.body.style.overflow = isModalOpen ? 'hidden' : 'auto';
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [isModalOpen]);
 
   const setPage = (page: number) => {
     const newParams = new URLSearchParams(searchParams);
@@ -77,7 +57,7 @@ export default function SearchPage() {
 
   const handleAddToCart = async () => {
     if (selectedCourses.size === 0) {
-      setShowNoCourseSelected(true);
+      openModal('search/noCourseSelected');
       return;
     }
 
@@ -96,7 +76,7 @@ export default function SearchPage() {
           cartItem.course.placeAndTime
         );
         if (hasTimeConflict(selectedTimeStr, cartTimeStr)) {
-          setShowTimeOverlapModal(true);
+          openModal('search/timeOverlap');
           return;
         }
       }
@@ -108,7 +88,7 @@ export default function SearchPage() {
       );
       await Promise.all(promises);
       setSelectedCourses(new Set());
-      setShowCartModal(true);
+      openModal('search/cart');
     } catch (err) {
       console.error('[Search] 장바구니 추가 실패:', err);
       if (isAxiosError(err) && err.response) {
@@ -119,11 +99,10 @@ export default function SearchPage() {
           );
 
           if (course) {
-            setConflictCourse({
+            openModal('search/conflict', {
               name: course.courseTitle || '알 수 없는 강의',
               code: course.courseNumber || '',
             });
-            setShowConflictModal(true);
           }
           setSelectedCourses(new Set());
         } else {
@@ -140,10 +119,10 @@ export default function SearchPage() {
   return (
     <div className="searchPage">
       <WarningModal.Confirm
-        isOpen={showCartModal}
-        onCancel={() => setShowCartModal(false)}
+        isOpen={isOpen('search/cart')}
+        onCancel={() => closeModal('search/cart')}
         onConfirm={() => {
-          setShowCartModal(false);
+          closeModal('search/cart');
           navigate('/cart');
         }}
         title="장바구니에 담겼습니다."
@@ -152,23 +131,19 @@ export default function SearchPage() {
         confirmLabel="장바구니로 이동"
       />
 
-      {conflictCourse && (
+      {getData('search/conflict') && (
         <WarningModal.Confirm
-          isOpen={showConflictModal}
-          onCancel={() => {
-            setShowConflictModal(false);
-            setConflictCourse(null);
-          }}
+          isOpen={isOpen('search/conflict')}
+          onCancel={() => closeModal('search/conflict')}
           onConfirm={() => {
-            setShowConflictModal(false);
-            setConflictCourse(null);
+            closeModal('search/conflict');
             navigate('/cart');
           }}
           cancelLabel="아니요, 괜찮습니다."
           confirmLabel="장바구니로 이동"
         >
           <h2 className="modal-title-conflict">
-            {conflictCourse.name} ({conflictCourse.code}) :<br />
+            {getData('search/conflict')!.name} ({getData('search/conflict')!.code}) :<br />
             수업교시가 중복되었습니다.
           </h2>
           <p className="modal-subtitle">
@@ -180,24 +155,24 @@ export default function SearchPage() {
       )}
 
       <WarningModal.Alert
-        isOpen={showNotSupporting}
-        onClose={() => setShowNotSupporting(false)}
+        isOpen={isOpen('notSupported')}
+        onClose={() => closeModal('notSupported')}
         icon="warning"
       >
         <p className="warningText">지원하지 않는 기능입니다.</p>
       </WarningModal.Alert>
 
       <WarningModal.Alert
-        isOpen={showNoCourseSelected}
-        onClose={() => setShowNoCourseSelected(false)}
+        isOpen={isOpen('search/noCourseSelected')}
+        onClose={() => closeModal('search/noCourseSelected')}
         icon="warning"
       >
         <p className="warningText">장바구니 담기할 강좌를 선택해주십시오.</p>
       </WarningModal.Alert>
 
       <WarningModal.Alert
-        isOpen={showTimeOverlapModal}
-        onClose={() => setShowTimeOverlapModal(false)}
+        isOpen={isOpen('search/timeOverlap')}
+        onClose={() => closeModal('search/timeOverlap')}
         icon="warning"
       >
         <p className="warningText">
@@ -253,7 +228,7 @@ export default function SearchPage() {
             </div>
             <button
               className="excelBtn"
-              onClick={() => setShowNotSupporting(true)}
+              onClick={() => openModal('notSupported')}
             >
               엑셀저장
             </button>
@@ -306,7 +281,7 @@ export default function SearchPage() {
             <div className="searchFloatingMenu">
               <button
                 className="floatBtn outlineBtn"
-                onClick={() => setShowNotSupporting(true)}
+                onClick={() => openModal('notSupported')}
               >
                 관심강좌 저장
               </button>
@@ -345,13 +320,13 @@ export default function SearchPage() {
 
               <button
                 className="floatBtn fillRedBtn"
-                onClick={() => setShowNotSupporting(true)}
+                onClick={() => openModal('notSupported')}
               >
                 수강신청
               </button>
               <button
                 className="floatBtn outlineWhiteBtn"
-                onClick={() => setShowNotSupporting(true)}
+                onClick={() => openModal('notSupported')}
               >
                 예비수강신청
               </button>

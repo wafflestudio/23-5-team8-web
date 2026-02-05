@@ -1,10 +1,11 @@
-import {createContext, useContext} from 'react';
+import { createContext, useContext } from 'react';
 
 export type LoginProvider = 'local' | 'kakao' | 'google';
 
 export interface User {
   id: string;
   nickname: string;
+  email?: string;
   provider: LoginProvider;
   admin: boolean;
 }
