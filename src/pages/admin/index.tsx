@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@features/auth';
 import {
@@ -24,6 +24,22 @@ import './admin.css';
 export default function AdminPage() {
   const navigate = useNavigate();
   const { logout } = useAuth();
+
+  // 로그인 직후 뒤로가기 방지
+  useEffect(() => {
+    const isFreshLogin = sessionStorage.getItem('freshLogin') === 'true';
+    if (isFreshLogin) {
+      sessionStorage.removeItem('freshLogin');
+      window.history.pushState(null, '', window.location.href);
+    }
+
+    const handlePopState = () => {
+      window.history.pushState(null, '', window.location.href);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const [activeSection, setActiveSection] = useState<AdminSection>('notice');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
