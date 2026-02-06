@@ -12,23 +12,12 @@
 
 ## 기술 스택
 
-| 카테고리        | 기술                        | 버전 |
-| --------------- | --------------------------- | ---- |
-| UI 프레임워크   | React (with React Compiler) | 19.2 |
-| 언어            | TypeScript (strict mode)    | 5.9  |
-| 빌드 도구       | Vite                        | 7.2  |
-| 라우팅          | React Router DOM            | 7.x  |
-| 서버 상태       | TanStack Query              | 5.x  |
-| 가상화 리스트   | TanStack Virtual            | 3.x  |
-| 클라이언트 상태 | Zustand                     | 5.x  |
-| 폼 상태         | React Hook Form             | 7.x  |
-| HTTP 클라이언트 | Axios                       | 1.x  |
-| 드래그 앤 드롭  | @dnd-kit                    | 6.x  |
-| 인증            | Kakao OAuth, Google OAuth   | -    |
-| 린팅            | ESLint                      | 9.x  |
-| 포매팅          | Prettier                    | 3.x  |
-| E2E 테스트      | Playwright                  | 1.x  |
-| Git Hooks       | Husky                       | 9.x  |
+| 카테고리 | 기술 |
+| --- | --- |
+| Core | React 19.2 (React Compiler), TypeScript 5.9, Vite 7.2 |
+| 상태 관리 | TanStack Query, Zustand, React Hook Form |
+| UI/라우팅 | React Router DOM 7, TanStack Virtual, @dnd-kit |
+| 인프라 | Axios, Kakao/Google OAuth, Playwright, ESLint, Prettier, Husky |
 
 ---
 
@@ -36,9 +25,8 @@
 
 ### 홈
 
-<div style={{display: flex, align-items: space-around}}>
-<img width="48%" height="1000" alt="home1" src="https://github.com/user-attachments/assets/5ecb6b3e-e6ff-4209-b0b1-d75c57de34cf" /><img width="48%" height="1000" alt="home2" src="https://github.com/user-attachments/assets/61f1770f-5ab3-414b-bbde-4c42633985ed" />
-</div>
+| <img alt="home1" src="https://github.com/user-attachments/assets/5ecb6b3e-e6ff-4209-b0b1-d75c57de34cf" /> | <img alt="home2" src="https://github.com/user-attachments/assets/61f1770f-5ab3-414b-bbde-4c42633985ed" /> |
+| :--: | :--: |
 
 
 
