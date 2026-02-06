@@ -281,9 +281,8 @@ const MyPage: React.FC = () => {
     try {
       await deleteAccountMutation.mutateAsync(password);
       setShowDeleteModal(false);
-      setSuccessMessage('계정이 삭제되었습니다.');
-      setSuccessModalCallback(() => () => navigate('/login'));
-      setShowSuccessModal(true);
+      await logout();
+      navigate('/');
     } catch (error) {
       if (isAxiosError(error)) {
         setErrorMessage(
