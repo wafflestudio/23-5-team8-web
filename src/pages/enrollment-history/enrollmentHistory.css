@@ -242,6 +242,53 @@
   margin-right: 24px;
 }
 
+@media (max-width: 768px) {
+  .enrollment-page-title {
+    display: none;
+  }
+
+  .enrollment-content-wrapper {
+    flex-direction: column;
+  }
+
+  .enrollment-left-column,
+  .enrollment-right-column {
+    width: 100%;
+  }
+
+  .enrollment-notice-text {
+    font-size: 14px;
+  }
+
+  .enrollment-tabs-container {
+    flex-wrap: wrap;
+  }
+
+  .enrollment-credit-info {
+    width: 100%;
+    order: -1;
+    text-align: center;
+    margin-left: 0;
+    padding: 14px 0;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 12px;
+  }
+
+  .courseCheckArea {
+    margin-left: 8px;
+    margin-right: 12px;
+  }
+
+  .courseActionArea {
+    margin-right: 4px;
+    gap: 8px;
+  }
+
+  .enrollment-right-column {
+    margin-top: 30px;
+  }
+}
+
 .successBadge {
   padding: 6px 12px;
   background: #dcfce7;

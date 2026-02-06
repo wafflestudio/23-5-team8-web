@@ -45,10 +45,32 @@ button {
   display: flex;
   flex-direction: column;
 }
+.app.withHeader {
+  padding-top: 80px;
+}
 #main {
   flex: 1;
 }
 .containerX {
-  width: min(var(--max), calc(100% - 32px));
+  width: min(var(--max), calc(100% - 24px));
   margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .app.withHeader:has(.registrationPage),
+  .app.withHeader:has(.cart-page-title),
+  .app.withHeader:has(.enrollment-page-title),
+  .app.withHeader:has(.leaderboard-page),
+  .app.withHeader:has(.practice-results-page) {
+    padding-top: 128px;
+  }
+}
+
+@media (min-width: 769px) {
+  .app.withHeader {
+    padding-top: 170px;
+  }
+  .containerX {
+    width: min(var(--max), calc(100% - 32px));
+  }
 }

@@ -105,6 +105,23 @@
   margin-left: 4px; /* 시간과 버튼 사이 추가 여백 */
 }
 
+/* ===== Mobile footer ===== */
+@media (max-width: 768px) {
+  .footerRight {
+    display: none;
+  }
+  .footerInner {
+    justify-content: center;
+    text-align: center;
+  }
+  .footerLeft {
+    align-items: center;
+  }
+  .footer {
+    padding: 20px 0;
+  }
+}
+
 /* ================= SESSION WARNING MODAL (FINAL) ================= */
 .sessionMsg {
   font-size: 15px;

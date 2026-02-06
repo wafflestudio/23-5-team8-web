@@ -458,3 +458,103 @@
   text-decoration-color: #376dc8;
   text-underline-offset: 2px;
 }
+
+/* 모바일 플로팅 버튼 — 데스크톱에서 숨김 */
+.mobile-float-btn {
+  display: none;
+}
+
+/* 모바일 플로팅 메뉴 — 데스크톱에서 숨김 */
+.mobile-float-menu {
+  display: none;
+}
+
+/* ── 모바일 반응형 ── */
+@media (max-width: 768px) {
+  .searchContent {
+    flex-direction: column;
+  }
+
+  .searchLeftColumn {
+    width: 100%;
+    min-height: auto;
+  }
+
+  .searchRightColumn {
+    display: none;
+  }
+
+  .searchHeader {
+    padding: 16px 0 24px;
+  }
+
+  .legendList {
+    justify-content: center;
+  }
+
+  .courseCheckArea {
+    margin-left: 8px;
+    margin-right: 12px;
+  }
+
+  .courseActionArea {
+    margin-right: 4px;
+    gap: 8px;
+  }
+
+  .cartInfoBox {
+    margin-right: 8px;
+  }
+
+  /* 모바일 플로팅 + 버튼 */
+  .mobile-float-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #0f3c8e;
+    color: #fff;
+    font-size: 32px;
+    border: none;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  }
+
+  /* 모바일 플로팅 메뉴 */
+  .mobile-float-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 174px;
+    background-color: #0f3c8e;
+    border-radius: 10px;
+    padding: 20px 17px;
+    z-index: 100;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  /* 플로팅 메뉴 닫기 버튼 */
+  .mobile-float-close {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+
+  .mobile-float-close button {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+  }
+}

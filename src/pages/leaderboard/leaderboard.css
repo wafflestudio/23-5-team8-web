@@ -336,3 +336,9 @@
 .leaderboard-login-btn:hover {
   background: #2563eb;
 }
+
+@media (max-width: 768px) {
+  .leaderboard-title {
+    display: none;
+  }
+}

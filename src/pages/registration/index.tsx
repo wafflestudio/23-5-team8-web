@@ -318,6 +318,42 @@ export default function Registration() {
         </div>
       </div>
 
+      <div className="regMobileBottomBar">
+        <div className="regMobileCaptchaGroup">
+          <div className="regMobileCaptcha">
+            {captcha.captchaDigits.map((digit, index) => (
+              <span
+                key={index}
+                className="regCaptchaDigit"
+                style={{
+                  transform: `rotate(${digit.rotation}deg) translateY(${digit.yOffset}px) translateX(${digit.xOffset}px)`,
+                  color: digit.color,
+                  fontSize: `${digit.fontSize}px`,
+                }}
+              >
+                {digit.value}
+              </span>
+            ))}
+          </div>
+          <div className="regMobileInput">
+            <input
+              className="regMobileCaptchaInput"
+              placeholder="입 력"
+              name="mobileCaptchaInput"
+              autoComplete="off"
+              value={captcha.captchaInput}
+              onChange={(e) => captcha.setCaptchaInput(e.target.value)}
+            />
+          </div>
+        </div>
+        <button
+          className="regMobileSubmitBtn"
+          onClick={attempt.handleRegisterAttempt}
+        >
+          수강신청
+        </button>
+      </div>
+
       {pipWindow &&
         createPortal(
           <PracticeClock currentTime={timer.currentTime} />,

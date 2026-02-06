@@ -29,6 +29,7 @@ export default function SearchPage() {
   const [selectedCourses, setSelectedCourses] = useState<Set<number>>(
     new Set()
   );
+  const [isFloatingMenuOpen, setIsFloatingMenuOpen] = useState(false);
 
   const { data: cartData } = useCartQuery();
   const { data, isLoading, error } = useCourseSearchQuery({
@@ -328,6 +329,73 @@ export default function SearchPage() {
               </button>
             </div>
           </div>
+
+          {!isFloatingMenuOpen ? (
+            <button
+              className="mobile-float-btn"
+              onClick={() => setIsFloatingMenuOpen(true)}
+            >
+              +
+            </button>
+          ) : (
+            <div className="mobile-float-menu">
+              <button
+                className="floatBtn outlineBtn"
+                onClick={() => openModal('notSupported')}
+              >
+                관심강좌 저장
+              </button>
+              <button
+                className="floatBtn fillBlueBtn"
+                onClick={handleAddToCart}
+              >
+                장바구니 담기
+              </button>
+
+              <div className="floatLine"></div>
+
+              <div className="captchaRow">
+                <div className="captchaBox">
+                  {captcha.captchaDigits.map((digit, index) => (
+                    <span
+                      key={index}
+                      className="captchaDigit"
+                      style={{
+                        transform: `rotate(${digit.rotation}deg) translateY(${digit.yOffset}px) translateX(${digit.xOffset}px)`,
+                        color: digit.color,
+                        fontSize: `${digit.fontSize}px`,
+                      }}
+                    >
+                      {digit.value}
+                    </span>
+                  ))}
+                </div>
+                <input
+                  className="captchaInput"
+                  placeholder="입 력"
+                  value={captcha.captchaInput}
+                  onChange={(e) => captcha.setCaptchaInput(e.target.value)}
+                />
+              </div>
+
+              <button
+                className="floatBtn fillRedBtn"
+                onClick={() => openModal('notSupported')}
+              >
+                수강신청
+              </button>
+              <button
+                className="floatBtn outlineWhiteBtn"
+                onClick={() => openModal('notSupported')}
+              >
+                예비수강신청
+              </button>
+
+              <div className="mobile-float-close">
+                <button onClick={() => setIsFloatingMenuOpen(false)}>✕</button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

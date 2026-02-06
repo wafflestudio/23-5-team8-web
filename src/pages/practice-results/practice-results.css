@@ -160,3 +160,9 @@
   color: #2491c9;
   background: #f0f8ff;
 }
+
+@media (max-width: 768px) {
+  .practice-results-title {
+    display: none;
+  }
+}
