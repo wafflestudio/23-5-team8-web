@@ -20,13 +20,13 @@ export default function Cart() {
     showDeleteSuccess,
     openDeleteSuccess,
     closeDeleteSuccess,
-    showNotSupported,
     openNotSupported,
-    closeNotSupported,
-    isOpen,
     openModal,
     closeModal,
   } = useModalStore();
+  const isNoCourseSelectedOpen = useModalStore(
+    (state) => state.openModals.has('cart/noCourseSelected')
+  );
 
   const [selectedCourses, setSelectedCourses] = useState<Set<number>>(
     new Set()
@@ -339,19 +339,13 @@ export default function Cart() {
       />
 
       <WarningModal.Alert
-        isOpen={isOpen('cart/noCourseSelected')}
+        isOpen={isNoCourseSelectedOpen}
         onClose={() => closeModal('cart/noCourseSelected')}
         icon="warning"
       >
         <p className="warningText">삭제할 강좌를 선택해주십시오.</p>
       </WarningModal.Alert>
 
-      <WarningModal.Alert
-        isOpen={showNotSupported}
-        onClose={closeNotSupported}
-        icon="warning"
-        title="지원하지 않는 기능입니다."
-      />
     </main>
   );
 }

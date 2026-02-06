@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useEnrolledCoursesQuery } from '@features/registration-practice';
 import { useModalStore } from '@shared/model/modalStore';
-import { WarningModal } from '@shared/ui/Warning';
 import { TimeTable } from '@widgets/timetable';
 import { formatSchedule } from '@shared/lib/timeUtils';
 import './enrollmentHistory.css';
@@ -10,7 +9,7 @@ export default function EnrollmentHistory() {
   const { data, isLoading } = useEnrolledCoursesQuery();
   const enrolledCourses = useMemo(() => (Array.isArray(data) ? data : []), [data]);
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
-  const { showNotSupported, openNotSupported, closeNotSupported } = useModalStore();
+  const { openNotSupported } = useModalStore();
 
   const toggleCourseSelection = (courseId: number) => {
     setSelectedCourseId((prev) => (prev === courseId ? null : courseId));
@@ -180,12 +179,6 @@ export default function EnrollmentHistory() {
         </div>
       </div>
 
-      <WarningModal.Alert
-        isOpen={showNotSupported}
-        onClose={closeNotSupported}
-        icon="warning"
-        title="지원하지 않는 기능입니다."
-      />
     </main>
   );
 }

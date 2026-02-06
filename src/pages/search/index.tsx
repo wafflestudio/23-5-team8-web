@@ -21,7 +21,11 @@ export default function SearchPage() {
   const currentPage = parseInt(searchParams.get('page') || '0', 10);
 
   const captcha = useCaptcha();
-  const { isOpen, openModal, closeModal, getData } = useModalStore();
+  const { openModal, closeModal, getData } = useModalStore();
+  const isCartOpen = useModalStore((s) => s.openModals.has('search/cart'));
+  const isConflictOpen = useModalStore((s) => s.openModals.has('search/conflict'));
+  const isNoCourseSelectedOpen = useModalStore((s) => s.openModals.has('search/noCourseSelected'));
+  const isTimeOverlapOpen = useModalStore((s) => s.openModals.has('search/timeOverlap'));
   const [selectedCourses, setSelectedCourses] = useState<Set<number>>(
     new Set()
   );
@@ -119,7 +123,7 @@ export default function SearchPage() {
   return (
     <div className="searchPage">
       <WarningModal.Confirm
-        isOpen={isOpen('search/cart')}
+        isOpen={isCartOpen}
         onCancel={() => closeModal('search/cart')}
         onConfirm={() => {
           closeModal('search/cart');
@@ -133,7 +137,7 @@ export default function SearchPage() {
 
       {getData('search/conflict') && (
         <WarningModal.Confirm
-          isOpen={isOpen('search/conflict')}
+          isOpen={isConflictOpen}
           onCancel={() => closeModal('search/conflict')}
           onConfirm={() => {
             closeModal('search/conflict');
@@ -155,15 +159,7 @@ export default function SearchPage() {
       )}
 
       <WarningModal.Alert
-        isOpen={isOpen('notSupported')}
-        onClose={() => closeModal('notSupported')}
-        icon="warning"
-      >
-        <p className="warningText">지원하지 않는 기능입니다.</p>
-      </WarningModal.Alert>
-
-      <WarningModal.Alert
-        isOpen={isOpen('search/noCourseSelected')}
+        isOpen={isNoCourseSelectedOpen}
         onClose={() => closeModal('search/noCourseSelected')}
         icon="warning"
       >
@@ -171,7 +167,7 @@ export default function SearchPage() {
       </WarningModal.Alert>
 
       <WarningModal.Alert
-        isOpen={isOpen('search/timeOverlap')}
+        isOpen={isTimeOverlapOpen}
         onClose={() => closeModal('search/timeOverlap')}
         icon="warning"
       >
