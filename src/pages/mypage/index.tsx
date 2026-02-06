@@ -10,7 +10,7 @@ import {
   usePracticeSessionsQuery,
 } from '@entities/user';
 import type { PracticeSessionItem } from '@entities/user';
-import { useAuth } from '@features/auth';
+import { useAuth, loginApi } from '@features/auth';
 import { WarningModal } from '@shared/ui/Warning';
 import './mypage.css';
 
@@ -279,11 +279,26 @@ const MyPage: React.FC = () => {
   // 계정 삭제
   const handleDeleteAccount = async (password: string) => {
     try {
+      // 로컬 계정인 경우 비밀번호 검증 먼저 수행
+      if (!isSocialUser) {
+        if (!user?.email) {
+          setErrorMessage('보안을 위해 다시 로그인 후 시도해주세요.');
+          setShowErrorModal(true);
+          return;
+        }
+        try {
+          await loginApi({ email: user.email, password });
+        } catch {
+          setErrorMessage('비밀번호가 올바르지 않습니다.');
+          setShowErrorModal(true);
+          return;
+        }
+      }
+
       await deleteAccountMutation.mutateAsync(password);
       setShowDeleteModal(false);
-      setSuccessMessage('계정이 삭제되었습니다.');
-      setSuccessModalCallback(() => () => navigate('/login'));
-      setShowSuccessModal(true);
+      await logout();
+      navigate('/');
     } catch (error) {
       if (isAxiosError(error)) {
         setErrorMessage(
