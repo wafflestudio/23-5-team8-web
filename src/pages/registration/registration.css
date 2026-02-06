@@ -496,6 +496,11 @@
   text-align: center;
 }
 
+/* 모바일 연습 영역 - 데스크톱에서 숨김 */
+.regMobilePracticeArea {
+  display: none;
+}
+
 /* 모바일 하단 고정 바 - 데스크톱에서 숨김 */
 .regMobileBottomBar {
   display: none;
@@ -596,6 +601,53 @@
 
   .courseStatusBadge {
     right: 12px;
+  }
+
+  /* 모바일 연습 영역 */
+  .regMobilePracticeArea {
+    display: block;
+    padding: 16px 0 0;
+  }
+
+  .mobilePracticeControls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .mobilePracticeToggleBtn {
+    flex: 1;
+    padding: 10px 0;
+    background-color: #fff;
+    border: 1px solid #333;
+    color: #333;
+    font-weight: 600;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+
+  .mobilePracticeToggleBtn.active {
+    background-color: #333;
+    color: #fff;
+    border-color: #333;
+  }
+
+  .mobilePracticeDropdown {
+    width: 110px;
+    padding: 10px 6px;
+    font-size: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+  }
+
+  .mobilePracticeInfo {
+    font-size: 11px;
+    color: #888;
+    margin-top: 8px;
+    text-align: center;
   }
 
   /* 모바일 하단 고정 바 */
