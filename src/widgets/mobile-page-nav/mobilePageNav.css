@@ -1,0 +1,82 @@
+.mobilePageNav {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(100%);
+  z-index: 100;
+}
+
+.mobilePageNav-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 0;
+  background: #1b3264;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+}
+
+.mobilePageNav-title {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.mobilePageNav-arrow {
+  font-size: 12px;
+  transition: transform 0.25s ease;
+  line-height: 1;
+}
+
+.mobilePageNav-arrow.open {
+  transform: rotate(180deg);
+}
+
+.mobilePageNav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 98;
+}
+
+.mobilePageNav-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  background: #4a7cc9;
+  z-index: 99;
+}
+
+.mobilePageNav-item {
+  padding: 14px 0;
+  border: none;
+  background: none;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+.mobilePageNav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mobilePageNav-item.active {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 768px) {
+  .mobilePageNav {
+    display: block;
+  }
+}

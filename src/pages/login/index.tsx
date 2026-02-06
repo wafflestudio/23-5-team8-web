@@ -2,7 +2,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { isAxiosError } from 'axios';
-import { useAuth, loginApi, socialLoginApi, type socialProvider } from '@features/auth';
+import {
+  useAuth,
+  loginApi,
+  socialLoginApi,
+  type socialProvider,
+} from '@features/auth';
 import './login.css';
 
 const KAKAO_REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;

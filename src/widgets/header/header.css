@@ -14,6 +14,7 @@
   position: relative;
   border-top: 1px solid var(--line);
   z-index: 1000;
+  display: none;
 }
 
 /* Logo */
@@ -24,8 +25,8 @@
   width: fit-content;
 }
 .logoMark {
-  width: 80px;
-  height: 92px;
+  width: 50px;
+  height: 55px;
   border-radius: 12px;
   background: #fff;
   overflow: hidden;
@@ -40,8 +41,8 @@
   align-items: baseline;
   gap: 3px;
   flex-wrap: wrap;
-  line-height: 1; /* 추가: 글자 높이를 타이트하게 줄임 */
-  margin-bottom: 2px; /* 추가: 아래쪽 여백 미세 조정 (필요시 -2px 등으로 더 줄일 수 있음) */
+  line-height: 1;
+  margin-bottom: 2px;
 }
 .logoTitle {
   display: flex;
@@ -51,21 +52,21 @@
 }
 .logoBold {
   font-weight: 700;
-  font-size: 23px;
+  font-size: 18px;
   letter-spacing: -0.6px;
 }
 .logoTerm {
   margin-left: 4px;
   color: var(--blue);
-  font-size: 18px;
+  font-size: 14px;
 }
 .logoSub {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
   margin-top: 4px;
 }
 
-/* Header Top Grid & Search */
+/* Header Top Grid & Search — Mobile first */
 .headTopGrid {
   display: flex;
   align-items: center;
@@ -77,10 +78,11 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  gap: 4px;
 }
 
 .searchBox {
-  display: none; /* Mobile Default: Hide SearchBox */
+  display: none;
   align-items: stretch;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -128,45 +130,132 @@
   stroke-width: 1.5px;
 }
 
-/* Mobile Search Button */
+/* Mobile Search Button — visible on mobile */
 .mobileSearchBtn {
-  display: block; /* Mobile Default: Show Icon */
+  display: block;
   border: none;
   background: transparent;
-  color: var(--blue);
+  color: #333;
   cursor: pointer;
-  padding: 8px;
+  padding: 6px;
+}
+.mobileSearchBtn svg {
+  width: 30px;
+  height: 30px;
+  stroke-width: 2.2px;
 }
 
-.headTopGrid {
-  display: grid;
-  grid-template-columns: 342px 1fr;
-  justify-content: flex-start;
+/* Hamburger Button — visible on mobile */
+.hamburgerBtn {
+  display: block;
+  border: none;
+  background: transparent;
+  color: #333;
+  cursor: pointer;
+  padding: 6px;
 }
-.searchArea {
+.hamburgerBtn svg {
+  width: 30px;
+  height: 30px;
+  stroke-width: 2.2px;
+}
+
+/* ===== Mobile Search Page (full screen) ===== */
+.mobileSearchPage {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  background: #fff;
+  flex-direction: column;
+}
+.mobileSearchPage.active {
+  display: flex;
+}
+.mobileSearchTopBar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1.5px solid var(--blue);
+  gap: 0;
 }
-.searchBox {
-  display: flex;
+.mobileSearchBackBtn {
+  border: none;
+  background: transparent;
+  color: #333;
+  cursor: pointer;
+  padding: 4px 0 4px 0;
+  flex-shrink: 0;
+}
+.mobileSearchBarInner {
   flex: 1;
-} /* Show SearchBox */
-.mobileSearchBtn {
-  display: none;
-} /* Hide Icon */
-
-/* Head Bottom */
-.headBottom {
-  display: none; /* Mobile Default: Hide Bottom Nav */
+  display: flex;
+  align-items: stretch;
+  height: 48px;
+}
+.mobileSearchBarSelect {
+  border: none;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  padding: 0 8px 0 14px;
+  color: var(--blue);
+  font-size: 15px;
+  font-weight: 500;
+  outline: none;
+}
+.mobileSearchBarInput {
+  flex: 1;
+  border: none;
+  padding: 0 10px;
+  font-size: 14px;
+  outline: none;
+  min-width: 0;
+}
+.mobileSearchBarInput::placeholder {
+  color: var(--blue);
+  font-size: 14px;
+  opacity: 0.55;
+}
+.mobileSearchBarSearchBtn {
+  border: none;
+  background: #1a3a6b;
+  color: #fff;
+  cursor: pointer;
+  padding: 0 14px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  margin-left: 6px;
+}
+.mobileSearchBarFilterBtn {
+  border: 1px solid #d5dce6;
+  background: #edf1f7;
+  color: #4a6a9b;
+  cursor: pointer;
+  padding: 0 12px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  margin-left: 4px;
+}
+.mobileSearchBody {
+  flex: 1;
+  padding: 20px 16px;
+}
+.mobileSearchHint {
+  font-size: 15px;
+  color: #333;
+}
+.mobileSearchHint .blue {
+  color: var(--blue);
 }
 
-.headBottom {
-  display: block;
-} /* PC: Show Bottom Nav */
+/* User info — hidden on mobile */
+.userInfoArea {
+  display: none;
+}
 
+/* Head Bottom Nav */
 .headBottomFlex {
   display: flex;
   align-items: center;
@@ -212,18 +301,7 @@
   transform: translateY(-50%);
 }
 
-/* [추가] 유저 정보 영역 (기본: 모바일 숨김) */
-.userInfoArea {
-  display: none;
-}
-
-.userInfoArea {
-  display: block; /* 혹은 flex */
-  position: relative;
-  margin-left: 10px;
-  flex-shrink: 0; /* 공간 부족해도 줄어들지 않음 */
-}
-
+/* User Info Btn & Dropdown (shared styles) */
 .userInfoBtn {
   border: 0.5px solid var(--line);
   background: #fff;
@@ -234,7 +312,7 @@
   gap: 12px;
   font-family: 'Noto Sans KR', sans-serif;
   padding: 0 16px 0 20px;
-  height: 50px; /* 검색창 높이와 동일 */
+  height: 50px;
   border-radius: 25px;
   transition: background 0.2s;
   width: 100%;
@@ -296,15 +374,14 @@
   padding: 16px 0 16px 0;
   gap: 8px;
 
-  /* 애니메이션 설정 */
-  transform-origin: top center; /* 위쪽 중심 */
-  transform: scaleY(0); /* 기본 상태: 세로 크기 0 */
+  transform-origin: top center;
+  transform: scaleY(0);
   opacity: 0;
   visibility: hidden;
   transition:
     transform 0.3s ease,
     opacity 0.3s ease,
-    visibility 0.3s; /* 화살표와 동일한 0.3s */
+    visibility 0.3s;
 }
 
 .userDropdown.active {
@@ -325,6 +402,68 @@
 
 .userDropItem:last-child {
   border-bottom: none;
+}
+
+/* ===== Desktop overrides ===== */
+@media (min-width: 769px) {
+  .headTopGrid {
+    display: grid;
+    grid-template-columns: 342px 1fr;
+    justify-content: flex-start;
+  }
+
+  .searchArea {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .searchBox {
+    display: flex;
+    flex: 1;
+  }
+
+  .mobileSearchBtn {
+    display: none;
+  }
+
+  .hamburgerBtn {
+    display: none;
+  }
+
+  .mobileSearchPage {
+    display: none !important;
+  }
+
+  .headBottom {
+    display: block;
+  }
+
+  .userInfoArea {
+    display: block;
+    position: relative;
+    margin-left: 10px;
+    flex-shrink: 0;
+  }
+
+  .logoMark {
+    width: 80px;
+    height: 92px;
+  }
+
+  .logoBold {
+    font-size: 23px;
+  }
+
+  .logoTerm {
+    font-size: 18px;
+  }
+
+  .logoSub {
+    font-size: 12px;
+  }
 }
 
 /* 애니메이션 감소 선호 사용자 대응 */

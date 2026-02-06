@@ -33,8 +33,8 @@ import './registration.css';
 
 export default function Registration() {
   const { pipWindow, openWindow, closeWindow } = usePracticeWindow();
-  const { openNotSupported } = useModalStore();
-  const [showPracticeEndModal, setShowPracticeEndModal] = useState(false);
+  const { openNotSupported, openModal, closeModal } = useModalStore();
+  const isPracticeEndOpen = useModalStore((s) => s.openModals.has('registration/practiceEnd'));
 
   // Custom hooks
   const captcha = useCaptcha();
@@ -44,7 +44,7 @@ export default function Registration() {
     pipWindow,
     openWindow,
     closeWindow,
-    onPracticeEnd: () => setShowPracticeEndModal(true),
+    onPracticeEnd: () => openModal('registration/practiceEnd'),
   });
 
   const attempt = useRegistrationAttempt({
@@ -318,6 +318,42 @@ export default function Registration() {
         </div>
       </div>
 
+      <div className="regMobileBottomBar">
+        <div className="regMobileCaptchaGroup">
+          <div className="regMobileCaptcha">
+            {captcha.captchaDigits.map((digit, index) => (
+              <span
+                key={index}
+                className="regCaptchaDigit"
+                style={{
+                  transform: `rotate(${digit.rotation}deg) translateY(${digit.yOffset}px) translateX(${digit.xOffset}px)`,
+                  color: digit.color,
+                  fontSize: `${digit.fontSize}px`,
+                }}
+              >
+                {digit.value}
+              </span>
+            ))}
+          </div>
+          <div className="regMobileInput">
+            <input
+              className="regMobileCaptchaInput"
+              placeholder="입 력"
+              name="mobileCaptchaInput"
+              autoComplete="off"
+              value={captcha.captchaInput}
+              onChange={(e) => captcha.setCaptchaInput(e.target.value)}
+            />
+          </div>
+        </div>
+        <button
+          className="regMobileSubmitBtn"
+          onClick={attempt.handleRegisterAttempt}
+        >
+          수강신청
+        </button>
+      </div>
+
       {pipWindow &&
         createPortal(
           <PracticeClock currentTime={timer.currentTime} />,
@@ -362,11 +398,11 @@ export default function Registration() {
           document.body
         )}
 
-      {showPracticeEndModal &&
+      {isPracticeEndOpen &&
         createPortal(
           <WarningModal.Alert
-            isOpen={showPracticeEndModal}
-            onClose={() => setShowPracticeEndModal(false)}
+            isOpen={isPracticeEndOpen}
+            onClose={() => closeModal('registration/practiceEnd')}
             icon="warning"
             title="연습 시간이 종료되었습니다! (08:33)"
           />,

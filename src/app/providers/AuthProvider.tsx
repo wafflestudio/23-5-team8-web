@@ -20,10 +20,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   });
 
-  // 관리자 감지 시 어드민 페이지로 리다이렉트
+  // 권한에 따른 페이지 접근 제어
   useEffect(() => {
-    if (user?.admin && !location.pathname.startsWith('/admin')) {
+    const isAdminPath = location.pathname.startsWith('/admin');
+
+    if (user?.admin && !isAdminPath) {
+      // 관리자가 일반 페이지 접근 시 어드민 페이지로 리다이렉트
       window.location.replace('/admin');
+    } else if (!user?.admin && isAdminPath) {
+      // 비관리자가 어드민 페이지 접근 시 홈으로 리다이렉트
+      window.location.replace('/');
     }
   }, [user, location.pathname]);
 

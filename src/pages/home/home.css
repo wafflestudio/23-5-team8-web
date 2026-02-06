@@ -1,18 +1,20 @@
 .page {
-  padding: 60px 0 40px;
+  padding: 24px 0 30px;
   flex: 1;
 }
 
-/* ===== Home Layout System (Flattened) ===== */
-/* Mobile First (One Column) */
+/* ===== Home Layout System — Mobile First (Single Column) ===== */
 .homeGrid {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
 }
 
-/* 모바일 순서 지정 (Flex Order) */
-/* 요구사항: 로그인 -> 기간 -> 버튼 -> 수강안내 -> 공지 */
+.homeLeft,
+.homeRight {
+  display: contents;
+}
+
 .loginPanel {
   order: 1;
 }
@@ -22,32 +24,56 @@
 .rightButtons {
   order: 3;
 }
-
-.homeGrid {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 32px;
-  align-items: start;
+.noticePanel {
+  order: 4;
+}
+.leaderBoardPanel {
+  order: 5;
 }
 
-/* PC 배치 지정 (Grid Lines) */
-/* Left Column Items */
-.periodPanel {
-  grid-column: 1;
-  grid-row: 1;
-  order: unset;
-}
+/* ===== Desktop: 2-column grid ===== */
+@media (min-width: 769px) {
+  .page {
+    padding: 60px 0 40px;
+  }
 
-/* Right Column Items */
-.loginPanel {
-  grid-column: 2;
-  grid-row: 1;
-  order: unset;
-}
-.rightButtons {
-  grid-column: 2;
-  grid-row: 2;
-  order: unset;
+  .homeGrid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .homeLeft,
+  .homeRight {
+    display: block;
+  }
+
+  .periodPanel {
+    grid-column: 1;
+    grid-row: 1;
+    order: unset;
+  }
+
+  .loginPanel {
+    grid-column: 2;
+    grid-row: 1;
+    order: unset;
+  }
+
+  .rightButtons {
+    grid-column: 2;
+    grid-row: 2;
+    order: unset;
+  }
+
+  .noticePanel {
+    order: unset;
+  }
+
+  .leaderBoardPanel {
+    order: unset;
+  }
 }
 
 /* Panel Styles */
@@ -59,7 +85,7 @@
   margin-bottom: 18px;
 }
 .panelHead {
-  padding: 30px 36px 18px;
+  padding: 20px 20px 14px;
   gap: 9px;
   display: flex;
   align-items: flex-end;
@@ -79,7 +105,7 @@
   letter-spacing: -0.6px;
 }
 .periodBody {
-  padding: 0 40px 30px;
+  padding: 0 16px 20px;
 }
 .periodTable {
   width: 100%;
@@ -94,71 +120,156 @@
   letter-spacing: -0.6px;
 }
 
-.periodTable,
-.periodTable thead,
-.periodTable tbody,
-.periodTable tr,
-.periodTable th,
-.periodTable td {
-  display: table-cell; /* display 초기화 (필수) */
-}
-.periodTable {
-  display: table; /* 테이블 자체는 table로 */
-  width: 100%;
-  table-layout: fixed; /* 열 너비 고정 */
-}
-.periodTable thead,
-.periodTable tbody {
-  display: table-row-group;
-}
-.periodTable tr {
-  display: table-row;
-}
-.periodTable th:nth-child(1) {
-  width: 25%;
-} /* 구분 */
-.periodTable th:nth-child(2) {
-  width: 41%;
-} /* 일자 */
-.periodTable th:nth-child(3) {
-  width: 18%;
-} /* 시간 */
-.periodTable th:nth-child(4) {
-  width: 16%;
-} /* 대상 */
-.periodTable th {
-  padding: 14px 18px;
-  border-bottom: 1px solid #e5e7eb;
-  border-right: 1px solid #eef2f7;
-  font-size: 16px;
-  font-weight: 400;
-  text-align: center;
-  letter-spacing: -1px;
-}
-.periodTable td {
-  padding: 12px 5px;
-  border-bottom: none;
-  vertical-align: middle;
-  border-right: 1px solid #eef2f7;
-  font-size: 15px;
-  font-weight: 400;
-  letter-spacing: -0.6px;
+/* Desktop table layout */
+@media (min-width: 769px) {
+  .panelHead {
+    padding: 30px 36px 18px;
+  }
+  .periodBody {
+    padding: 0 40px 30px;
+  }
 
-  white-space: pre-wrap;
+  .periodTable,
+  .periodTable thead,
+  .periodTable tbody,
+  .periodTable tr,
+  .periodTable th,
+  .periodTable td {
+    display: table-cell;
+  }
+  .periodTable {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+  .periodTable thead,
+  .periodTable tbody {
+    display: table-row-group;
+  }
+  .periodTable tr {
+    display: table-row;
+  }
+  .periodTable th:nth-child(1) {
+    width: 25%;
+  }
+  .periodTable th:nth-child(2) {
+    width: 41%;
+  }
+  .periodTable th:nth-child(3) {
+    width: 18%;
+  }
+  .periodTable th:nth-child(4) {
+    width: 16%;
+  }
+  .periodTable th {
+    padding: 14px 18px;
+    border-bottom: 1px solid #e5e7eb;
+    border-right: 1px solid #eef2f7;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: center;
+    letter-spacing: -1px;
+  }
+  .periodTable td {
+    padding: 12px 5px;
+    border-bottom: none;
+    vertical-align: middle;
+    border-right: 1px solid #eef2f7;
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: -0.6px;
+    white-space: pre-wrap;
+  }
+  .periodTable tbody tr:first-child td {
+    background-color: #eef5ff;
+  }
+  .periodTable td:first-child {
+    text-align: left;
+    padding-left: 18px;
+  }
+  .periodTable td:nth-child(2) {
+    text-align: center;
+  }
+  .periodTable th:last-child,
+  .periodTable td:last-child {
+    border-right: none;
+  }
 }
-.periodTable tbody tr:first-child td {
-  background-color: #eef5ff;
-}
-.periodTable td:first-child {
-  text-align: left;
-  padding-left: 18px;
-}
-.periodTable td:nth-child(2) {
-  text-align: center;
-}
-.periodTable th:last-child,
-.periodTable td:last-child {
-  border-right: none;
+
+/* ===== Mobile: Card-style table ===== */
+@media (max-width: 768px) {
+  .panelHead {
+    padding: 16px 12px 10px;
+  }
+  .periodBody {
+    padding: 0 0 8px;
+  }
+
+  .periodTable thead {
+    display: none;
+  }
+  .periodTable,
+  .periodTable tbody {
+    display: block;
+  }
+
+  .periodTable tr {
+    display: grid;
+    grid-template-columns: 30% 1fr;
+    grid-template-rows: auto;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .periodTable td {
+    display: block;
+    border-right: none;
+    border-bottom: none;
+    padding: 0;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: -0.4px;
+    white-space: pre-wrap;
+  }
+
+  .periodTable td:first-child {
+    grid-column: 1;
+    grid-row: 1 / 4;
+    display: flex;
+    align-items: center;
+    font-weight: 400;
+    padding: 14px 12px;
+    border-right: 1px solid #eef2f7;
+    font-size: 16px;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .periodTable td:nth-child(2) {
+    grid-column: 2;
+    padding: 14px 16px 3px;
+  }
+  .periodTable td:nth-child(3) {
+    grid-column: 2;
+    padding: 3px 16px;
+  }
+  .periodTable td:nth-child(4) {
+    grid-column: 2;
+    padding: 3px 16px 14px;
+  }
+
+  .periodTable td:nth-child(2)::before,
+  .periodTable td:nth-child(3)::before,
+  .periodTable td:nth-child(4)::before {
+    content: attr(data-label) '  ';
+    font-weight: 400;
+    color: #333;
+    min-width: 36px;
+    display: inline-block;
+  }
+
+  .periodTable tbody tr:first-child td {
+    background-color: transparent;
+  }
 }
 
 /* Info Panel */
@@ -175,15 +286,10 @@
   padding: 18px 0;
 }
 
-.panelTitle {
-  font-size: 19px;
-  font-weight: 600;
-}
-
 /* Login Panel */
 .loginPanel {
   border-color: var(--line);
-  margin-bottom: 120px;
+  margin-bottom: 0;
 }
 .loginTop {
   padding: 32px 47px 20px;
@@ -216,6 +322,12 @@
   letter-spacing: -0.7px;
 }
 
+@media (min-width: 769px) {
+  .loginPanel {
+    margin-bottom: 120px;
+  }
+}
+
 /* Right Buttons */
 .rightButtons {
   display: grid;
@@ -225,14 +337,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 72px;
+  height: 56px;
 
-  /* 디자인 반전: 파란 배경, 흰 글씨 */
   background: #5189d6;
   color: #fff;
 
   border-radius: 12px;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
   letter-spacing: -0.6px;
   transition: opacity 0.2s;
@@ -246,14 +357,22 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 72px;
+  height: 56px;
   border: 2px solid #376dc8;
   border-radius: 12px;
   background: #fff;
   color: #376dc8;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
   letter-spacing: -0.6px;
+}
+
+@media (min-width: 769px) {
+  .rightFilledBtn,
+  .rightOutlineBtn {
+    height: 72px;
+    font-size: 20px;
+  }
 }
 
 .leaderBoardPanel {

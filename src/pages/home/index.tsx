@@ -16,7 +16,6 @@ import type {
   LeaderboardResponse,
   MyLeaderboardResponse,
 } from '@features/leaderboard';
-import { WarningModal } from '@shared/ui/Warning';
 import './home.css';
 
 type FilterType = 'all' | 'weekly';
@@ -58,7 +57,6 @@ const formatNoticeDate = (dateString: string): string => {
 export default function HomePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [showNotSupporting, setShowNotSupporting] = useState(false);
   const [filter, setFilter] = useState<FilterType>('all');
   const [category, setCategory] = useState<CategoryType>('firstReaction');
   const { data: myProfile } = useMyPageQuery();
@@ -424,13 +422,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <WarningModal.Alert
-        isOpen={showNotSupporting}
-        onClose={() => setShowNotSupporting(false)}
-        icon="warning"
-      >
-        <p className="warningText">지원하지 않는 기능입니다.</p>
-      </WarningModal.Alert>
     </main>
   );
 }

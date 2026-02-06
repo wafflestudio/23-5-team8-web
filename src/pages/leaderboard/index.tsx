@@ -193,12 +193,12 @@ export default function LeaderBoard() {
             </div>
           ) : (
             <div ref={scrollContainerRef} className="leaderboard-list">
-              {entries.map((entry, index) => {
-                const rank = index + 1;
+              {entries.map((entry) => {
+                const rank = entry.rank;
                 const isTop3 = rank <= 3;
                 return (
                   <div
-                    key={`${entry.userId}-${index}`}
+                    key={`${entry.userId}-${entry.rank}`}
                     className={`leaderboard-item ${isTop3 ? 'top-3' : ''}`}
                   >
                     <span

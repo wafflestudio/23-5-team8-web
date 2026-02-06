@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth, useTimer } from '@features/auth';
 import { Header } from '@widgets/header';
 import { Footer } from '@widgets/footer';
+import { SideMenu } from '@widgets/side-menu';
 import { WarningModal } from '@shared/ui/Warning';
 import { AppRoutes } from './routes';
 import './styles/global.css';
@@ -13,6 +14,7 @@ export default function App() {
   const { user, logout } = useAuth();
   const { timeLeft, extendLogin } = useTimer();
   const [showLoginWarningOpen, setShowLoginWarningOpen] = useState(false);
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const searchParams = new URLSearchParams(location.search);
   const fromHome = searchParams.get('from') === 'home';
   const isAuthPage =
@@ -66,13 +68,25 @@ export default function App() {
   }, [showLoginWarningOpen]);
 
   return (
-    <div className="app" style={{ paddingTop: !isAuthPage ? '170px' : '0' }}>
-      {!isAuthPage && <Header handleLogout={handleLogout} />}
+    <div className={`app ${!isAuthPage ? 'withHeader' : ''}`}>
+      {!isAuthPage && (
+        <Header
+          handleLogout={handleLogout}
+          onToggleSideMenu={() => setIsSideMenuOpen(true)}
+        />
+      )}
       <div id="main">
         <AppRoutes />
       </div>
       {!isAuthPage && (
         <Footer onOpenModal={() => setShowLoginWarningOpen(true)} />
+      )}
+      {!isAuthPage && (
+        <SideMenu
+          isOpen={isSideMenuOpen}
+          onClose={() => setIsSideMenuOpen(false)}
+          onLogout={handleLogout}
+        />
       )}
       {user && (timeLeft <= 60 || showLoginWarningOpen) && timeLeft > 0 && (
         <SessionWarningModal

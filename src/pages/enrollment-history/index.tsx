@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useEnrolledCoursesQuery } from '@features/registration-practice';
-import { WarningModal } from '@shared/ui/Warning';
+import { useModalStore } from '@shared/model/modalStore';
 import { TimeTable } from '@widgets/timetable';
 import { formatSchedule } from '@shared/lib/timeUtils';
 import './enrollmentHistory.css';
@@ -9,7 +9,7 @@ export default function EnrollmentHistory() {
   const { data, isLoading } = useEnrolledCoursesQuery();
   const enrolledCourses = useMemo(() => (Array.isArray(data) ? data : []), [data]);
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
-  const [showNotSupported, setShowNotSupported] = useState(false);
+  const { openNotSupported } = useModalStore();
 
   const toggleCourseSelection = (courseId: number) => {
     setSelectedCourseId((prev) => (prev === courseId ? null : courseId));
@@ -47,13 +47,13 @@ export default function EnrollmentHistory() {
               <div className="enrollment-tabs-container">
                 <button
                   className="enrollment-tab-button active"
-                  onClick={() => setShowNotSupported(true)}
+                  onClick={() => openNotSupported()}
                 >
                   선택삭제
                 </button>
                 <button
                   className="enrollment-tab-button"
-                  onClick={() => setShowNotSupported(true)}
+                  onClick={() => openNotSupported()}
                 >
                   엑셀저장
                 </button>
@@ -172,19 +172,13 @@ export default function EnrollmentHistory() {
               <TimeTable
                 title="수강신청 시간표"
                 courses={coursesForTimeTable}
-                onPrintClick={() => setShowNotSupported(true)}
+                onPrintClick={() => openNotSupported()}
               />
             </div>
           </div>
         </div>
       </div>
 
-      <WarningModal.Alert
-        isOpen={showNotSupported}
-        onClose={() => setShowNotSupported(false)}
-        icon="warning"
-        title="지원하지 않는 기능입니다."
-      />
     </main>
   );
 }
