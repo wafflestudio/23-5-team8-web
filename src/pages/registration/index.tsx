@@ -189,6 +189,39 @@ export default function Registration() {
           </p>
         </div>
 
+        <div className="regMobilePracticeArea">
+          <div className="mobilePracticeControls">
+            <button
+              className={`mobilePracticeToggleBtn ${pipWindow ? 'active' : ''}`}
+              onClick={timer.handleToggleWithCooldown}
+              disabled={timer.isCooldown}
+              style={{
+                cursor: timer.isCooldown ? 'not-allowed' : 'pointer',
+                opacity: timer.isCooldown ? 0.6 : 1,
+              }}
+            >
+              {timer.isCooldown
+                ? '잠시 대기... (1.5s)'
+                : pipWindow
+                  ? '연습 종료 (Stop)'
+                  : '연습 모드 (Start)'}
+            </button>
+            <select
+              className="mobilePracticeDropdown"
+              value={timer.startOffset}
+              onChange={(e) => timer.setStartOffset(Number(e.target.value))}
+            >
+              <option value={0} disabled hidden>연습 시작 설정</option>
+              <option value={60}>60초 전</option>
+              <option value={30}>30초 전</option>
+              <option value={15}>15초 전</option>
+            </select>
+          </div>
+          <p className="mobilePracticeInfo">
+            ※ 타이머 기본값: 30초전 (8시 29분 30초)
+          </p>
+        </div>
+
         <div className="regInfoLine">
           신청가능학점 <span className="infoNum">21</span>학점 / 신청학점{' '}
           <span className="infoNum">0</span>학점 / 신청강좌{' '}
