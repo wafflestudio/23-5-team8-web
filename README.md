@@ -2,6 +2,8 @@
 
 서울대학교 수강신청 시스템을 모방한 시뮬레이션 플랫폼입니다. 실제와 유사한 환경에서 수강신청을 연습하고, 반응속도를 측정하여 랭킹에 도전할 수 있습니다.
 
+**배포:** https://allclear.codes/
+
 현재 레포는 front(web) 레포지토리이고 백엔드 레포는 https://github.com/wafflestudio/23-5-team8-server에서 확인하실 수 있습니다.
 
 모바일을 위한 반응형 디자인이 구현되어 있습니다.
@@ -10,34 +12,23 @@
 
 ## 기술 스택
 
-### Core
-
-![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-7.2-646CFF?logo=vite&logoColor=white)
-
-### State Management
-
-![TanStack Query](https://img.shields.io/badge/TanStack_Query-5.x-FF4154?logo=reactquery&logoColor=white)
-![Zustand](https://img.shields.io/badge/Zustand-5.x-000000)
-![React Hook Form](https://img.shields.io/badge/React_Hook_Form-7.x-EC5990?logo=reacthookform&logoColor=white)
-
-### UI / Interaction
-
-![dnd-kit](https://img.shields.io/badge/@dnd--kit-6.x-000000)
-![TanStack Virtual](https://img.shields.io/badge/TanStack_Virtual-3.x-FF4154)
-
-### Auth
-
-![Kakao](https://img.shields.io/badge/Kakao_OAuth-FFCD00?logo=kakao&logoColor=black)
-![Google](https://img.shields.io/badge/Google_OAuth-4285F4?logo=google&logoColor=white)
-
-### Developer Experience
-
-![ESLint](https://img.shields.io/badge/ESLint-9.x-4B32C3?logo=eslint&logoColor=white)
-![Prettier](https://img.shields.io/badge/Prettier-3.x-F7B93E?logo=prettier&logoColor=black)
-![Playwright](https://img.shields.io/badge/Playwright-1.x-2EAD33?logo=playwright&logoColor=white)
-![Husky](https://img.shields.io/badge/Husky-9.x-000000)
+| 카테고리        | 기술                        | 버전 |
+| --------------- | --------------------------- | ---- |
+| UI 프레임워크   | React (with React Compiler) | 19.2 |
+| 언어            | TypeScript (strict mode)    | 5.9  |
+| 빌드 도구       | Vite                        | 7.2  |
+| 라우팅          | React Router DOM            | 7.x  |
+| 서버 상태       | TanStack Query              | 5.x  |
+| 가상화 리스트   | TanStack Virtual            | 3.x  |
+| 클라이언트 상태 | Zustand                     | 5.x  |
+| 폼 상태         | React Hook Form             | 7.x  |
+| HTTP 클라이언트 | Axios                       | 1.x  |
+| 드래그 앤 드롭  | @dnd-kit                    | 6.x  |
+| 인증            | Kakao OAuth, Google OAuth   | -    |
+| 린팅            | ESLint                      | 9.x  |
+| 포매팅          | Prettier                    | 3.x  |
+| E2E 테스트      | Playwright                  | 1.x  |
+| Git Hooks       | Husky                       | 9.x  |
 
 ---
 
@@ -45,7 +36,11 @@
 
 ### 홈
 
-[메인 페이지 전체 화면 스크린샷 - 수강신청 일정 카운트다운, 공지사항 목록, 주간 리더보드 미리보기가 보이는 대시보드]
+<div style={{display: flex, align-items: space-around}}>
+<img width="48%" height="1000" alt="home1" src="https://github.com/user-attachments/assets/5ecb6b3e-e6ff-4209-b0b1-d75c57de34cf" /><img width="48%" height="1000" alt="home2" src="https://github.com/user-attachments/assets/61f1770f-5ab3-414b-bbde-4c42633985ed" />
+</div>
+
+
 
 서비스의 메인 화면입니다. Header와 Footer는 로그인/회원가입/마이페이지를 제외하고는 유지가 됩니다. Header에서는 강의 검색, 탭 이동, 유저메뉴가 표시되며 Footer에서는 로그인 타이머가 표시됩니다. 로그인 타이머가 1분 이하로 남으면 팝업이 뜹니다.
 
@@ -53,7 +48,8 @@
 
 ### 로그인 / 회원가입
 
-[로그인 페이지 스크린샷 - 이메일/비밀번호 입력 폼, 카카오 로그인 버튼, 구글 로그인 버튼이 보이는 화면]
+<img width="2850" height="1466" alt="login" src="https://github.com/user-attachments/assets/884dc21e-28ee-438e-aeb5-ccb7a1edb532" />
+
 
 이메일 로그인과 카카오, 구글 소셜 로그인을 지원합니다. 아이디 저장 시 다음 접속에 입력했던 이메일 정보가 자동입력됩니다.
 
@@ -61,7 +57,7 @@
 
 ### 강좌 검색
 
-[강좌 검색 페이지 스크린샷 - 검색창, 검색 결과 테이블, 장바구니 담기 버튼이 보이는 화면]
+<img width="2880" height="1466" alt="search" src="https://github.com/user-attachments/assets/b6d2e2fe-3090-4fac-8ea7-c092157a2c20" />
 
 강좌명, 교수명으로 강좌를 검색할 수 있습니다. 장바구니에 담기 전 시간표 충돌 여부를 자동으로 검사하여 겹치는 강좌가 있으면 경고를 표시합니다.
 
@@ -69,7 +65,8 @@
 
 ### 장바구니
 
-[장바구니 페이지 스크린샷 - 담은 강좌 목록, 드래그 핸들, 우측에 시간표 미리보기가 보이는 화면]
+<img width="2880" height="1466" alt="cart" src="https://github.com/user-attachments/assets/4cca6fcb-d13b-4928-a85b-6cfe16926ec1" />
+
 
 수강신청할 강좌를 미리 담아둘 수 있습니다. 장바구니 담은 수 숫자를 클릭하면 유저가 담은 수를 수정할 수 있습니다. 우측 시간표에서 담은 강좌들의 시간 배치를 미리 확인할 수 있습니다.
 
@@ -77,7 +74,8 @@
 
 ### 수강신청 시뮬레이터
 
-[수강신청 시뮬레이터 페이지 스크린샷 - 상단 타이머, 장바구니에서 가져온 강좌 목록, CAPTCHA 입력창, 신청 버튼이 보이는 화면]
+<img width="2880" height="1468" alt="registration" src="https://github.com/user-attachments/assets/d78aad35-9826-4334-bd41-dbb010efc3a9" />
+
 
 실제 수강신청과 동일한 긴장감을 느낄 수 있는 핵심 기능입니다.
 
@@ -87,13 +85,15 @@
 - 경쟁자 수와 수용 인원을 기반으로 대기열을 시뮬레이션합니다
 - 수강신청 성공 / 실패 로직은 그동안 쌓은 로그를 바탕으로 해당 시도의 반응속도 백분율을 기반으로 백엔드에서 판단합니다.
 
-[PiP 타이머가 활성화된 상태의 스크린샷 - 브라우저 위에 떠있는 미니 타이머 창이 보이는 화면]
+<img width="2878" height="1426" alt="registration_pip" src="https://github.com/user-attachments/assets/18fadb95-b231-4fb2-96eb-c6675e1e3fef" />
+
 
 ---
 
 ### 리더보드
 
-[리더보드 페이지 스크린샷 - 1픽/2픽 반응속도 탭, 주간/전체 필터, 순위 목록이 보이는 화면]
+<img width="2880" height="1462" alt="leaderboard" src="https://github.com/user-attachments/assets/755775d5-77d2-476a-ab17-3c7508a6cf09" />
+
 
 수강신청 연습 결과를 바탕으로 랭킹을 확인할 수 있습니다.
 
@@ -107,15 +107,18 @@
 
 ### 마이페이지
 
-[마이페이지 스크린샷 - 사용자 프로필, 연습 세션 목록, 평균 반응속도/성공률 통계가 보이는 화면]
+<img width="2878" height="1466" alt="mypage" src="https://github.com/user-attachments/assets/3a9130fa-857e-4f66-bcc4-43d8a79cdc0c" />
+
 
 자신의 연습 기록과 통계를 확인할 수 있습니다. 각 연습 세션별 상세 결과를 조회할 수 있으며, 평균 반응속도와 성공률을 통해 실력 향상을 추적할 수 있습니다.
+연습 기록 통계는 '연습결과상세'탭에서도 같은 내용을 확인할 수 있습니다.
 
 ---
 
 ### 관리자 페이지
 
-[관리자 페이지 스크린샷 - 공지사항 관리 탭, 강좌 동기화 설정이 보이는 화면]
+<img width="2878" height="1466" alt="admin" src="https://github.com/user-attachments/assets/5229484f-d984-41c3-8b48-83585d31c1a4" />
+
 
 관리자 전용 페이지입니다. 공지사항 작성/수정/삭제와 강좌 데이터 동기화 기능을 제공합니다.
 
