@@ -5,6 +5,7 @@ export interface LeaderboardEntryResponse {
   nickname: string;
   profileImageUrl: string;
   value: number;
+  rank: number;
 }
 
 export interface LeaderboardRequest {
