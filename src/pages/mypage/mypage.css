@@ -513,6 +513,7 @@
 .leaderboard-user {
   display: flex;
   align-items: center;
+  margin-left: -15vw;
   gap: 8px;
 }
 
