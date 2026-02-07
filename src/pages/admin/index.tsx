@@ -18,6 +18,7 @@ import { AdminHeader } from './components/AdminHeader';
 import { AdminSidebar, type AdminSection } from './components/AdminSidebar';
 import { NoticeSection } from './components/NoticeSection';
 import { SyncSection } from './components/SyncSection';
+import { MetricsSection } from './components/MetricsSection';
 import { PasswordChangeModal } from './components/PasswordChangeModal';
 import './admin.css';
 
@@ -116,6 +117,13 @@ export default function AdminPage() {
               isSyncing={runSyncMutation.isPending}
               onToggleAutoSync={handleToggleAutoSync}
               onSyncNow={handleSyncNow}
+            />
+          )}
+
+          {activeSection === 'metrics' && (
+            <MetricsSection
+              totalUsers={461}
+              totalPracticeAttempts={10820}
             />
           )}
         </main>
