@@ -28,8 +28,7 @@
 ### 홈
 
 | <img alt="home1" src="https://github.com/user-attachments/assets/5ecb6b3e-e6ff-4209-b0b1-d75c57de34cf" /> | <img alt="home2" src="https://github.com/user-attachments/assets/61f1770f-5ab3-414b-bbde-4c42633985ed" /> |
-
-| :--: | :--: |
+| :-------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------: |
 
 
 서비스의 메인 화면입니다. Header와 Footer는 로그인/회원가입/마이페이지를 제외하고는 유지가 됩니다. Header에서는 강의 검색, 탭 이동, 유저메뉴가 표시되며 Footer에서는 로그인 타이머가 표시됩니다. 로그인 타이머가 1분 이하로 남으면 팝업이 뜹니다.
@@ -101,7 +100,8 @@
 
 ### 관리자 페이지
 
-<img width="2878" height="1466" alt="admin" src="https://github.com/user-attachments/assets/5229484f-d984-41c3-8b48-83585d31c1a4" />
+<img width="2850" height="1466" alt="image" src="https://github.com/user-attachments/assets/ef6040c9-15e3-4f99-b670-117f28203656" />
+
 
 관리자 전용 페이지입니다. 공지사항 작성/수정/삭제와 강좌 데이터 동기화 기능을 제공하고 백엔드에서 여러 지표를 받아와 표시합니다.
 
