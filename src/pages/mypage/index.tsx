@@ -12,6 +12,7 @@ import {
 import type { PracticeSessionItem } from '@entities/user';
 import { useAuth } from '@features/auth';
 import { WarningModal } from '@shared/ui/Warning';
+import { DEFAULT_AVATAR } from '@shared/lib/defaultAvatar';
 import './mypage.css';
 
 // MyPage 헤더 컴포넌트
@@ -131,7 +132,9 @@ const DeleteAccountModal: React.FC<{
 
   if (!isOpen) return null;
 
-  const canSubmit = isSocialUser ? inputValue === '계정삭제' : inputValue.length > 0;
+  const canSubmit = isSocialUser
+    ? inputValue === '계정삭제'
+    : inputValue.length > 0;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -196,7 +199,8 @@ const MyPage: React.FC = () => {
   >(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user, logout } = useAuth();
-  const isSocialUser = user?.provider === 'kakao' || user?.provider === 'google';
+  const isSocialUser =
+    user?.provider === 'kakao' || user?.provider === 'google';
 
   // Queries
   const { data: myPageData, isLoading } = useMyPageQuery();
@@ -329,7 +333,7 @@ const MyPage: React.FC = () => {
           <div className="profile-content">
             <div className="profile-image-wrapper">
               <img
-                src={myPageData.profileImageUrl || '/assets/basic_profile.png'}
+                src={myPageData.profileImageUrl || DEFAULT_AVATAR}
                 alt="Profile"
                 className="profile-image"
               />
@@ -403,7 +407,7 @@ const MyPage: React.FC = () => {
             <>
               <div className="leaderboard-list-header">
                 <span>날짜</span>
-                <span>성공/시도</span>
+                <span className="leaderboard-user">성공/시도</span>
                 <span style={{ textAlign: 'right' }}>성공률</span>
               </div>
               <div className="leaderboard-list">
