@@ -745,6 +745,48 @@
   }
 }
 
+/* Metrics Section */
+.metrics-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.metrics-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.metrics-card-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.metrics-card-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.metrics-card-unit {
+  font-size: 16px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-left: 4px;
+}
+
 /* Password Change Modal */
 .password-modal-content {
   padding: 24px;

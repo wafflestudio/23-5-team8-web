@@ -1,4 +1,4 @@
-export type AdminSection = 'notice' | 'sync';
+export type AdminSection = 'notice' | 'sync' | 'metrics';
 
 interface AdminSidebarProps {
   activeSection: AdminSection;
@@ -23,6 +23,12 @@ export function AdminSidebar({
           onClick={() => onSectionChange('sync')}
         >
           강의 동기화
+        </li>
+        <li
+          className={`admin-sidebar-item ${activeSection === 'metrics' ? 'active' : ''}`}
+          onClick={() => onSectionChange('metrics')}
+        >
+          지표
         </li>
       </ul>
     </aside>

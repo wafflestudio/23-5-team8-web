@@ -12,23 +12,12 @@
 
 ## 기술 스택
 
-| 카테고리        | 기술                        | 버전 |
-| --------------- | --------------------------- | ---- |
-| UI 프레임워크   | React (with React Compiler) | 19.2 |
-| 언어            | TypeScript (strict mode)    | 5.9  |
-| 빌드 도구       | Vite                        | 7.2  |
-| 라우팅          | React Router DOM            | 7.x  |
-| 서버 상태       | TanStack Query              | 5.x  |
-| 가상화 리스트   | TanStack Virtual            | 3.x  |
-| 클라이언트 상태 | Zustand                     | 5.x  |
-| 폼 상태         | React Hook Form             | 7.x  |
-| HTTP 클라이언트 | Axios                       | 1.x  |
-| 드래그 앤 드롭  | @dnd-kit                    | 6.x  |
-| 인증            | Kakao OAuth, Google OAuth   | -    |
-| 린팅            | ESLint                      | 9.x  |
-| 포매팅          | Prettier                    | 3.x  |
-| E2E 테스트      | Playwright                  | 1.x  |
-| Git Hooks       | Husky                       | 9.x  |
+| 카테고리  | 기술                                                           |
+| --------- | -------------------------------------------------------------- |
+| Core      | React 19.2 (React Compiler), TypeScript 5.9, Vite 7.2          |
+| 상태 관리 | TanStack Query, Zustand, React Hook Form                       |
+| UI/라우팅 | React Router DOM 7, TanStack Virtual, @dnd-kit                 |
+| 인프라    | Axios, Kakao/Google OAuth, Playwright, ESLint, Prettier, Husky |
 
 ---
 
@@ -36,11 +25,8 @@
 
 ### 홈
 
-<div style={{display: flex, align-items: space-around}}>
-<img width="48%" height="1000" alt="home1" src="https://github.com/user-attachments/assets/5ecb6b3e-e6ff-4209-b0b1-d75c57de34cf" /><img width="48%" height="1000" alt="home2" src="https://github.com/user-attachments/assets/61f1770f-5ab3-414b-bbde-4c42633985ed" />
-</div>
-
-
+| <img alt="home1" src="https://github.com/user-attachments/assets/5ecb6b3e-e6ff-4209-b0b1-d75c57de34cf" /> | <img alt="home2" src="https://github.com/user-attachments/assets/61f1770f-5ab3-414b-bbde-4c42633985ed" /> |
+| :-------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------: |
 
 서비스의 메인 화면입니다. Header와 Footer는 로그인/회원가입/마이페이지를 제외하고는 유지가 됩니다. Header에서는 강의 검색, 탭 이동, 유저메뉴가 표시되며 Footer에서는 로그인 타이머가 표시됩니다. 로그인 타이머가 1분 이하로 남으면 팝업이 뜹니다.
 
@@ -49,7 +35,6 @@
 ### 로그인 / 회원가입
 
 <img width="2850" height="1466" alt="login" src="https://github.com/user-attachments/assets/884dc21e-28ee-438e-aeb5-ccb7a1edb532" />
-
 
 이메일 로그인과 카카오, 구글 소셜 로그인을 지원합니다. 아이디 저장 시 다음 접속에 입력했던 이메일 정보가 자동입력됩니다.
 
@@ -67,7 +52,6 @@
 
 <img width="2880" height="1466" alt="cart" src="https://github.com/user-attachments/assets/4cca6fcb-d13b-4928-a85b-6cfe16926ec1" />
 
-
 수강신청할 강좌를 미리 담아둘 수 있습니다. 장바구니 담은 수 숫자를 클릭하면 유저가 담은 수를 수정할 수 있습니다. 우측 시간표에서 담은 강좌들의 시간 배치를 미리 확인할 수 있습니다.
 
 ---
@@ -75,7 +59,6 @@
 ### 수강신청 시뮬레이터
 
 <img width="2880" height="1468" alt="registration" src="https://github.com/user-attachments/assets/d78aad35-9826-4334-bd41-dbb010efc3a9" />
-
 
 실제 수강신청과 동일한 긴장감을 느낄 수 있는 핵심 기능입니다.
 
@@ -87,13 +70,11 @@
 
 <img width="2878" height="1426" alt="registration_pip" src="https://github.com/user-attachments/assets/18fadb95-b231-4fb2-96eb-c6675e1e3fef" />
 
-
 ---
 
 ### 리더보드
 
 <img width="2880" height="1462" alt="leaderboard" src="https://github.com/user-attachments/assets/755775d5-77d2-476a-ab17-3c7508a6cf09" />
-
 
 수강신청 연습 결과를 바탕으로 랭킹을 확인할 수 있습니다.
 
@@ -109,7 +90,6 @@
 
 <img width="2878" height="1466" alt="mypage" src="https://github.com/user-attachments/assets/3a9130fa-857e-4f66-bcc4-43d8a79cdc0c" />
 
-
 자신의 연습 기록과 통계를 확인할 수 있습니다. 각 연습 세션별 상세 결과를 조회할 수 있으며, 평균 반응속도와 성공률을 통해 실력 향상을 추적할 수 있습니다.
 연습 기록 통계는 '연습결과상세'탭에서도 같은 내용을 확인할 수 있습니다.
 
@@ -119,8 +99,7 @@
 
 <img width="2878" height="1466" alt="admin" src="https://github.com/user-attachments/assets/5229484f-d984-41c3-8b48-83585d31c1a4" />
 
-
-관리자 전용 페이지입니다. 공지사항 작성/수정/삭제와 강좌 데이터 동기화 기능을 제공합니다.
+관리자 전용 페이지입니다. 공지사항 작성/수정/삭제와 강좌 데이터 동기화 기능을 제공하고 백엔드에서 여러 지표를 받아와 표시합니다.
 
 ---
 
@@ -191,7 +170,8 @@ app → pages → widgets → features → entities → shared
 
 ## 기여자
 
-| <img src="https://github.com/user983740.png" width="120" /> | <img src="https://github.com/ohsemin2.png" width="120" /> |
-| :---------------------------------------------------------: | :-------------------------------------------------------: |
-|                         **서민석**                          |                        **오세민**                         |
-|        [@user983740](https://github.com/user983740)         |         [@ohsemin2](https://github.com/ohsemin2)          |
+|   <img src="https://github.com/user983740.png" width="120" />    |    <img src="https://github.com/ohsemin2.png" width="120" />    |
+| :--------------------------------------------------------------: | :-------------------------------------------------------------: |
+|                            **서민석**                            |                           **오세민**                            |
+|           [@user983740](https://github.com/user983740)           |            [@ohsemin2](https://github.com/ohsemin2)             |
+| 홈, 수강신청 시뮬레이터, 리더보드, 관리자 페이지, 상태 관리 설계 | 로그인/회원가입, 강좌 검색, 장바구니, 수강신청 내역, 마이페이지 |
