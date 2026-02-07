@@ -12,12 +12,14 @@
 
 ## 기술 스택
 
+
 | 카테고리  | 기술                                                           |
 | --------- | -------------------------------------------------------------- |
 | Core      | React 19.2 (React Compiler), TypeScript 5.9, Vite 7.2          |
 | 상태 관리 | TanStack Query, Zustand, React Hook Form                       |
 | UI/라우팅 | React Router DOM 7, TanStack Virtual, @dnd-kit                 |
 | 인프라    | Axios, Kakao/Google OAuth, Playwright, ESLint, Prettier, Husky |
+
 
 ---
 
@@ -26,7 +28,9 @@
 ### 홈
 
 | <img alt="home1" src="https://github.com/user-attachments/assets/5ecb6b3e-e6ff-4209-b0b1-d75c57de34cf" /> | <img alt="home2" src="https://github.com/user-attachments/assets/61f1770f-5ab3-414b-bbde-4c42633985ed" /> |
-| :-------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------: |
+
+| :--: | :--: |
+
 
 서비스의 메인 화면입니다. Header와 Footer는 로그인/회원가입/마이페이지를 제외하고는 유지가 됩니다. Header에서는 강의 검색, 탭 이동, 유저메뉴가 표시되며 Footer에서는 로그인 타이머가 표시됩니다. 로그인 타이머가 1분 이하로 남으면 팝업이 뜹니다.
 
@@ -170,8 +174,10 @@ app → pages → widgets → features → entities → shared
 
 ## 기여자
 
-|   <img src="https://github.com/user983740.png" width="120" />    |    <img src="https://github.com/ohsemin2.png" width="120" />    |
-| :--------------------------------------------------------------: | :-------------------------------------------------------------: |
-|                            **서민석**                            |                           **오세민**                            |
-|           [@user983740](https://github.com/user983740)           |            [@ohsemin2](https://github.com/ohsemin2)             |
+
+| <img src="https://github.com/user983740.png" width="120" /> | <img src="https://github.com/ohsemin2.png" width="120" /> |
+| :---------------------------------------------------------: | :-------------------------------------------------------: |
+|                         **서민석**                          |                        **오세민**                         |
+|        [@user983740](https://github.com/user983740)         |         [@ohsemin2](https://github.com/ohsemin2)          |
 | 홈, 수강신청 시뮬레이터, 리더보드, 관리자 페이지, 상태 관리 설계 | 로그인/회원가입, 강좌 검색, 장바구니, 수강신청 내역, 마이페이지 |
+
