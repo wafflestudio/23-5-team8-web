@@ -97,7 +97,7 @@
 
 ### 관리자 페이지
 
-<img width="2878" height="1466" alt="admin" src="https://github.com/user-attachments/assets/5229484f-d984-41c3-8b48-83585d31c1a4" />
+<img width="2850" height="1466" alt="image" src="https://github.com/user-attachments/assets/ef6040c9-15e3-4f99-b670-117f28203656" />
 
 관리자 전용 페이지입니다. 공지사항 작성/수정/삭제와 강좌 데이터 동기화 기능을 제공하고 백엔드에서 여러 지표를 받아와 표시합니다.
 

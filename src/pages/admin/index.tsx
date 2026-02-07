@@ -120,12 +120,7 @@ export default function AdminPage() {
             />
           )}
 
-          {activeSection === 'metrics' && (
-            <MetricsSection
-              totalUsers={461}
-              totalPracticeAttempts={10820}
-            />
-          )}
+          {activeSection === 'metrics' && <MetricsSection />}
         </main>
       </div>
 
