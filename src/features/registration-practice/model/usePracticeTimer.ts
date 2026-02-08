@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
 import { practiceStartApi, practiceEndApi } from '../api/registrationApi';
+import { enrolledCoursesKeys } from './useEnrolledCoursesQuery';
 import type { VirtualStartTimeOption } from './types';
 
 export interface UsePracticeTimerOptions {
@@ -51,6 +53,7 @@ export function usePracticeTimer({
   closeWindow,
   onPracticeEnd,
 }: UsePracticeTimerOptions): UsePracticeTimerReturn {
+  const queryClient = useQueryClient();
   const [currentTime, setCurrentTime] = useState<Date>(createInitialTime);
   const [startOffset, setStartOffset] = useState<number>(0);
   const [isCooldown, setIsCooldown] = useState(false);
@@ -89,6 +92,7 @@ export function usePracticeTimer({
 
     try {
       await practiceEndApi();
+      queryClient.invalidateQueries({ queryKey: enrolledCoursesKeys.all });
       if (!isManual && onPracticeEnd) {
         onPracticeEnd();
       }

@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 
 import { practiceAttemptApi } from '../api/registrationApi';
 import { calculateQueueInfo } from '../lib/registrationUtils';
+import { enrolledCoursesKeys } from './useEnrolledCoursesQuery';
 import type { WarningType } from '../ui/RegistrationWarning';
 import type { SelectedCourseInfo, WaitingInfo } from './types';
 
@@ -40,6 +42,7 @@ export function useRegistrationAttempt({
   onSelectionClear,
 }: UseRegistrationAttemptOptions): UseRegistrationAttemptReturn {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [warningType, setWarningType] = useState<WarningType>('none');
   const [waitingInfo, setWaitingInfo] = useState<WaitingInfo | null>(null);
@@ -127,6 +130,7 @@ export function useRegistrationAttempt({
         onSelectionClear();
         setShowSuccessModal(true);
         setSucceededCourseIds((prev) => new Set(prev).add(currentCourseId));
+        queryClient.invalidateQueries({ queryKey: enrolledCoursesKeys.all });
       }
     } catch (error) {
       if (isAxiosError(error) && error.response) {

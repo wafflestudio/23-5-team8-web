@@ -75,7 +75,12 @@ export default function LeaderBoard() {
   };
 
   const entries: LeaderboardEntryResponse[] = data?.pages
-    ? data.pages.flatMap((page) => page.categoryData.items)
+    ? data.pages
+        .flatMap((page) => page.categoryData.items)
+        .filter(
+          (entry, index, self) =>
+            self.findIndex((e) => e.userId === entry.userId) === index
+        )
     : [];
 
   const getMyValue = (): { value: number | null; rank: number | null } => {
