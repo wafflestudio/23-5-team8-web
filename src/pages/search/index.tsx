@@ -1,14 +1,20 @@
 import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { isAxiosError } from 'axios';
-import { useCourseSearchQuery, SearchCourseItem } from '@features/course-search';
+import {
+  useCourseSearchQuery,
+  SearchCourseItem,
+} from '@features/course-search';
 import { useAddToCartMutation, useCartQuery } from '@features/cart-management';
 import { useCaptcha } from '@features/registration-practice';
 import type { CourseDetailResponse } from '@entities/course';
 import { useModalStore } from '@shared/model/modalStore';
 import { WarningModal } from '@shared/ui/Warning';
 import { Pagination } from '@shared/ui/Pagination';
-import { hasTimeConflict, extractTimeFromPlaceAndTime } from '@shared/lib/timeUtils';
+import {
+  hasTimeConflict,
+  extractTimeFromPlaceAndTime,
+} from '@shared/lib/timeUtils';
 import './search.css';
 
 const PAGE_SIZE = 10;
@@ -21,11 +27,18 @@ export default function SearchPage() {
   const currentPage = parseInt(searchParams.get('page') || '0', 10);
 
   const captcha = useCaptcha();
-  const { openModal, closeModal, getData } = useModalStore();
+  const { openModal, closeModal } = useModalStore();
   const isCartOpen = useModalStore((s) => s.openModals.has('search/cart'));
-  const isConflictOpen = useModalStore((s) => s.openModals.has('search/conflict'));
-  const isNoCourseSelectedOpen = useModalStore((s) => s.openModals.has('search/noCourseSelected'));
-  const isTimeOverlapOpen = useModalStore((s) => s.openModals.has('search/timeOverlap'));
+  const isConflictOpen = useModalStore((s) =>
+    s.openModals.has('search/conflict')
+  );
+  const isNoCourseSelectedOpen = useModalStore((s) =>
+    s.openModals.has('search/noCourseSelected')
+  );
+  const isTimeOverlapOpen = useModalStore((s) =>
+    s.openModals.has('search/timeOverlap')
+  );
+
   const [selectedCourses, setSelectedCourses] = useState<Set<number>>(
     new Set()
   );
@@ -98,17 +111,7 @@ export default function SearchPage() {
       console.error('[Search] 장바구니 추가 실패:', err);
       if (isAxiosError(err) && err.response) {
         if (err.response.status === 409) {
-          const courseId = Array.from(selectedCourses)[0];
-          const course = courses.find(
-            (c: CourseDetailResponse) => c.id === courseId
-          );
-
-          if (course) {
-            openModal('search/conflict', {
-              name: course.courseTitle || '알 수 없는 강의',
-              code: course.courseNumber || '',
-            });
-          }
+          openModal('search/conflict');
           setSelectedCourses(new Set());
         } else {
           alert(
@@ -136,28 +139,17 @@ export default function SearchPage() {
         confirmLabel="장바구니로 이동"
       />
 
-      {getData('search/conflict') && (
-        <WarningModal.Confirm
-          isOpen={isConflictOpen}
-          onCancel={() => closeModal('search/conflict')}
-          onConfirm={() => {
-            closeModal('search/conflict');
-            navigate('/cart');
-          }}
-          cancelLabel="아니요, 괜찮습니다."
-          confirmLabel="장바구니로 이동"
-        >
-          <h2 className="modal-title-conflict">
-            {getData('search/conflict')!.name} ({getData('search/conflict')!.code}) :<br />
-            수업교시가 중복되었습니다.
-          </h2>
-          <p className="modal-subtitle">
-            지금 바로 장바구니로
-            <br />
-            이동하시겠습니까?
-          </p>
-        </WarningModal.Confirm>
-      )}
+      <WarningModal.Alert
+        isOpen={isConflictOpen}
+        onClose={() => closeModal('search/conflict')}
+        icon="warning"
+      >
+        <p className="warningText">
+          중복된 강의를 장바구니에
+          <br />
+          담을 수 없습니다.
+        </p>
+      </WarningModal.Alert>
 
       <WarningModal.Alert
         isOpen={isNoCourseSelectedOpen}

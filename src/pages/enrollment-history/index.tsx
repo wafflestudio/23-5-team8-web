@@ -1,13 +1,36 @@
 import { useState, useMemo } from 'react';
 import { useEnrolledCoursesQuery } from '@features/registration-practice';
+import { useCartQuery } from '@features/cart-management';
 import { useModalStore } from '@shared/model/modalStore';
 import { TimeTable } from '@widgets/timetable';
 import { formatSchedule } from '@shared/lib/timeUtils';
 import './enrollmentHistory.css';
 
 export default function EnrollmentHistory() {
-  const { data, isLoading } = useEnrolledCoursesQuery();
-  const enrolledCourses = useMemo(() => (Array.isArray(data) ? data : []), [data]);
+  const { data: enrolledData, isLoading: isEnrolledLoading } = useEnrolledCoursesQuery();
+  const { data: cartData, isLoading: isCartLoading } = useCartQuery();
+
+  const isLoading = isEnrolledLoading || isCartLoading;
+
+  const enrolledCourses = useMemo(() => {
+    const enrolled = Array.isArray(enrolledData) ? enrolledData : [];
+    const cartCourses = Array.isArray(cartData) ? cartData : [];
+
+    // 담은 수가 정원 이하인 강의는 경쟁 없이 자동 수강 확정
+    const autoEnrolled = cartCourses
+      .filter((item) => item.cartCount <= item.course.quota)
+      .map((item) => item.course);
+
+    const enrolledIds = new Set(enrolled.map((c) => c.id));
+    const merged = [...enrolled];
+    for (const course of autoEnrolled) {
+      if (!enrolledIds.has(course.id)) {
+        merged.push(course);
+      }
+    }
+
+    return merged;
+  }, [enrolledData, cartData]);
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
   const { openNotSupported } = useModalStore();
 
