@@ -4,7 +4,7 @@
 
 **배포:** https://allclear.codes/
 
-현재 레포는 front(web) 레포지토리이고 백엔드 레포는 https://github.com/wafflestudio/23-5-team8-server에서 확인하실 수 있습니다.
+현재 레포는 front(web) 레포지토리이고 백엔드 레포는 https://github.com/wafflestudio/23-5-team8-server 에서 확인하실 수 있습니다.
 
 모바일을 위한 반응형 디자인이 구현되어 있습니다.
 
