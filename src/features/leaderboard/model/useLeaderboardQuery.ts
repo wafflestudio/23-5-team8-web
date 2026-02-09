@@ -33,14 +33,15 @@ const getCategoryData = (data: LeaderboardResponse, category: CategoryType): Lea
 export function useLeaderboardInfiniteQuery(filter: FilterType, category: CategoryType) {
   return useInfiniteQuery({
     queryKey: leaderboardKeys.list(filter, category),
-    queryFn: async ({pageParam = 0}) => {
+    queryFn: async ({pageParam = 0, queryKey}) => {
+      const [, , filterParam, categoryParam] = queryKey;
       const response =
-        filter === 'all'
+        filterParam === 'all'
           ? await getLeaderboardApi({page: pageParam, size: PAGE_SIZE})
           : await getWeeklyLeaderboardApi({page: pageParam, size: PAGE_SIZE});
       return {
         fullData: response.data,
-        categoryData: getCategoryData(response.data, category),
+        categoryData: getCategoryData(response.data, categoryParam),
         page: pageParam,
       };
     },

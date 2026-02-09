@@ -87,6 +87,12 @@ export default function SideMenu({ isOpen, onClose, onLogout }: SideMenuProps) {
 
         {user && (
           <div className="sideMenuLogoutArea">
+            <button
+              className="sideMenuMypageBtn"
+              onClick={() => handleNavClick('/mypage', true)}
+            >
+              마이페이지
+            </button>
             <button className="sideMenuLogoutBtn" onClick={onLogout}>
               로그아웃
             </button>

@@ -64,7 +64,18 @@
 
 /* Logout area */
 .sideMenuLogoutArea {
+  display: flex;
+  gap: 8px;
   padding: 0 24px 20px;
+}
+.sideMenuMypageBtn {
+  padding: 8px 20px;
+  border: 1px solid var(--blue);
+  border-radius: 6px;
+  background: #fff;
+  font-size: 14px;
+  color: var(--blue);
+  cursor: pointer;
 }
 .sideMenuLogoutBtn {
   padding: 8px 20px;
