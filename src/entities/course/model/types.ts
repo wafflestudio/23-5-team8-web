@@ -24,6 +24,7 @@ export interface CourseDetailResponse {
   placeAndTime?: string;
   quota: number;
   freshmanQuota: number;
+  registrationCount: number;
 }
 
 export interface CourseSearchRequest {

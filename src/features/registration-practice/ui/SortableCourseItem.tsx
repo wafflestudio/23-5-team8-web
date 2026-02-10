@@ -86,7 +86,7 @@ export function SortableCourseItem({
         <div className="infoRow bottom">
           <span className="c-label">수강신청인원/정원(재학생)</span>
           <span className="c-val-blue">
-            0/{c.course.quota}({c.course.quota - c.course.freshmanQuota})
+            {c.course.registrationCount}/{c.course.quota}({c.course.quota - c.course.freshmanQuota})
           </span>
           <span className="c-divider-light">|</span>
           <span className="c-label">학점</span>

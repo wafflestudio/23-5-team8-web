@@ -60,11 +60,11 @@ export function SearchCourseItem({
         <div className="infoRow">
           <span className="c-label">수강신청인원/정원(재학생)</span>
           <span className="c-val-blue">
-            0/{course.quota}({course.quota - course.freshmanQuota})
+            {course.registrationCount}/{course.quota}({course.quota - course.freshmanQuota})
           </span>
           <span className="c-divider-light">|</span>
           <span className="c-label">총수강인원</span>
-          <span className="c-val-blue">0</span>
+          <span className="c-val-blue">{course.registrationCount}</span>
           <span className="c-divider-light">|</span>
           <span className="c-label">학점</span>
           <span className="c-val-blue">{course.credit}</span>
