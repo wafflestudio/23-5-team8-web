@@ -61,6 +61,15 @@ export default function Registration() {
   const { data: cartData } = useCartQuery(true);
   const [localCourseList, setLocalCourseList] = useState<CourseData[]>([]);
   const [isDraggingActive, setIsDraggingActive] = useState(false);
+  const [isMobileWarningOpen, setMobileWarningOpen] = useState(false);
+
+  const handlePracticeToggle = () => {
+    if (!pipWindow && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      setMobileWarningOpen(true);
+      return;
+    }
+    timer.handleToggleWithCooldown();
+  };
   const hasUserReordered = useRef(false);
 
   useEffect(() => {
@@ -193,7 +202,7 @@ export default function Registration() {
           <div className="mobilePracticeControls">
             <button
               className={`mobilePracticeToggleBtn ${pipWindow ? 'active' : ''}`}
-              onClick={timer.handleToggleWithCooldown}
+              onClick={handlePracticeToggle}
               disabled={timer.isCooldown}
               style={{
                 cursor: timer.isCooldown ? 'not-allowed' : 'pointer',
@@ -314,7 +323,7 @@ export default function Registration() {
             <div className="practiceArea">
               <button
                 className={`practiceToggleBtn ${pipWindow ? 'active' : ''}`}
-                onClick={timer.handleToggleWithCooldown}
+                onClick={handlePracticeToggle}
                 disabled={timer.isCooldown}
                 aria-label="연습 시작 시간 설정"
                 style={{
@@ -438,6 +447,18 @@ export default function Registration() {
             onClose={() => closeModal('registration/practiceEnd')}
             icon="warning"
             title="연습 시간이 종료되었습니다! (08:33)"
+          />,
+          document.body
+        )}
+
+      {isMobileWarningOpen &&
+        createPortal(
+          <WarningModal.Alert
+            isOpen={isMobileWarningOpen}
+            onClose={() => setMobileWarningOpen(false)}
+            icon="warning"
+            title="모바일 환경에서는 수강신청 연습을 지원하지 않습니다."
+            subtitle="PC 환경에서 시도해주세요"
           />,
           document.body
         )}
