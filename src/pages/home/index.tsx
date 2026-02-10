@@ -421,13 +421,13 @@ export default function HomePage() {
 
 const SCHEDULE_DATA = [
   {
-    category: '신입생선착순수강신청\n(1일 차)',
+    category: '신입생선착순수강신청\n(1일차)',
     date: '2026-02-24(화) ~ 2026-02-24(화)',
     time: '08:30 ~ 16:30',
     target: '신·편입생\n(선착순수강1일)',
   },
   {
-    category: '신입생선착순수강신청\n(2일 차)',
+    category: '신입생선착순수강신청\n(2일차)',
     date: '2026-02-25(수) ~ 2026-02-25(수)',
     time: '08:30 ~ 16:30',
     target: '신·편입생\n(선착순수강2일)',
