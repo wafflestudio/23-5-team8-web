@@ -6,12 +6,14 @@ interface UseModalEffectsOptions {
   isOpen: boolean;
   variant: VariantType;
   onClose?: () => void;
+  onConfirm?: () => void;
 }
 
 export function useModalEffects({
   isOpen,
   variant,
   onClose,
+  onConfirm,
 }: UseModalEffectsOptions) {
   // 스크롤 잠금 처리
   useEffect(() => {
@@ -41,7 +43,9 @@ export function useModalEffects({
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
 
-        if ((variant === 'single' || variant === 'double') && onClose) {
+        if (variant === 'double' && onConfirm) {
+          onConfirm();
+        } else if (variant === 'single' && onClose) {
           onClose();
         }
       }
@@ -51,5 +55,5 @@ export function useModalEffects({
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, variant, onClose]);
+  }, [isOpen, variant, onClose, onConfirm]);
 }
