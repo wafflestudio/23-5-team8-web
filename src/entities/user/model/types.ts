@@ -8,6 +8,7 @@ export interface UserDto {
 export interface MyPageResponse {
   nickname: string;
   profileImageUrl: string;
+  canChangePassword: boolean;
 }
 
 export interface UpdateProfileRequest {

@@ -186,6 +186,8 @@ const DeleteAccountModal: React.FC<{
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showSocialPasswordWarning, setShowSocialPasswordWarning] =
+    useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showNameModal, setShowNameModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
@@ -371,7 +373,13 @@ const MyPage: React.FC = () => {
           <div className="profile-actions">
             <button
               className="profile-action-btn"
-              onClick={() => setShowPasswordModal(true)}
+              onClick={() => {
+                if (myPageData.canChangePassword) {
+                  setShowPasswordModal(true);
+                } else {
+                  setShowSocialPasswordWarning(true);
+                }
+              }}
             >
               비밀번호 변경
             </button>
@@ -518,6 +526,14 @@ const MyPage: React.FC = () => {
         isSocialUser={isSocialUser}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={handleDeleteAccount}
+      />
+
+      {/* 소셜 로그인 비밀번호 변경 불가 안내 모달 */}
+      <WarningModal.Alert
+        isOpen={showSocialPasswordWarning}
+        onClose={() => setShowSocialPasswordWarning(false)}
+        icon="warning"
+        title="소셜 로그인 유저는 비밀번호를 변경할 수 없습니다"
       />
 
       {/* 성공 안내 모달 */}
