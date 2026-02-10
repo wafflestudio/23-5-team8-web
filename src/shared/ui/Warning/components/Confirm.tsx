@@ -52,7 +52,7 @@ export function Confirm({
   confirmLabel = '확인',
   children,
 }: ConfirmProps) {
-  useModalEffects({ isOpen, variant: 'double', onClose: onCancel });
+  useModalEffects({ isOpen, variant: 'double', onClose: onCancel, onConfirm });
 
   if (!isOpen) return null;
 

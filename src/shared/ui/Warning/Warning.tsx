@@ -95,9 +95,9 @@ export default function Warning(props: WarningProps) {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
 
-        if (variant === 'single' && onClose) {
-          onClose();
-        } else if (variant === 'double' && onClose) {
+        if (variant === 'double' && onConfirm) {
+          onConfirm();
+        } else if (variant === 'single' && onClose) {
           onClose();
         }
       }
