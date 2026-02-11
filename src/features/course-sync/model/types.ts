@@ -24,3 +24,13 @@ export interface CourseSyncAutoStatusResponse {
   lastRun: LastRunInfo | null;
   updatedAt: string;
 }
+
+export type EnrollmentPeriodType = 'REGULAR' | 'FRESHMAN';
+
+export interface EnrollmentPeriodResponse {
+  type: EnrollmentPeriodType;
+}
+
+export interface EnrollmentPeriodUpdateRequest {
+  type: EnrollmentPeriodType;
+}

@@ -549,6 +549,15 @@
   background: #ef4444;
 }
 
+.sync-status-badge.freshman {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.sync-status-badge.freshman::before {
+  background: #3b82f6;
+}
+
 .sync-status-badge.running {
   background: #fef3c7;
   color: #92400e;
@@ -601,6 +610,15 @@
 
 .sync-toggle-btn.disable:hover {
   background: #dc2626;
+}
+
+.sync-toggle-btn.freshman {
+  background: #3b82f6;
+  color: white;
+}
+
+.sync-toggle-btn.freshman:hover {
+  background: #2563eb;
 }
 
 .sync-now-btn {

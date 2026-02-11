@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { WarningModal } from '@shared/ui/Warning';
-import type { CourseSyncAutoStatusResponse, CourseSyncRunRequest } from '@features/course-sync';
+import type { CourseSyncAutoStatusResponse, CourseSyncRunRequest, EnrollmentPeriodType } from '@features/course-sync';
+import { useEnrollmentPeriodQuery, useUpdateEnrollmentPeriodMutation } from '@features/course-sync';
 
 type SemesterType = CourseSyncRunRequest['semester'];
 
@@ -36,6 +37,11 @@ export function SyncSection({
   const [yearError, setYearError] = useState<string | null>(null);
   const [selectedSemester, setSelectedSemester] = useState<SemesterType>('SPRING');
   const [isToggling, setIsToggling] = useState(false);
+
+  const { data: enrollmentPeriod } = useEnrollmentPeriodQuery();
+  const updateEnrollmentPeriod = useUpdateEnrollmentPeriodMutation();
+  const [showPeriodConfirm, setShowPeriodConfirm] = useState(false);
+  const [pendingPeriodType, setPendingPeriodType] = useState<EnrollmentPeriodType | null>(null);
 
   const handleToggleClick = () => {
     setShowToggleConfirm(true);
@@ -88,6 +94,22 @@ export function SyncSection({
       setShowSyncConfirm(false);
     } catch (error) {
       console.error('[SyncSection] Sync error:', error);
+    }
+  };
+
+  const handlePeriodChangeClick = (type: EnrollmentPeriodType) => {
+    setPendingPeriodType(type);
+    setShowPeriodConfirm(true);
+  };
+
+  const handlePeriodConfirm = async () => {
+    if (!pendingPeriodType) return;
+    try {
+      await updateEnrollmentPeriod.mutateAsync({ type: pendingPeriodType });
+      setShowPeriodConfirm(false);
+      setPendingPeriodType(null);
+    } catch (error) {
+      console.error('[SyncSection] Enrollment period update error:', error);
     }
   };
 
@@ -151,6 +173,44 @@ export function SyncSection({
       <h2 className="admin-section-title">강의 동기화</h2>
 
       <div className="sync-section">
+        <div className="sync-card">
+          <h3 className="sync-card-title">수강신청 기간 설정</h3>
+
+          <div className="sync-status-row">
+            <span className="sync-status-label">현재 기간</span>
+            {enrollmentPeriod ? (
+              <span
+                className={`sync-status-badge ${enrollmentPeriod.type === 'REGULAR' ? 'active' : 'freshman'}`}
+              >
+                {enrollmentPeriod.type === 'REGULAR' ? '재학생' : '신입생'}
+              </span>
+            ) : (
+              <span className="sync-status-value">불러오는 중...</span>
+            )}
+          </div>
+
+          <div className="sync-actions">
+            <button
+              className="sync-toggle-btn enable"
+              onClick={() => handlePeriodChangeClick('REGULAR')}
+              disabled={enrollmentPeriod?.type === 'REGULAR' || updateEnrollmentPeriod.isPending}
+            >
+              {updateEnrollmentPeriod.isPending && pendingPeriodType === 'REGULAR'
+                ? '변경 중...'
+                : '재학생으로 변경'}
+            </button>
+            <button
+              className="sync-toggle-btn freshman"
+              onClick={() => handlePeriodChangeClick('FRESHMAN')}
+              disabled={enrollmentPeriod?.type === 'FRESHMAN' || updateEnrollmentPeriod.isPending}
+            >
+              {updateEnrollmentPeriod.isPending && pendingPeriodType === 'FRESHMAN'
+                ? '변경 중...'
+                : '신입생으로 변경'}
+            </button>
+          </div>
+        </div>
+
         <div className="sync-card">
           <h3 className="sync-card-title">자동 동기화 설정</h3>
 
@@ -339,6 +399,21 @@ export function SyncSection({
         subtitle={`${yearInput}학년도 ${SEMESTER_OPTIONS.find((s) => s.value === selectedSemester)?.label} 강의 정보를 동기화하시겠습니까?`}
         cancelLabel="취소"
         confirmLabel={isSyncing ? '동기화 중...' : '동기화'}
+      />
+
+      {/* Enrollment Period Change Confirm Modal */}
+      <WarningModal.Confirm
+        isOpen={showPeriodConfirm}
+        onCancel={() => {
+          setShowPeriodConfirm(false);
+          setPendingPeriodType(null);
+        }}
+        onConfirm={handlePeriodConfirm}
+        icon="question"
+        title="수강신청 기간 변경"
+        subtitle={`수강신청 기간을 ${pendingPeriodType === 'REGULAR' ? '재학생' : '신입생'}으로 변경하시겠습니까?`}
+        cancelLabel="취소"
+        confirmLabel={updateEnrollmentPeriod.isPending ? '변경 중...' : '변경'}
       />
     </div>
   );
