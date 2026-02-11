@@ -4,8 +4,10 @@ import {
   runCourseSyncApi,
   enableAutoSyncApi,
   disableAutoSyncApi,
+  getEnrollmentPeriodApi,
+  updateEnrollmentPeriodApi,
 } from '../api/courseSyncApi';
-import type { CourseSyncRunRequest } from './types';
+import type { CourseSyncRunRequest, EnrollmentPeriodUpdateRequest } from './types';
 
 export const courseSyncKeys = {
   all: ['courseSync'] as const,
@@ -47,6 +49,32 @@ export function useToggleAutoSyncMutation() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: courseSyncKeys.all });
+    },
+  });
+}
+
+export const enrollmentPeriodKeys = {
+  all: ['enrollmentPeriod'] as const,
+};
+
+export function useEnrollmentPeriodQuery() {
+  return useQuery({
+    queryKey: enrollmentPeriodKeys.all,
+    queryFn: async () => {
+      const response = await getEnrollmentPeriodApi();
+      return response.data;
+    },
+    retry: false,
+  });
+}
+
+export function useUpdateEnrollmentPeriodMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: EnrollmentPeriodUpdateRequest) => updateEnrollmentPeriodApi(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: enrollmentPeriodKeys.all });
     },
   });
 }

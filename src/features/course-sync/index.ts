@@ -10,6 +10,9 @@ export {
   useRunSyncMutation,
   useToggleAutoSyncMutation,
   courseSyncKeys,
+  useEnrollmentPeriodQuery,
+  useUpdateEnrollmentPeriodMutation,
+  enrollmentPeriodKeys,
 } from './model/useCourseSyncQuery';
 
 export type {
@@ -17,4 +20,7 @@ export type {
   CourseSyncRunResponse,
   CourseSyncAutoStatusResponse,
   LastRunInfo,
+  EnrollmentPeriodType,
+  EnrollmentPeriodResponse,
+  EnrollmentPeriodUpdateRequest,
 } from './model/types';

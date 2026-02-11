@@ -3,6 +3,8 @@ import type {
   CourseSyncRunRequest,
   CourseSyncRunResponse,
   CourseSyncAutoStatusResponse,
+  EnrollmentPeriodResponse,
+  EnrollmentPeriodUpdateRequest,
 } from '../model/types';
 
 export const runCourseSyncApi = async (data: CourseSyncRunRequest) => {
@@ -19,4 +21,12 @@ export const disableAutoSyncApi = async () => {
 
 export const getAutoSyncStatusApi = async () => {
   return await api.get<CourseSyncAutoStatusResponse>('/api/courses/course-sync/auto');
+};
+
+export const getEnrollmentPeriodApi = async () => {
+  return await api.get<EnrollmentPeriodResponse>('/api/admin/enrollment-period');
+};
+
+export const updateEnrollmentPeriodApi = async (data: EnrollmentPeriodUpdateRequest) => {
+  return await api.put<EnrollmentPeriodResponse>('/api/admin/enrollment-period', data);
 };
