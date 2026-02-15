@@ -11,6 +11,7 @@ type ModalId =
   | 'search/conflict'
   | 'search/noCourseSelected'
   | 'search/timeOverlap'
+  | 'search/capacityFull'
   // cart 페이지
   | 'cart/noCourseSelected'
   // registration 페이지

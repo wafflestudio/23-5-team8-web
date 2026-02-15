@@ -38,6 +38,9 @@ export default function SearchPage() {
   const isTimeOverlapOpen = useModalStore((s) =>
     s.openModals.has('search/timeOverlap')
   );
+  const isCapacityFullOpen = useModalStore((s) =>
+    s.openModals.has('search/capacityFull')
+  );
 
   const [selectedCourses, setSelectedCourses] = useState<Set<number>>(
     new Set()
@@ -84,18 +87,25 @@ export default function SearchPage() {
       (c: CourseDetailResponse) => c.id === courseId
     );
 
-    if (selectedCourse && cartData) {
-      const selectedTimeStr = extractTimeFromPlaceAndTime(
-        selectedCourse.placeAndTime
-      );
+    if (selectedCourse) {
+      if (selectedCourse.registrationCount >= selectedCourse.quota) {
+        openModal('search/capacityFull');
+        return;
+      }
 
-      for (const cartItem of cartData) {
-        const cartTimeStr = extractTimeFromPlaceAndTime(
-          cartItem.course.placeAndTime
+      if (cartData) {
+        const selectedTimeStr = extractTimeFromPlaceAndTime(
+          selectedCourse.placeAndTime
         );
-        if (hasTimeConflict(selectedTimeStr, cartTimeStr)) {
-          openModal('search/timeOverlap');
-          return;
+
+        for (const cartItem of cartData) {
+          const cartTimeStr = extractTimeFromPlaceAndTime(
+            cartItem.course.placeAndTime
+          );
+          if (hasTimeConflict(selectedTimeStr, cartTimeStr)) {
+            openModal('search/timeOverlap');
+            return;
+          }
         }
       }
     }
@@ -169,6 +179,14 @@ export default function SearchPage() {
           <br />
           장바구니에 담을 수 없습니다.
         </p>
+      </WarningModal.Alert>
+
+      <WarningModal.Alert
+        isOpen={isCapacityFullOpen}
+        onClose={() => closeModal('search/capacityFull')}
+        icon="warning"
+      >
+        <p className="warningText">정원이 가득 찬 강좌입니다.</p>
       </WarningModal.Alert>
 
       <div className="containerX">

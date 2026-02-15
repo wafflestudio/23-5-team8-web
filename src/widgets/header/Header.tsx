@@ -31,12 +31,14 @@ export default function Header({ handleLogout, onToggleSideMenu }: HeaderProps) 
   const handleSearch = () => {
     const query = searchInputRef.current?.value || '';
     navigate(`/search?query=${encodeURIComponent(query)}`);
+    window.scrollTo(0, 0);
   };
 
   const handleMobileSearch = () => {
     const query = mobileSearchInputRef.current?.value || '';
     navigate(`/search?query=${encodeURIComponent(query)}`);
     setIsMobileSearchOpen(false);
+    window.scrollTo(0, 0);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
