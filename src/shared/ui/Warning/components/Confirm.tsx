@@ -14,6 +14,7 @@ interface ConfirmProps {
   cancelLabel?: string;
   confirmLabel?: string;
   children?: ReactNode;
+  enterAction?: 'confirm' | 'cancel';
 }
 
 function QuestionIcon() {
@@ -51,8 +52,10 @@ export function Confirm({
   cancelLabel = '취소',
   confirmLabel = '확인',
   children,
+  enterAction = 'confirm',
 }: ConfirmProps) {
-  useModalEffects({ isOpen, variant: 'double', onClose: onCancel, onConfirm });
+  const enterHandler = enterAction === 'cancel' ? onCancel : onConfirm;
+  useModalEffects({ isOpen, variant: 'double', onClose: onCancel, onConfirm: enterHandler });
 
   if (!isOpen) return null;
 
