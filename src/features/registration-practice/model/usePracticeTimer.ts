@@ -84,7 +84,7 @@ export function usePracticeTimer({
     practiceState.current.isRunning = false;
 
     if (practiceState.current.timerId) {
-      clearInterval(practiceState.current.timerId);
+      clearTimeout(practiceState.current.timerId);
       practiceState.current.timerId = undefined;
     }
 
@@ -163,15 +163,15 @@ export function usePracticeTimer({
     setCurrentTime(createInitialTime());
   };
 
-  // Timer interval effect
+  // Timer effect — 매 정초에 맞춰 자기 보정하는 setTimeout 체인
   useEffect(() => {
     if (!pipWindow) return;
 
     const state = practiceState.current;
 
-    if (state.timerId) clearInterval(state.timerId);
+    if (state.timerId) clearTimeout(state.timerId);
 
-    state.timerId = window.setInterval(() => {
+    const tick = () => {
       const now = Date.now();
       const elapsed = now - state.startTime;
       const nextTime = new Date(state.virtualOffset + elapsed);
@@ -180,12 +180,20 @@ export function usePracticeTimer({
 
       if (nextTime.getHours() === 8 && nextTime.getMinutes() >= 33) {
         handleStopPractice(false);
+        return;
       }
-    }, 1000);
+
+      const msUntilNextSecond = 1000 - (elapsed % 1000);
+      state.timerId = window.setTimeout(tick, msUntilNextSecond);
+    };
+
+    const initialElapsed = Date.now() - state.startTime;
+    const initialDelay = 1000 - (initialElapsed % 1000);
+    state.timerId = window.setTimeout(tick, initialDelay);
 
     return () => {
       if (state.timerId) {
-        clearInterval(state.timerId);
+        clearTimeout(state.timerId);
       }
       if (!pipWindow.closed) {
         pipWindow.close();
@@ -200,7 +208,7 @@ export function usePracticeTimer({
     return () => {
       if (state.isRunning) {
         if (state.timerId) {
-          clearInterval(state.timerId);
+          clearTimeout(state.timerId);
         }
 
         state.isRunning = false;
