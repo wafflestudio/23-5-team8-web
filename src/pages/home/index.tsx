@@ -52,7 +52,6 @@ export default function HomePage() {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<FilterType>('all');
   const [category, setCategory] = useState<CategoryType>('firstReaction');
-  const [showNotice, setShowNotice] = useState(true);
   const { data: myProfile } = useMyPageQuery();
 
   const { data: noticesData } = useNoticesQuery(0, 10);
@@ -134,59 +133,6 @@ export default function HomePage() {
 
   return (
     <main className="page">
-      {showNotice && (
-        <div className="notice-overlay" onClick={() => setShowNotice(false)}>
-          <div className="notice-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="notice-modal-header">
-              <h2 className="notice-modal-title">
-                서비스 이용 장애 및 데이터 복구 안내
-              </h2>
-              <button
-                className="notice-modal-close"
-                onClick={() => setShowNotice(false)}
-                aria-label="닫기"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="notice-modal-body">
-              <p>안녕하세요. AllClear서비스 개발진입니다.</p>
-              <p>
-                현재 저희 서비스는 데이터베이스 시스템의 기술적인 오류로 인해
-                기존에 저장된 데이터가 정상적으로 표시되지 않거나 유실되는
-                심각한 장애를 겪고 있습니다. 이로 인해 사이트 접속 및 서비스
-                이용이 원활하지 않은 점 고개 숙여 사과드립니다.
-              </p>
-              <h3 className="notice-modal-subtitle">
-                개인정보 보안에 관한 안내
-              </h3>
-              <p>
-                데이터 유실 소식에 개인정보 유출을 우려하시는 이용자분들이 계실
-                것이라 생각합니다. 이에 대해 명확히 안내해 드립니다. 이번 현상은
-                외부의 불법적인 침입이나 해킹 등 보안 사고로 발생한 것이
-                아닙니다. 내부 시스템의 설정 및 데이터 처리 과정에서 발생한
-                기술적 오류임이 확인되었습니다. 따라서 이용자분들의 소중한
-                개인정보가 외부로 유출되거나 악용될 우려는 전혀 없으니 이 점은
-                안심하셔도 좋습니다.
-              </p>
-              <p>
-                현재 서비스가 완전히 정상화되기까지는 다소 시간이 소요될 수
-                있으나, 최대한 빠른 시일 내에 정상적으로 이용하실 수 있도록
-                최선을 다하겠습니다. 이용에 큰 불편을 끼쳐드려 다시 한번
-                진심으로 사과드립니다.
-              </p>
-            </div>
-            <div className="notice-modal-footer">
-              <button
-                className="notice-modal-btn"
-                onClick={() => setShowNotice(false)}
-              >
-                닫기
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
       <div className="containerX">
         <div className="homeGrid">
           <div className="homeLeft">
