@@ -170,6 +170,7 @@ export const SuccessModal = ({ onKeep, onGoToHistory }: SuccessModalProps) => {
       subtitle="지금 바로 수강신청내역으로 이동하시겠습니까?"
       cancelLabel="수강신청 계속하기"
       confirmLabel="수강신청내역으로 이동"
+      enterAction="cancel"
     />
   );
 };
