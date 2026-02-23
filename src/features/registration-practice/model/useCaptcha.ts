@@ -15,7 +15,14 @@ export function useCaptcha(): UseCaptchaReturn {
   const [captchaDigits, setCaptchaDigits] = useState<CaptchaDigit[]>(() =>
     makeCaptchaDigits()
   );
-  const [captchaInput, setCaptchaInput] = useState('');
+  const [captchaInput, setRawCaptchaInput] = useState('');
+
+  const setCaptchaInput = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, '');
+    if (digitsOnly.length <= 2) {
+      setRawCaptchaInput(digitsOnly);
+    }
+  };
 
   const validate = (): boolean => {
     const correctCaptcha = captchaDigits.map((d) => d.value).join('');
