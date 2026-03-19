@@ -211,7 +211,7 @@ function drawSessionCard(data: ShareData): string {
   ctx.fillStyle = '#9ca3af';
   ctx.font = `12px -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`;
   ctx.textAlign = 'center';
-  ctx.fillText('allclear.codes', W / 2, cursor + 26);
+  ctx.fillText('snuclear.wafflestudio.com', W / 2, cursor + 26);
   ctx.textAlign = 'left';
 
   return canvas.toDataURL('image/png');
