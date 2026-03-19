@@ -37,7 +37,6 @@ const PracticeSessionDetail: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const fromHome = searchParams.get('from') === 'home';
-  const [showAllAttempts, setShowAllAttempts] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
 
   const { data: sessionDetail, isLoading } = usePracticeSessionDetailQuery(
@@ -122,16 +121,8 @@ const PracticeSessionDetail: React.FC = () => {
                     alt="공유 QR 코드"
                     className="session-qr-img"
                   />
-                  <span className="session-qr-label">QR 공유</span>
+                  <span className="session-qr-label">사진 다운로드</span>
                 </div>
-              )}
-              {sessionDetail.attempts && sessionDetail.attempts.length > 3 && (
-                <button
-                  className="view-more-btn"
-                  onClick={() => setShowAllAttempts(!showAllAttempts)}
-                >
-                  {showAllAttempts ? '간단히 보기' : '더보기 +'}
-                </button>
               )}
             </div>
           </div>
@@ -156,10 +147,7 @@ const PracticeSessionDetail: React.FC = () => {
                 <span className="session-detail-col-percentile">상위%</span>
               </div>
               <div className="session-detail-list">
-                {(showAllAttempts
-                  ? sessionDetail.attempts
-                  : sessionDetail.attempts.slice(0, 3)
-                ).map((detail: PracticeAttemptResult, index: number) => {
+                {sessionDetail.attempts.map((detail: PracticeAttemptResult, index: number) => {
                   const isSuccess = detail.isSuccess === true;
                   return (
                     <div key={index} className="session-detail-item">
