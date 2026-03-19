@@ -52,7 +52,6 @@ function drawSessionCard(data: ShareData): string {
   const W = 390;
   const pagePad = 16;
   const rowH = 70;
-  const accentH = 4;
   const brandH = 52;
   const titleH = 50;
   const sepH = 1;
@@ -63,7 +62,6 @@ function drawSessionCard(data: ShareData): string {
 
   const totalH =
     pagePad * 2 +
-    accentH +
     brandH +
     titleH +
     sepH +
@@ -99,26 +97,12 @@ function drawSessionCard(data: ShareData): string {
   roundRect(ctx, cardX, cardY, cardW, cardH, 16);
   ctx.stroke();
 
-  // Blue accent bar at top of card
+  // Brand: SNUCLEAR
   let cursor = cardY;
-  ctx.fillStyle = '#2491c9';
-  ctx.beginPath();
-  ctx.moveTo(cardX + 16, cursor);
-  ctx.lineTo(cardX + cardW - 16, cursor);
-  ctx.quadraticCurveTo(cardX + cardW, cursor, cardX + cardW, cursor + 16);
-  ctx.lineTo(cardX + cardW, cursor + accentH);
-  ctx.lineTo(cardX, cursor + accentH);
-  ctx.lineTo(cardX, cursor + 16);
-  ctx.quadraticCurveTo(cardX, cursor, cardX + 16, cursor);
-  ctx.closePath();
-  ctx.fill();
-  cursor += accentH;
-
-  // Brand: ALL CLEAR
   ctx.fillStyle = '#2491c9';
   ctx.font = `bold 20px -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif`;
   ctx.textAlign = 'left';
-  ctx.fillText('ALL CLEAR', cardX + 20, cursor + 34);
+  ctx.fillText('SNUCLEAR', cardX + 20, cursor + 34);
   cursor += brandH;
 
   // Title
@@ -216,7 +200,7 @@ function drawSessionCard(data: ShareData): string {
     ctx.fillText(`${attempt.r}ms`, cardX + cardW - 90, rowY + 38);
 
     // Percentile
-    const pctText = attempt.p ? `상위 ${(attempt.p * 100).toFixed(1)}%` : '-';
+    const pctText = attempt.p ? `${(attempt.p * 100).toFixed(1)}%` : '-';
     ctx.fillText(pctText, cardX + cardW - 20, rowY + 38);
     ctx.textAlign = 'left';
   });
