@@ -1,6 +1,6 @@
 # 프로젝트 개요
 
-수강신청 연습 사이트 (ALL CLEAR) 프론트엔드.
+수강신청 연습 사이트 (SnuClear) 프론트엔드.
 React 19 + Vite + TypeScript, FSD(Feature-Sliced Design) 아키텍처.
 
 ## 기술 스택
@@ -56,6 +56,11 @@ npm run build        # 프로덕션 빌드
 - `src/pages/practice-session/index.tsx`: 세션 데이터를 base64 인코딩 → QR 생성 (`qrcode` 라이브러리)
 - `src/pages/session-share/index.tsx`: URL 파라미터 디코딩 → Canvas API로 카드 이미지 생성 → `<img>` 표시
 - 인증 불필요, 데이터가 URL에 포함되어 있음
+
+## GitHub
+
+- **push/PR 시 반드시 `user983740` 계정 사용** (`gh auth status`로 확인 후 진행)
+- 계정이 다르면: `gh auth switch --user user983740`
 
 ## 컨벤션
 

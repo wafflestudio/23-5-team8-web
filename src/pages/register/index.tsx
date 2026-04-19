@@ -131,7 +131,7 @@ export default function Register() {
           <Link to="/" className="login-logo">
             <img
               src="/assets/logo.png"
-              alt="All Clear Logo"
+              alt="SnuClear Logo"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).style.display = 'none';
               }}
