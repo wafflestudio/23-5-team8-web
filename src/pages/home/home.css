@@ -194,9 +194,10 @@
     line-height: 24px;
     white-space: pre-wrap;
     word-break: keep-all;
+    overflow-wrap: break-word;
   }
   .periodTable tbody tr.currentPeriod td {
-    background-color: transparent;
+    background-color: #eef5ff;
   }
   .periodTable td:first-child {
     text-align: left;
@@ -247,6 +248,7 @@
     letter-spacing: -1px;
     line-height: 24px;
     word-break: keep-all;
+    overflow-wrap: break-word;
     white-space: pre-wrap;
   }
 
